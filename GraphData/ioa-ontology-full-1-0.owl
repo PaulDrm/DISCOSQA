@@ -1,0 +1,1800 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#"
+     xml:base="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#">
+    <owl:Ontology rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology">
+        <owl:versionIRI rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology/1.0"/>
+    </owl:Ontology>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Object Properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasConstraint -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasConstraint">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDestinationOrbit -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDestinationOrbit">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOrbit"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isDestinationOrbitOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEntity -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEntity">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isEntityOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Entity"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFragmentation -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFragmentation">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isFragmentationOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Fragmentation"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFragmentationEventType -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFragmentationEventType">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isFragmentationEventTypeOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#FragmentationEventType"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFrame -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFrame">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitFrame"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasInitialOrbit -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasInitialOrbit">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOrbit"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isInitialOrbitOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunch -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunch">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Launch"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchPads -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchPads">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchSite -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchSite">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLocation"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchSiteOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchSite"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchVehicle -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchVehicle">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchVehicleEngine -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchVehicleEngine">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleEngineOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicleEngine"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchVehicleFamily -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchVehicleFamily">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleFamilyOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicleFamily"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchVehicleStage -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchVehicleStage">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleStageOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicleStage"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLocation -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLocation">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLocationOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Location"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasObjectClass -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasObjectClass">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isObjectClassOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ObjectClass"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasObserver -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasObserver">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#GroundStationPass"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#RelayWindow"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOperator -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOperator">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEntity"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isOperatorOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Operator"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOrbit -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOrbit">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isOrbitOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasParent -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasParent">
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isParentOf"/>
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasPropellant -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasPropellant">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isPropellantOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Propellant"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasReentry -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasReentry">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isReentryOf"/>
+        <rdfs:range rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Reentry"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasReportingData -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasReportingData">
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isReportingDataOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasState -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasState">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEntity"/>
+        <owl:inverseOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isStateOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasTarget -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasTarget">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#GroundStationPass"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#RelayWindow"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isConstraintOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isConstraintOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isDestinationOrbitOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isDestinationOrbitOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isOrbitOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isEntityOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isEntityOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isFragmentationEventTypeOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isFragmentationEventTypeOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isFragmentationOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isFragmentationOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isInitialOrbitOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isInitialOrbitOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isOrbitOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchSiteOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchSiteOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLocationOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleEngineOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleEngineOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleFamilyOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleFamilyOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleStageOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchVehicleStageOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLocationOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLocationOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isObjectClassOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isObjectClassOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isOperatorOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isOperatorOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isEntityOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isOrbitOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isOrbitOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isParentOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isParentOf">
+        <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isPropellantOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isPropellantOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isReentryOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isReentryOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topObjectProperty"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isReportingDataOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isReportingDataOf"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isStateOf -->
+
+    <owl:ObjectProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isStateOf">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isEntityOf"/>
+    </owl:ObjectProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Data properties
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasAltitude -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasAltitude">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasArgOfPeriapsis -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasArgOfPeriapsis">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasAvgCrossSection -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasAvgCrossSection">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasAzimuths -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasAzimuths">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasBurnTime -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasBurnTime">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasCosparID -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasCosparID">
+        <owl:equivalentProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasInternationalDesignator"/>
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasCosparLaunchNo -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasCosparLaunchNo">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDepth -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDepth">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDimensions"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDiameter -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDiameter">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDimensions"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDimensions -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDimensions">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDryMass -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDryMass">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMass"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDuration -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDuration">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDurationLowerBound -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDurationLowerBound">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDuration"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDurationUpperBound -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDurationUpperBound">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDuration"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEccentricity -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEccentricity">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEnd -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEnd">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEndLowerBound -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEndLowerBound">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEnd"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEndUpperBound -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEndUpperBound">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEnd"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEpoch -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEpoch">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEscCapacity -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEscCapacity">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasExplanation -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasExplanation">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFailedLaunches -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFailedLaunches">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFailure -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFailure">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFilePath -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFilePath">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#anyURI"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFlightNo -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFlightNo">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFormat -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFormat">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFuel -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFuel">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFuelMass -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFuelMass">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMass"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasGeoCapacity -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasGeoCapacity">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasGtoCapacity -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasGtoCapacity">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasHeight -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasHeight">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDimensions"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasInclination -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasInclination">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasInternationalDesignator -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasInternationalDesignator">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasKeywords -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasKeywords">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLatestValue -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLatestValue">
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ReportingData"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLatitude -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLatitude">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLeoCapacity -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLeoCapacity">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLongitude -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLongitude">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMass -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMass">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMaxCrossSection -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMaxCrossSection">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMaxIsp -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMaxIsp">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMeanAnomaly -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMeanAnomaly">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMinCrossSection -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMinCrossSection">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMode -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMode">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasName -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasName">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasNoradID -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasNoradID">
+        <owl:equivalentProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSatno"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#unsignedInt"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasNumStages -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasNumStages">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOxidiser -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOxidiser">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOxidiserMass -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOxidiserMass">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMass"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasRAAN -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasRAAN">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSatno -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSatno">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#unsignedInt"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSemimajorAxis -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSemimajorAxis">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:domain rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasShape -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasShape">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSolidPropellant -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSolidPropellant">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSolidPropellantMass -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSolidPropellantMass">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMass"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSpan -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSpan">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDimensions"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSsoCapacity -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSsoCapacity">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasStart -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasStart">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasStartLowerBound -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasStartLowerBound">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasStart"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasStartUpperBound -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasStartUpperBound">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasStart"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#dateTime"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSuccessfulLaunches -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSuccessfulLaunches">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#nonNegativeInteger"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasThrustLevel -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasThrustLevel">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasUnit -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasUnit">
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasVimpelID -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasVimpelID">
+        <rdfs:subPropertyOf rdf:resource="http://www.w3.org/2002/07/owl#topDataProperty"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#unsignedInt"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasWetMass -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasWetMass">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMass"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasWidth -->
+
+    <owl:DatatypeProperty rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasWidth">
+        <rdfs:subPropertyOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDimensions"/>
+        <rdfs:range rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+    </owl:DatatypeProperty>
+    
+
+
+    <!-- 
+    ///////////////////////////////////////////////////////////////////////////////////////
+    //
+    // Classes
+    //
+    ///////////////////////////////////////////////////////////////////////////////////////
+     -->
+
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AOS -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AOS">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AnxCrossing -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AnxCrossing">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ApogeeCrossing -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ApogeeCrossing">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeEvent -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeEvent">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeManouever -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeManouever">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeManoueverEnd -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeManoueverEnd">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeManoueverStart -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeManoueverStart">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#AttitudeEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Constellation -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Constellation">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#DestinationOrbit -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#DestinationOrbit">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit"/>
+        <owl:disjointWith rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#InitialOrbit"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#DnxCrossing -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#DnxCrossing">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Document -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Document">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#EarthEclipse -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#EarthEclipse">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#EarthEclipseEnd -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#EarthEclipseEnd">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#EarthEclipseStart -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#EarthEclipseStart">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Entity -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Entity"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Enumeration -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Enumeration">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ReportingData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ErrorEvent -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ErrorEvent">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Event -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Event"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#FatalEvent -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#FatalEvent">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#File -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#File">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Document"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#FinalState -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#FinalState">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SysState"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Fragmentation -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Fragmentation">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isFragmentationOf"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Object"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#FragmentationEventType -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#FragmentationEventType"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#GroundSegment -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#GroundSegment">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#GroundStation -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#GroundStation">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Location"/>
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#GroundStationPass -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#GroundStationPass">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#InformationEvent -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#InformationEvent">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#InitialOrbit -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#InitialOrbit">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#InitialState -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#InitialState">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SysState"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LOS -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LOS">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Launch -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Launch">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchSite"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchSite"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#isLaunchOf"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Object"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFailure"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#boolean"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchPads -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchPads"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchSite -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchSite">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Location"/>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLaunchPads"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchPads"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasAzimuths"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchSystem -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchSystem"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicle -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicle"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicleEngine -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicleEngine"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicleFamily -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicleFamily"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicleStage -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#LaunchVehicleStage"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Location -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Location">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasAltitude"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLatitude"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasLongitude"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Mission -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Mission">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#MissionControlSystem -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#MissionControlSystem">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Mode -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Mode">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Enumeration"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#MoonEclipse -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#MoonEclipse">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#MoonEclipseEnd -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#MoonEclipseEnd">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#MoonEclipseStart -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#MoonEclipseStart">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Numeric -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Numeric">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ReportingData"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Object -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Object">
+        <owl:equivalentClass>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOrbit"/>
+                <owl:someValuesFrom rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit"/>
+            </owl:Restriction>
+        </owl:equivalentClass>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasDimensions"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMass"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ObjectClass -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ObjectClass"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Operator -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Operator">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Entity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Orbit">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasArgOfPeriapsis"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasEccentricity"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasInclination"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasMeanAnomaly"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasRAAN"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSemimajorAxis"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#float"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitFrame -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitFrame"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitRevolution -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitRevolution">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalManouever -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalManouever">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalManoueverEnd -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalManoueverEnd">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalManoueverStart -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalManoueverStart">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Payload -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Payload">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#PerigeeCrossing -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#PerigeeCrossing">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#PlanningDomainDefinition -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#PlanningDomainDefinition">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Document"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#PlanningProblemDefinition -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#PlanningProblemDefinition">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Document"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Platform -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Platform">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Propellant -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Propellant">
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasFuel"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasOxidiser"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+        <rdfs:subClassOf>
+            <owl:Restriction>
+                <owl:onProperty rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#hasSolidPropellant"/>
+                <owl:someValuesFrom rdf:resource="http://www.w3.org/2001/XMLSchema#string"/>
+            </owl:Restriction>
+        </rdfs:subClassOf>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Reentry -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Reentry"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#RelayWindow -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#RelayWindow">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Report -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Report">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#File"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ReportingData -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#ReportingData">
+        <rdfs:comment>Is information that a system element provides, irrespective of how this information is used. Reporting data can comprise measurements which reflect the state of the associated system element or an output product whose purpose is to be used by another system element (e.g. manoeuvre parameters provided by the flight dynamics system). Reporting data comprises parameters and compound parameters. A parameter is the lowest level of elementary information that has a meaning for monitoring and control of the space system. A compound parameter is a record comprised of any sequence of parameters, arrays of parameters and sub‐records (see also ECSS‐E‐ST‐70‐41). For example, a complete telemetry packet, or part thereof, may be represented as a compound parameter. The parameters within a compound parameter are normally interpreted together (e.g. when interpreting the contents of an anomaly report). Reporting data can have different representations depending on its life cycle within the space system (e.g. an on‐board measurement has a raw value in telemetry and an engineering value when presented on a ground segment display) [ECSS‐E‐ST‐70‐31C, 2008].</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Schedule -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Schedule">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Document"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SpaceSegment -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SpaceSegment">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Spacecraft -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Spacecraft">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#StartRevolution -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#StartRevolution">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#OrbitalEvent"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#State -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#State">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Entity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Status -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Status">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Enumeration"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Subsystem -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Subsystem">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SysState -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SysState">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Enumeration"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#SystemElement"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeFixedSchedule -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeFixedSchedule">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Schedule"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeFlexibleSchedule -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeFlexibleSchedule">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Schedule"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeInterval -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeInterval"/>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeIntervalEnd -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeIntervalEnd">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeInterval"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeIntervalStart -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeIntervalStart">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#TimeInterval"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Trigger -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Trigger">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Event"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#UserManual -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#UserManual">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#File"/>
+    </owl:Class>
+    
+
+
+    <!-- http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#WarningEvent -->
+
+    <owl:Class rdf:about="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#WarningEvent">
+        <rdfs:subClassOf rdf:resource="http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-ontology#Event"/>
+    </owl:Class>
+</rdf:RDF>
+
+
+
+<!-- Generated by the OWL API (version 4.5.9.2019-02-01T07:24:44Z) https://github.com/owlcs/owlapi -->
+

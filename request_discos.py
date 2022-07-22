@@ -2,7 +2,7 @@
 
 import requests
 from pprint import pprint
-from tqdm import trange
+from tqdm.notebook import trange
 import time
 import pdb
 
@@ -11,9 +11,10 @@ with open('token-discos.txt') as f:
     token = f.read()
     
     
-def countdownTimer(Nsec):
-    print(f'Waiting for {Nsec} seconds...')
-    for _ in trange(Nsec):
+def countdownTimer(Nsec, message=None):
+    t = trange(Nsec, leave=False)
+    t.set_description(message + f'Wait {Nsec} seconds')
+    for _ in t:
         time.sleep(1)
         
 
@@ -181,9 +182,10 @@ def requestAllAndWait(pageName="/api/objects",pageSize=100,filter=None,sort=None
             resp_json = response.json()
             if not response.ok:
                 if resp_json['errors'][0]['status']=='429':
-                    print(f'Completed {currentPage} pages of {totalPages}')
+                    # print(f'\rCompleted {currentPage} pages of {totalPages}',end="")
+                    message = f'Page {currentPage}/{totalPages}. '
                     t_wait = int(response.headers['Retry-After'])+1
-                    countdownTimer(t_wait)
+                    countdownTimer(t_wait, message=message)
                     continue
                 else:
                     pprint(resp_json['errors'])

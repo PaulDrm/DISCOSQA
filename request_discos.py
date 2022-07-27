@@ -11,7 +11,7 @@ with open('token-discos.txt') as f:
     token = f.read()
     
     
-def countdownTimer(Nsec, message=None):
+def countdownTimer(Nsec, message=''):
     t = trange(Nsec, leave=False)
     t.set_description(message + f'Wait {Nsec} seconds')
     for _ in t:
@@ -19,6 +19,7 @@ def countdownTimer(Nsec, message=None):
         
 
 def requestSinglePage(pageName="/api/objects",pageSize=20,filter=None,sort=None,include=None):
+    """Return JSON format of response from a single page"""
     with requests.Session() as s:
         response = s.get(
             URL + pageName,
@@ -43,6 +44,7 @@ def requestSinglePage(pageName="/api/objects",pageSize=20,filter=None,sort=None,
             return []
 
 def requestAllPages(pageName="/api/objects",pageSize=100,filter=None,sort=None,include=None):
+    """Iterate over all pages and return data from JSON format of response"""
     with requests.Session() as s:
         response = s.get(
             URL + pageName,
@@ -88,6 +90,7 @@ def requestAllPages(pageName="/api/objects",pageSize=100,filter=None,sort=None,i
     return allData
 
 def requestWithRelationships(pageName="/api/objects",pageSize=100,filter=None,sort=None,include=None):
+    """All pages, also return data from 'included'"""
     with requests.Session() as s:
         response = s.get(
             URL + pageName,
@@ -142,6 +145,7 @@ def requestWithRelationships(pageName="/api/objects",pageSize=100,filter=None,so
 
 
 def requestAllAndWait(pageName="/api/objects",pageSize=100,filter=None,sort=None,include=None):
+    """For larger requests, waits for required time upon a 429 error"""
     with requests.Session() as s:
         response = s.get(
             URL + pageName,
@@ -182,7 +186,6 @@ def requestAllAndWait(pageName="/api/objects",pageSize=100,filter=None,sort=None
             resp_json = response.json()
             if not response.ok:
                 if resp_json['errors'][0]['status']=='429':
-                    # print(f'\rCompleted {currentPage} pages of {totalPages}',end="")
                     message = f'Page {currentPage}/{totalPages}. '
                     t_wait = int(response.headers['Retry-After'])+1
                     countdownTimer(t_wait, message=message)

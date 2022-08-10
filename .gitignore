@@ -3,3 +3,4 @@ token-discos.txt
 __pycache__/
 
 *.csv
+*.ttl

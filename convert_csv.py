@@ -17,7 +17,9 @@ def row2rdf(dfRow):
                        (s.split(':') for s in att_str.split(';')) )
     
     rdf_str = f"<{dfRow['name']}> a ioa:{dfRow['class']} ;\n"
-    rdf_str += f"  ioa:Name '{dfRow['name']}'^^xsd:string ;\n"
+    # rdf_str += f"  ioa:Name '{dfRow['name']}'^^xsd:string ;\n"
+    for name in dfRow['known_as'].split(';'):
+        rdf_str += f"  pred:name '{name}'^^xsd:string ;\n"
         
     if att_str is not np.nan:
         for att,val in att_dict.items():

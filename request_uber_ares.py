@@ -1,4 +1,4 @@
-"""Helper functions for requesting from Uberlog and ARES"""
+"""Helper functions for requesting from Uberlog and ARES mock server"""
 
 import requests
 from pprint import pprint

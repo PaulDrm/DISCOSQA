@@ -7,7 +7,7 @@ import time
 import pdb
 
 URL = 'https://discosweb.esoc.esa.int'
-with open('token-discos.txt') as f:
+with open('token-discos.txt') as f: #put your own discos token in this file
     token = f.read()
     
     

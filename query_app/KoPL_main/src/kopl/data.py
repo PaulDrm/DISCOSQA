@@ -95,8 +95,10 @@ class KB(object):
 				for c in self.get_all_concepts(ent_id): # merge entity into ancestor concept
 					self.concept_to_entity[c].add(ent_id)
 			else:
-				print('entity name not specified')
-				print(ent_id)
+				## Todo changed here to print if entity does not have name, entity id is name
+
+				#print('entity name not specified')
+				#print(ent_id)
 				self.name_to_id[ent_id].append(ent_id)
 				for c in self.get_all_concepts(ent_id):  # merge entity into ancestor concept
 					self.concept_to_entity[c].add(ent_id)

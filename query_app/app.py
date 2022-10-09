@@ -8,52 +8,25 @@ import time
 import streamlit as st
 import pickle
 import os
-def load_kg(path):
 
-    #path =
+
+@st.experimental_singleton
+def load_kg(path):
+    print("Load KG..")
     with open(path, 'r') as f:
         kqa_kb = json.load(f)
-
     kb = copy.deepcopy(kqa_kb)
     engine = KoPLEngine(kb)
     return engine
-
-
 
 def invert_dict(d):
     return {v: k for k, v in d.items()}
 
 
-# def load_vocab(dic):
-#     vocab = dic
-#     vocab['id2function'] = invert_dict(vocab['function2id'])
-#     return vocab
 def load_vocab(path):
     vocab = json.load(open(path))
     vocab['id2function'] = invert_dict(vocab['function2id'])
     return vocab
-
-
-def parse_program(program):
-    string = ""
-    for function in reversed(program):
-        if function.get('dependencies') != []:
-            addition = parse_program(program[:-1])
-            #print(function['function'])
-            if function['inputs']!=[]:
-                string += addition+','
-                string ="engine." + function['function']+'(' + string  + ", ".join([f"'{inp}'" for inp in function['inputs']])+")"
-            else:
-                string += addition
-                string ="engine." + function['function']+'(' + string  + ", ".join([f"'{inp}'" for inp in function['inputs']])+")"
-            return string
-        else:
-            #print(program)
-            #print(function['function'])
-            #string += "engine."+function['function'] + "("+"', '".join(function['inputs'])+")"#+','
-            #string += "engine."+function['function'] + "("+"', '".join(function['inputs'])+")"#+','
-            string += "engine."+function['function'] + '(' + string  + ", ".join([f"'{inp}'" for inp in function['inputs']])+")"
-            return string
 
 def parse_program(program):
     string = ""
@@ -100,15 +73,18 @@ def load_classes(path,device):
     'attention_mask': attention_mask
   }
   return argument_inputs
+@st.experimental_singleton
+def load_model():
 
-def main():
-    # save_dir = '/content/drive/MyDrive/IOA/ProgramTransfer/models/checkpoint-14399'
+    """
+    Load the model from checkpoint
+    """
+
     save_dir = "PaulD/checkpoint-14399"
-    config_class, model_class, tokenizer_class = (BertConfig, RelationPT, BertTokenizer)
+    config_class, model_class = (BertConfig, RelationPT)
     print("load ckpt from {}".format(save_dir))
     config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
     model = model_class.from_pretrained(save_dir, config=config)
-
     path = './processed/vocab.json'
     model.config.vocab = load_vocab(path)
 
@@ -117,23 +93,51 @@ def main():
         model.cuda()
         if n_gpu > 1:
             model = torch.nn.DataParallel(model)
+    return model
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    tokenizer = tokenizer_class.from_pretrained('bert-base-cased', do_lower_case=False)
+@st.experimental_singleton
+def load_tokenizer(path):
+    tokenizer_class = BertTokenizer
+    tokenizer = tokenizer_class.from_pretrained(path, do_lower_case=False)
+    return tokenizer
+
+DEFAULT_QUESTION_AT_STARTUP = os.getenv("DEFAULT_QUESTION_AT_STARTUP", "What is the mass of COS B?")
+
+def set_state_if_absent(key, value):
+    if key not in st.session_state:
+        st.session_state[key] = value
+
+def main():
+    ################################################################
+    ## Load KG engine
+    # path = 'C:\\Users\\pauld\\Projects\\IOA\\1_4_SW\\esa_kb.json'
+    path = '.\\Preprocessing_KG\\esa_kb.json'  # 'C:\\Users\\pauld\\Projects\\IOA\\3_1_Demo\\Preprocessing_KG\\esa_kb.json'
+    engine = load_kg(path)
+
+    # save_dir = '/content/drive/MyDrive/IOA/ProgramTransfer/models/checkpoint-14399'
+    tokenizer =load_tokenizer('bert-base-cased')
+
     path = './processed/vocab.json'
     vocab = load_vocab(path)
-
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     input_dir = './processed/'
     argument_inputs = load_classes(input_dir + "entity/entity_small.pt", device)
 
+
+
+
+    ## needs replacement
     ents = tokenizer.batch_decode(argument_inputs['input_ids'], skip_special_tokens=True)
     vocab['entity2id'] = {}
     for entity in ents:
         if not entity in vocab['entity2id']:
             vocab['entity2id'][entity] = len(vocab['entity2id'])
     vocab['id2entity'] = [entity for entity, iid in vocab['entity2id'].items()]
-
+    model = load_model()
     model.config.vocab = vocab
+
+    # Persistent state
+    set_state_if_absent("question", DEFAULT_QUESTION_AT_STARTUP)
 
     # argument_inputs = load_classes(input_dir + "entity/entity.pt", device)
     # with torch.no_grad():
@@ -141,36 +145,41 @@ def main():
     #                                    attention_mask=argument_inputs['attention_mask'],
     #                                    token_type_ids=argument_inputs['token_type_ids'])[1]
 
+    ## Loads embeddings
     with open(os.path.abspath(input_dir + "entity/entity_embeddings.pt"), 'rb') as f:
         model.entity_embeddings = pickle.load(f)
 
-    argument_inputs = load_classes(input_dir + "attribute/attribute.pt", device)
+    print(st.session_state.get('attribute_embeddings')==None)
 
-    with torch.no_grad():
-        attribute_embeddings = model.bert(input_ids=argument_inputs['input_ids'],
-                                          attention_mask=argument_inputs['attention_mask'],
-                                          token_type_ids=argument_inputs['token_type_ids'])[1]
+    if st.session_state.get('attribute_embeddings') == None:
+        argument_inputs = load_classes(input_dir + "attribute/attribute.pt", device)
+        with torch.no_grad():
+            attribute_embeddings = model.bert(input_ids=argument_inputs['input_ids'],
+                                              attention_mask=argument_inputs['attention_mask'],
+                                              token_type_ids=argument_inputs['token_type_ids'])[1]
+            set_state_if_absent('attribute_embeddings', attribute_embeddings)
 
-    argument_inputs = load_classes(input_dir + "concept/concept.pt", device)
-
-    with torch.no_grad():
-        concept_embeddings = model.bert(input_ids=argument_inputs['input_ids'],
-                                        attention_mask=argument_inputs['attention_mask'],
-                                        token_type_ids=argument_inputs['token_type_ids'])[1]
+    if st.session_state.get('concept_embeddings') == None:
+        argument_inputs = load_classes(input_dir + "concept/concept.pt", device)
+        with torch.no_grad():
+            concept_embeddings = model.bert(input_ids=argument_inputs['input_ids'],
+                                            attention_mask=argument_inputs['attention_mask'],
+                                            token_type_ids=argument_inputs['token_type_ids'])[1]
+            set_state_if_absent('concept_embeddings', concept_embeddings)
 
     argument_inputs = load_classes(input_dir + "relation/relation.pt", device)
-
     with torch.no_grad():
         relation_embeddings = model.bert(input_ids=argument_inputs['input_ids'],
                                          attention_mask=argument_inputs['attention_mask'],
                                          token_type_ids=argument_inputs['token_type_ids'])[1]
 
-
-    print("Load KG..")
-    #path = 'C:\\Users\\pauld\\Projects\\IOA\\1_4_SW\\esa_kb.json'
-    #path = 'C:\\Users\\pauld\\Projects\\IOA\\1_4_SW\\esa_kb.json'
-    path = 'C:\\Users\\pauld\\Projects\\IOA\\3_1_Demo\\Preprocessing_KG\\esa_kb.json'
-    engine = load_kg(path)
+    if st.session_state.get('relation_embeddings') == None:
+        argument_inputs = load_classes(input_dir + "relation/relation.pt", device)
+        with torch.no_grad():
+            relation_embeddings = model.bert(input_ids=argument_inputs['input_ids'],
+                                             attention_mask=argument_inputs['attention_mask'],
+                                             token_type_ids=argument_inputs['token_type_ids'])[1]
+        set_state_if_absent('relation_embeddings', relation_embeddings)
 
     st.title("Demo for querying KG with ProgramTransfer method")
     st.markdown(""" *Note: do not use keywords, but full-fledged questions.*""")
@@ -183,7 +192,10 @@ def main():
     #Enter a prediction of a model for querying the KB
 
 
-    object = model.demo(**inputs,relation_embeddings=relation_embeddings,concept_embeddings=concept_embeddings,attribute_embeddings=attribute_embeddings )[0]
+    #object = model.demo(**inputs,relation_embeddings=relation_embeddings,concept_embeddings=concept_embeddings,attribute_embeddings=attribute_embeddings )[0]
+    object = model.demo(**inputs, relation_embeddings=st.session_state.relation_embeddings, concept_embeddings=st.session_state.concept_embeddings,
+                        attribute_embeddings=st.session_state.attribute_embeddings)[0]
+
 
     for count, function in enumerate(object):
         if count == 0:
@@ -205,7 +217,6 @@ def main():
 
         is_correct_answer = None
         is_correct_document = None
-
         button_col1, button_col2, _ = st.columns([1, 1, 6])
 
         if button_col1.button("👍", help="Correct answer"):  # key=f"{result['context']}{count}1",

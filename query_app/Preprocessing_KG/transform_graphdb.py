@@ -58,12 +58,12 @@ def main():
         results = sparql.queryAndConvert()
 
         #entity = {}
-        entity = {'relations': []}
+        entity = {'relations': [], 'attributes': []}
         for r in results["results"]["bindings"]:
 
             ## attributes
             ## check that value is not entity ("/ressource") or the name "/predicates-ontology"
-            if not ("/ioa-wiki-ontology#" in r['o']['value'] or "/resource/" in r['o']['value'] or "/predicates-ontology" in r['pred']['value']):
+            if not ("/ioa-wiki-ontology#" in r['o']['value'] or "/resource/" in r['o']['value'] or "/predicates-ontology" in r['pred']['value'] or "genid" in r['o']['value']):
                 # entity['attributes'] = entity.get('attributes',[]) +[{'key':r['pred']['value'].split('#')[1],'value': {'value':r['o']['value'], 'type':'string'}, 'qualifiers':{} }]
 
                 ## datatype

@@ -616,11 +616,38 @@ def main():
         'concept2id': {
             '<PAD>': 0
         },
-        'function2id':{
-            '<PAD>': 0,
-            '<START>': 1,
-            '<END>':2
-        },
+        "function2id": {
+        "<PAD>": 0,
+        "<START>": 1,
+        "<END>": 2,
+        "FindAll": 3,
+        "FilterStr": 4,
+        "FilterConcept": 5,
+        "And": 6,
+        "What": 7,
+        "Find": 8,
+        "QueryAttrQualifier": 9,
+        "Relate": 10,
+        "QueryAttr": 11,
+        "VerifyStr": 12,
+        "FilterNum": 13,
+        "SelectBetween": 14,
+        "QueryRelationQualifier": 15,
+        "QueryRelation": 16,
+        "Count": 17,
+        "VerifyNum": 18,
+        "VerifyYear": 19,
+        "FilterYear": 20,
+        "SelectAmong": 21,
+        "FilterDate": 22,
+        "QueryAttrUnderCondition": 23,
+        "QFilterYear": 24,
+        "QFilterStr": 25,
+        "Or": 26,
+        "QFilterNum": 27,
+        "QFilterDate": 28,
+        "VerifyDate": 29
+      },
         'entity2id': {
             '<PAD>': 0
          },

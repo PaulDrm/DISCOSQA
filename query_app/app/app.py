@@ -111,8 +111,8 @@ def main():
     ################################################################
     ## Load KG engine
     # path = 'C:\\Users\\pauld\\Projects\\IOA\\1_4_SW\\esa_kb.json'
-    path = '.\\Preprocessing_KG\\esa_kb.json'  # 'C:\\Users\\pauld\\Projects\\IOA\\3_1_Demo\\Preprocessing_KG\\esa_kb.json'
-    engine = load_kg(path)
+    path = './Preprocessing_KG/esa_kb.json' # 'C:\\Users\\pauld\\Projects\\IOA\\3_1_Demo\\Preprocessing_KG\\esa_kb.json'
+    engine = load_kg(os.path.abspath(path))
 
     # save_dir = '/content/drive/MyDrive/IOA/ProgramTransfer/models/checkpoint-14399'
     tokenizer =load_tokenizer('bert-base-cased')
@@ -122,9 +122,6 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     input_dir = './processed/'
     argument_inputs = load_classes(input_dir + "entity/entity_small.pt", device)
-
-
-
 
     ## needs replacement
     ents = tokenizer.batch_decode(argument_inputs['input_ids'], skip_special_tokens=True)

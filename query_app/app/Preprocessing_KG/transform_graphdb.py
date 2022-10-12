@@ -14,17 +14,17 @@ def main():
     )
     sparql.setReturnFormat(JSON)
 
+    #via a SPARQL endpoint
+    sparql.setQuery("""PREFIX pred: <http://www.semanticweb.org/esa-ioa/ontologies/2022/predicates-ontology#>
+                    select distinct ?subj where { ?subj pred:instance_of ?obj .}
+                    """
+    )
     # via a SPARQL endpoint
     # sparql.setQuery("""PREFIX pred: <http://www.semanticweb.org/esa-ioa/ontologies/2022/predicates-ontology#>
-    #                 select distinct ?subj where { ?subj pred:instance_of ?obj .}
+    #                    PREFIX ioa: <http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-wiki-ontology#>
+    #                 select distinct ?subj where { ?subj pred:instance_of ioa:Object .}
     #                 """
-    # )
-    # via a SPARQL endpoint
-    sparql.setQuery("""PREFIX pred: <http://www.semanticweb.org/esa-ioa/ontologies/2022/predicates-ontology#>
-                       PREFIX ioa: <http://www.semanticweb.org/esa-ioa/ontologies/2022/ioa-wiki-ontology#>
-                    select distinct ?subj where { ?subj pred:instance_of ioa:Object .}
-                    """
-                    )
+    #                 )
 
     entity_extract = sparql.queryAndConvert()
 
@@ -46,6 +46,8 @@ def main():
                     """
                             )
         else:
+            print("Skippin following entity in extraction..")
+            print(extract['subj']['value'])
             continue
         #     print(f"""
         #         SELECT ?uri ?pred ?o
@@ -55,6 +57,9 @@ def main():
         #         }}
         #         """)
         # ret = sparql.queryAndConvert()
+        if extract['subj']['value'].split("/resource/")[1] in entities:
+            continue
+
         results = sparql.queryAndConvert()
 
         #entity = {}
@@ -108,6 +113,9 @@ def main():
                 if concepts_names.get(r['o']['value'].split('#')[1], None) == None:
                     concepts_names[r['o']['value'].split('#')[1]] = f'conc{str(len(concepts_names))}'
                 entity['instanceOf'] = entity.get('instanceOf', []) + [concepts_names[r['o']['value'].split('#')[1]]]
+
+        if entity.get('name')== None:
+            entity['name'] = extract['subj']['value'].split("/resource/")[1]
 
         entities[extract['subj']['value'].split("/resource/")[1]] = entity
     print("Extraction time: ", time.time() - start_extract)

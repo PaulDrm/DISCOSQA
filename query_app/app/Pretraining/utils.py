@@ -7,6 +7,10 @@ import torch.nn as nn
 import random
 import os
 import time
+from Pretraining.model import RelationPT
+from transformers import (BertConfig, BertModel, BertTokenizer, BertPreTrainedModel)
+
+
 START_RELATION = 'START_RELATION'
 NO_OP_RELATION = 'NO_OP_RELATION'
 NO_OP_ENTITY = 'NO_OP_ENTITY'
@@ -65,6 +69,27 @@ def format_path(path_trace, id2entity, id2relation):
             path_str += ' <-{}- '.format(rel[:-4])
         path_str += get_most_recent_entity(j)
     return path_str
+
+def load_model():
+
+    """
+    Load the model from checkpoint
+    """
+
+    save_dir = "PaulD/checkpoint-14399"
+    config_class, model_class = (BertConfig, RelationPT)
+    print("load ckpt from {}".format(save_dir))
+    config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
+    model = model_class.from_pretrained(save_dir, config=config)
+    #path = './processed/vocab.json'
+    #model.config.vocab = load_vocab(path)
+
+    n_gpu = torch.cuda.device_count()
+    if torch.cuda.is_available():  #
+        model.cuda()
+        if n_gpu > 1:
+            model = torch.nn.DataParallel(model)
+    return model
 
 def pad_and_cat(a, padding_value, padding_dim=1):
     max_dim_size = max([x.size()[padding_dim] for x in a])

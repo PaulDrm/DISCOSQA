@@ -232,6 +232,12 @@ class RelationPT(BertPreTrainedModel):
         #     nn.Linear(1024, config.hidden_size),
         # )
 
+        self.operation_classifier = nn.Sequential(
+            nn.Linear(config.hidden_size, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 5),
+        )
+
         self.hidden_size = config.hidden_size
         self.init_weights()
 
@@ -365,15 +371,16 @@ class RelationPT(BertPreTrainedModel):
                     torch.argmax(argument_logits, dim=2).cpu().numpy()]
                 return pred_concepts, arg_f_word_h, class_embeddings
             # pred_concepts = pred_arguments(programs, f_word_h, concept_embeddings, 'concept')
-        outputs['pred_attributes'], hidden_att, att_embeds = pred_arguments(programs, f_word_h,
-                                                                                attribute_embeddings,
-                                                                                'attribute')
-        outputs['pred_entities'], hidden_ent, ent_embeds = pred_arguments(programs, f_word_h, self.entity_embeddings,
-                                                                          'entity')
+            outputs['pred_attributes'], hidden_att, att_embeds = pred_arguments(programs, f_word_h,
+                                                                                    attribute_embeddings,
+                                                                                    'attribute')
+            outputs['pred_entities'], hidden_ent, ent_embeds = pred_arguments(programs, f_word_h, self.entity_embeddings,
+                                                                              'entity')
 
-        outputs['pred_relations'], _, _ = pred_arguments(programs, f_word_h, relation_embeddings, 'relation')
-        outputs['pred_concepts'], _, _ = pred_arguments(programs, f_word_h, concept_embeddings, 'concept')
+            outputs['pred_relations'], _, _ = pred_arguments(programs, f_word_h, relation_embeddings, 'relation')
+            outputs['pred_concepts'], _, _ = pred_arguments(programs, f_word_h, concept_embeddings, 'concept')
 
+        ## Transforms raw predictions into KG entities
         outputs['pred_entities'][1] = [[self.config.vocab['id2entity'][pred[0]]] for pred in outputs['pred_entities'][1]]
         ## Todo needs to be changed
         # outputs['pred_concepts'][1]=[[atts[pred[0]]] for pred in outputs.get('pred_concepts',[[],[]])[1]]
@@ -387,6 +394,8 @@ class RelationPT(BertPreTrainedModel):
         #               outputs['pred_functions'].cpu()]
         predictions = [[self.config.vocab['id2function'][function.item()] for function in program] for program in
                        outputs['pred_functions'].cpu()]
+
+        ## Creates dictionary structure of prediction [{'function':"Find", 'inputs': []}, {'function':"Relate", 'inputs':[]}, ...]
         parsed = []
         for prediction, entities_pos, entities_pred in zip(predictions, outputs['pred_entities'][0],
                                                            outputs['pred_entities'][1]):
@@ -396,8 +405,8 @@ class RelationPT(BertPreTrainedModel):
             temp = [{'function': function, 'inputs': []} for function in prediction[1:prediction.index('<END>')]]
 
             parsed.append(temp)
-            #    print({'function':function,'input':[]})
-
+            #print({'function':function,'input':[]})
+        ## Fills dictionary structure with right inputs  [{'function':"Find", 'inputs': ['COS B']}, {'function':"Relate", 'inputs':['LaunchVehicle' ]}, ...]
         for key in list(outputs.keys() - {'pred_functions'}):
             for i, parse in enumerate(parsed):
 
@@ -419,13 +428,13 @@ class RelationPT(BertPreTrainedModel):
 
     def forward(self, concept_inputs=None, relation_inputs=None, entity_inputs=None, attribute_inputs=None,
                 input_ids=None, token_type_ids=None, attention_mask=None, function_ids=None, relation_info=None,
-                concept_info=None, entity_info=None, attribute_info=None):  # , attribute_info, value_info):
+                concept_info=None, entity_info=None, attribute_info=None, operator_info= None):
+
         outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
         sequence_output = outputs[0]  # [bsz, max_seq_length, hidden_size]
         pooler_output = outputs[1]  # [bsz, hidden_size]
         outputs = {}
         sequence_output = self.dropout(sequence_output)
-
         # bsz = input_ids.size(0)
 
         def train(kb_inputs, kb_info, sequence_output, pooler_output, function_ids, pred_type):
@@ -452,6 +461,15 @@ class RelationPT(BertPreTrainedModel):
             kb_pos = kb_pos.repeat(1, dim_h).view(bsz, 1, dim_h)
             f_word_h = torch.gather(f_word_h, 1, kb_pos).squeeze(1)  # [bsz, dim_h]
 
+            if pred_type == 'operation':
+                operation_logits = self.operation_classifier(f_word_h)
+                outputs['operator_logits'] = operation_logits
+                #print('operator_logits', operation_logits.size())
+                # print('operator_id', kb_id.size())
+                kb_id = kb_id.squeeze(-1)
+                outputs['operator_loss'] = nn.CrossEntropyLoss()(operation_logits,kb_id)
+
+                return outputs
             embeddings_kb = self.bert(input_ids=kb_inputs['input_ids'], \
                                       attention_mask=kb_inputs['attention_mask'], \
                                       token_type_ids=kb_inputs['token_type_ids'])[1]  # [num_relations, dim_h]
@@ -461,8 +479,8 @@ class RelationPT(BertPreTrainedModel):
                 kb_logits = f_word_h @ embeddings_kb.t()  # [bsz, num_relationis]
                 outputs['entity_logits'] = kb_logits
                 kb_id = kb_id.squeeze(-1)
-                # print('entity_logits', kb_logits.size())
-                # print('entity_id', kb_id.size())
+                #print('entity_logits', kb_logits.size())
+                #print('entity_id', kb_id.size())
                 outputs['entity_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 return outputs
 
@@ -491,10 +509,12 @@ class RelationPT(BertPreTrainedModel):
                 kb_logits = f_word_h @ embeddings_kb.t()  # [bsz, num_relationis]
                 outputs['attribute_logits'] = kb_logits
                 kb_id = kb_id.squeeze(-1)
-                # print('relation_logits',  kb_logits.size())
-                # print('relation_id', kb_id.size())
+                print('relation_logits',  kb_logits.size())
+                print('relation_id', kb_id.size())
                 outputs['attribute_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 return outputs
+
+
 
         def evaluate(kb_inputs, kb_info, sequence_output, pooler_output, function_ids, pred_type):
 
@@ -549,6 +569,12 @@ class RelationPT(BertPreTrainedModel):
             kb_pos = kb_pos.repeat(1, dim_h).view(bsz, 1, dim_h)
             f_word_h = torch.gather(f_word_h, 1, kb_pos).squeeze(1)  # [bsz, dim_h]
 
+            if pred_type == 'operation':
+                operation_logits = self.operation_classifier(f_word_h)
+                outputs['operator_logits'] = operation_logits
+                outputs['pred_operator'] = torch.argmax(operation_logits, dim=1)
+                return outputs
+
             if pred_type == 'entity':
                 embeddings_kb = self.entity_embeddings
 
@@ -601,8 +627,7 @@ class RelationPT(BertPreTrainedModel):
                 outputs['pred_attribute'] = torch.argmax(kb_logits, dim=1)
                 return outputs
 
-                ## Train
-
+        ## Train
         if entity_info is not None and entity_info[1] is not None:
             outputs = train(entity_inputs, entity_info, sequence_output, pooler_output, function_ids, 'entity')
 
@@ -615,7 +640,10 @@ class RelationPT(BertPreTrainedModel):
         if attribute_info is not None and attribute_info[1] is not None:
             outputs = train(attribute_inputs, attribute_info, sequence_output, pooler_output, function_ids, 'attribute')
 
-            ## Eval
+        if operator_info is not None and operator_info[1] is not None:
+            outputs = train('', operator_info, sequence_output, pooler_output, function_ids, 'operation')
+
+        ## Eval
         if entity_info is not None and entity_info[1] is None:
             outputs = evaluate(entity_inputs, entity_info, sequence_output, pooler_output, function_ids, 'entity')
 
@@ -626,7 +654,9 @@ class RelationPT(BertPreTrainedModel):
             outputs = evaluate(concept_inputs, concept_info, sequence_output, pooler_output, function_ids, 'concept')
 
         if attribute_info is not None and attribute_info[1] is None:
-            outputs = evaluate(attribute_inputs, attribute_info, sequence_output, pooler_output, function_ids,
-                               'attribute')
+            outputs = evaluate(attribute_inputs, attribute_info, sequence_output, pooler_output, function_ids,'attribute')
+
+        if operator_info is not None and operator_info[1] is None:
+            outputs = evaluate('', operator_info, sequence_output, pooler_output, function_ids, 'operation')
 
         return outputs

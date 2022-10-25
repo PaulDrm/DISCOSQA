@@ -24,18 +24,76 @@ import pickle
 os.environ["WANDB_API_KEY"] = "7ee09b0cec0f14411947fcf09144f4a72c09c411"
 os.environ["CUDA_LAUNCH_BLOCKING"]="1"
 
-def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_eval_loader, concept_eval_loader, entity_eval_loader, attribute_eval_loader, device,global_step, prefix = '', ):
+def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, device,global_step, prefix = '',**val_loaders):
+
+    ## relation_eval_loader, concept_eval_loader, entity_eval_loader, attribute_eval_loader
+
     eval_output_dir = args.output_dir
     if not os.path.exists(eval_output_dir):
         os.makedirs(eval_output_dir)
+
+    ############################ Eval!
+    ## Opertors!
+    nb_eval_steps = 0
+    func_metric = FunctionAcc(val_loaders['operator_val_loader'].vocab['function2id']['<END>'])
+    pbar = ProgressBar(n_total=len(val_loaders['operator_val_loader']), desc="Evaluating")
+    correct = 0
+    tot = 0
+    for step, batch in enumerate(val_loaders['operator_val_loader']):
+        model.eval()
+        batch = tuple(t.to(device) for t in batch)
+        # print(batch[4].size())
+        with torch.no_grad():
+            batch = tuple(t.to(device) for t in batch)
+            inputs = {
+                #'concept_inputs': concept_inputs,
+                #'relation_inputs': relation_inputs,
+                #'entity_inputs': entity_inputs,
+                #'attribute_inputs': attribute_inputs,
+                'input_ids': batch[0],
+                'token_type_ids': batch[1],
+                'attention_mask': batch[2],
+                'function_ids': batch[3],
+                #'attribute_info': (batch[4], None),
+                #'relation_info': (batch[4], None),
+                'concept_info': None,
+                'entity_info': None,
+                #'entity_embeddings': None
+                'operator_info': (batch[4], None)
+            }
+            outputs = model(**inputs)
+            pred_functions = outputs['pred_functions'].cpu().tolist()
+            pred_relation = outputs['pred_operator']
+            gt_relation = batch[5]
+            gt_relation = gt_relation.squeeze(-1)
+            # print(pred_relation.size(), gt_relation.size(), batch[3].size())
+            correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
+            # print(correct)
+            tot += len(pred_relation)
+            gt_functions = batch[3].cpu().tolist()
+            for pred, gt in zip(pred_functions, gt_functions):
+                func_metric.update(pred, gt)
+        nb_eval_steps += 1
+        pbar(step)
+    logging.info('')
+    acc = func_metric.result()
+    logging.info('**** function results %s ****', prefix)
+    info = 'acc: {}'.format(acc)
+    logging.info(info)
+    acc = correct.item() / tot
+    wandb.log({'acc_func': func_metric.result(), 'acc_operations': acc, 'step': global_step})
+    logging.info('**** operation results %s ****', prefix)
+    logging.info('acc: {}'.format(acc))
+
+
     # Eval!
     ## Attributes!
     nb_eval_steps = 0
-    func_metric = FunctionAcc(attribute_eval_loader.vocab['function2id']['<END>'])
-    pbar = ProgressBar(n_total=len(attribute_eval_loader), desc="Evaluating")
+    func_metric = FunctionAcc(val_loaders['attribute_val_loader'].vocab['function2id']['<END>'])
+    pbar = ProgressBar(n_total=len(val_loaders['attribute_val_loader']), desc="Evaluating")
     correct = 0
     tot = 0
-    for step, batch in enumerate(attribute_eval_loader):
+    for step, batch in enumerate(val_loaders['attribute_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
         # print(batch[4].size())
@@ -82,11 +140,11 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
 
     ## Relations!
     nb_eval_steps = 0
-    func_metric = FunctionAcc(relation_eval_loader.vocab['function2id']['<END>'])
-    pbar = ProgressBar(n_total=len(relation_eval_loader), desc="Evaluating")
+    func_metric = FunctionAcc(val_loaders['relation_val_loader'].vocab['function2id']['<END>'])
+    pbar = ProgressBar(n_total=len(val_loaders['relation_val_loader']), desc="Evaluating")
     correct = 0
     tot = 0
-    for step, batch in enumerate(relation_eval_loader):
+    for step, batch in enumerate(val_loaders['relation_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
         # print(batch[4].size())
@@ -131,11 +189,11 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
 
     ## Concepts!
     nb_eval_steps = 0
-    func_metric = FunctionAcc(concept_eval_loader.vocab['function2id']['<END>'])
-    pbar = ProgressBar(n_total=len(concept_eval_loader), desc="Evaluating")
+    func_metric = FunctionAcc(val_loaders['concept_val_loader'].vocab['function2id']['<END>'])
+    pbar = ProgressBar(n_total=len(val_loaders['concept_val_loader']), desc="Evaluating")
     correct = 0
     tot = 0
-    for step, batch in enumerate(concept_eval_loader):
+    for step, batch in enumerate(val_loaders['concept_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
         # print(batch[4].size())
@@ -177,8 +235,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     logging.info('**** concept results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
     wandb.log({'acc_func': func_metric.result(), 'acc_concepts':acc ,'step': global_step})
+
     # Entities!
-    
     with torch.no_grad():
         model.entity_embeddings = model.bert(input_ids=entity_inputs['input_ids'],
                                         attention_mask=entity_inputs['attention_mask'],
@@ -187,14 +245,13 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     #           # for o in concept_embeddings:
     #            # print(o)
     #   pickle.dump(concept_embeddings, f)
-    
-    
+
     nb_eval_steps = 0
-    func_metric = FunctionAcc(entity_eval_loader.vocab['function2id']['<END>'])
-    pbar = ProgressBar(n_total=len(entity_eval_loader), desc="Evaluating")
+    func_metric = FunctionAcc(val_loaders['entity_val_loader'].vocab['function2id']['<END>'])
+    pbar = ProgressBar(n_total=len(val_loaders['entity_val_loader']), desc="Evaluating")
     correct = 0
     tot = 0    
-    for step, batch in enumerate(entity_eval_loader):
+    for step, batch in enumerate(val_loaders['entity_eval_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
         # print(batch[4].size())
@@ -242,7 +299,7 @@ def train(args):
     #device = 'cpu'
     ## breaks loops for test run case
 
-    test = 0
+    test = 1
     #print(args.batch_size)
     logging.info("Create train_loader and val_loader.........")
     vocab_json = os.path.join(args.input_dir, 'vocab.json')
@@ -270,6 +327,17 @@ def train(args):
     # entity_train_loader = DataLoader(vocab_json, concept_train_pt, args.batch_size, training=True)
     # entity_val_loader = DataLoader(vocab_json, concept_val_pt, args.batch_size)
 
+    operator_train_pt = os.path.join(args.input_dir, 'operator', 'train.pt')
+    operator_val_pt = os.path.join(args.input_dir, 'operator', 'dev.pt')
+    operator_train_loader = DataLoader(vocab_json, attribute_train_pt, args.train_batch_size, training=True)
+    operator_val_loader = DataLoader(vocab_json, attribute_val_pt, args.val_batch_size)
+
+    val_loaders = {'entity_val_loader': entity_val_loader,
+                   'concept_val_loader': concept_val_loader,
+                   'attribute_val_loader': attribute_val_loader,
+                   'operator_val_loader': operator_val_loader,
+                   'relation_val_loader':relation_val_loader,
+    }
 
     with open(os.path.join(args.input_dir, 'relation', 'relation.pt'), 'rb') as f:
         input_ids = pickle.load(f)
@@ -335,12 +403,20 @@ def train(args):
     # logging.info(model)
 
     ## # Prepare optimizer and schedule (linear warmup and decay)
-    t_total = (len(relation_train_loader) + len(concept_train_loader) + len(entity_train_loader))// args.gradient_accumulation_steps * args.num_train_epochs
+    t_total = (len(relation_train_loader) + len(concept_train_loader) + len(entity_train_loader) + len(attribute_train_loader)+ len(operator_train_loader))// args.gradient_accumulation_steps * args.num_train_epochs
     no_decay = ["bias", "LayerNorm.weight"]
     bert_param_optimizer = list(model.bert.named_parameters())
 
-    ## Todo added Entity classifier
-    linear_param_optimizer = list(model.function_embeddings.named_parameters()) + list(model.function_classifier.named_parameters()) + list(model.function_decoder.named_parameters()) + list(model.relation_classifier.named_parameters()) + list(model.concept_classifier.named_parameters()) +list(model.entity_classifier.named_parameters()) +list(model.attribute_classifier.named_parameters())
+    ## Number of optimization parameters
+    linear_param_optimizer =   list(model.function_embeddings.named_parameters()) \
+                             + list(model.function_classifier.named_parameters()) \
+                             + list(model.function_decoder.named_parameters()) \
+                             + list(model.relation_classifier.named_parameters())\
+                             + list(model.concept_classifier.named_parameters())\
+                             + list(model.entity_classifier.named_parameters())\
+                             + list(model.attribute_classifier.named_parameters())\
+                             + list(model.operation_classifier.named_parameters())
+    ## Linear warmup and decay
     optimizer_grouped_parameters = [
         {'params': [p for n, p in bert_param_optimizer if not any(nd in n for nd in no_decay)],
          'weight_decay': args.weight_decay, 'lr': args.learning_rate},
@@ -359,16 +435,16 @@ def train(args):
     # Check if saved optimizer or scheduler states exist
     if os.path.isfile(os.path.join(args.model_name_or_path, "optimizer.pt")) and os.path.isfile(
             os.path.join(args.model_name_or_path, "scheduler.pt")):
-        # Load in optimizer and scheduler states
-        optimizer.load_state_dict(torch.load(os.path.join(args.model_name_or_path, "optimizer.pt")))
-        scheduler.load_state_dict(torch.load(os.path.join(args.model_name_or_path, "scheduler.pt")))
+            # Load in optimizer and scheduler states
+            optimizer.load_state_dict(torch.load(os.path.join(args.model_name_or_path, "optimizer.pt")))
+            scheduler.load_state_dict(torch.load(os.path.join(args.model_name_or_path, "scheduler.pt")))
 
     # Train!
-        logging.info("***** Running training *****")
-        logging.info("  Num examples = %d", len(relation_train_loader.dataset))
-        logging.info("  Num Epochs = %d", args.num_train_epochs)
-        logging.info("  Gradient Accumulation steps = %d", args.gradient_accumulation_steps)
-        logging.info("  Total optimization steps = %d", t_total)
+    logging.info("***** Running training *****")
+    logging.info("  Num examples = %d", len(relation_train_loader.dataset))
+    logging.info("  Num Epochs = %d", args.num_train_epochs)
+    logging.info("  Gradient Accumulation steps = %d", args.gradient_accumulation_steps)
+    logging.info("  Total optimization steps = %d", t_total)
 
     global_step = 0
     steps_trained_in_current_epoch = 0
@@ -391,6 +467,79 @@ def train(args):
     for _ in range(int(args.num_train_epochs)):
 
         model.train()
+
+        logging.info('Operator training begins')
+        pbar = ProgressBar(n_total=len(operator_train_loader), desc='Training')
+        for step, batch in enumerate(operator_train_loader):
+            # Skip past any already trained steps if resuming training
+            if steps_trained_in_current_epoch > 0:
+                steps_trained_in_current_epoch -= 1
+                continue
+            model.train()
+            batch = tuple(t.to(device) for t in batch)
+            inputs = {
+                # 'concept_inputs': concept_inputs,
+                # 'relation_inputs': relation_inputs,
+                # 'entity_inputs': entity_inputs,
+                #'attribute_inputs': attribute_inputs,
+                'input_ids': batch[0],
+                'token_type_ids': batch[1],
+                'attention_mask': batch[2],
+                'function_ids': batch[3],
+                #'attribute_info': (batch[4], batch[5])
+                'operator_info': (batch[4], batch[5]),
+                # 'relation_info': (batch[4], batch[5]),
+                # 'concept_info': None,
+                # 'entity_info': None,
+                # 'entity_embeddings': None
+            }
+
+            outputs = model(**inputs)
+            loss = args.rel * outputs['operator_loss']
+            loss.backward()
+            pbar(step, {'loss': loss.item()})
+            tot_tr_loss += float(loss.item())
+            if (step + 1) % args.gradient_accumulation_steps == 0:
+                torch.nn.utils.clip_grad_norm_(model.parameters(), args.max_grad_norm)
+                optimizer.step()
+                scheduler.step()  # Update learning rate schedule
+                model.zero_grad()
+            global_step += 1
+
+            if args.wandb and (global_step + 1) % args.logging_steps == 0:
+                wandb.log({"train_loss_tot": tot_tr_loss / global_step, "epoch": _, "step": global_step,
+                           'lr_BERT': scheduler.get_last_lr()[0], 'lr_class': scheduler.get_last_lr()[2]})
+
+            if (global_step + 1) % args.eval_steps == 0:
+                model.eval()
+                with torch.no_grad():
+                    evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model,
+                             device, global_step, **val_loaders)
+                wandb.log({"train_loss_tot": tot_tr_loss / global_step, "epoch": _, "step": global_step,
+                           'lr_BERT': scheduler.get_last_lr()[0], 'lr_class': scheduler.get_last_lr()[2]})
+
+                model.train()
+            if (global_step + 1) % args.save_steps == 0:
+                # Save model checkpoint
+                output_dir = os.path.join(args.output_dir, "checkpoint-{}".format(global_step))
+                if not os.path.exists(output_dir):
+                    os.makedirs(output_dir)
+                model_to_save = (
+                    model.module if hasattr(model, "module") else model
+                )  # Take care of distributed/parallel training
+                model_to_save.save_pretrained(output_dir)
+                torch.save(args, os.path.join(output_dir, "training_args.bin"))
+                logging.info("Saving model checkpoint to %s", output_dir)
+                tokenizer.save_vocabulary(output_dir)
+                torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                logging.info("Saving optimizer and scheduler states to %s", output_dir)
+                logging.info("\n")
+
+            if test:
+                print("Testcase finished successfully")
+                break
+
 
         logging.info('Attribute training begins')
         pbar = ProgressBar(n_total=len(attribute_train_loader), desc='Training')
@@ -415,7 +564,6 @@ def train(args):
                # 'concept_info': None,
                # 'entity_info': None,
                # 'entity_embeddings': None
-
             }
             outputs = model(**inputs)
             loss = args.func * outputs['function_loss'] + args.rel * outputs['attribute_loss']
@@ -429,14 +577,17 @@ def train(args):
                 model.zero_grad()
             global_step += 1
 
+            ## WANDBDB Logging
             if (global_step+ 1) % args.logging_steps == 0:
                 wandb.log({"train_loss_tot": tot_tr_loss/global_step, "epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
-
+            ## EVALUATION
             if (global_step + 1) % args.eval_steps == 0:
                 wandb.log({"train_loss_tot": tot_tr_loss / global_step, "epoch": _,"step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
                 model.eval()
                 with torch.no_grad():
-                    evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
+                    #evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
+                    evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model,
+                             device, global_step, **val_loaders)
                 model.train()
             if (global_step+1) % args.save_steps== 0:
                  # Save model checkpoint
@@ -456,6 +607,7 @@ def train(args):
                 logging.info("\n")
 
             if test:
+                print("Testcase finished successfully")
                 break
 
         logging.info('entity training begins')
@@ -489,6 +641,7 @@ def train(args):
             input_ids = torch.LongTensor(np.array([entities_input_ids[i] for i in index])).to(device)  ## np.array increases processing speed, bug python
             token_type_ids = torch.LongTensor(np.array([entities_token_type_ids[i] for i in index])).to(device)
             attention_mask = torch.LongTensor(np.array([entities_attention_mask[i] for i in index])).to(device)
+
             batch_entity_inputs = {
                 'input_ids': input_ids,
                 'token_type_ids': token_type_ids,
@@ -543,7 +696,9 @@ def train(args):
 
                 model.eval()
                 with torch.no_grad():
-                    evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
+                    #evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
+                    evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model,
+                             device, global_step, **val_loaders)
                 model.train()
                 wandb.log({"train_loss_tot": tot_tr_loss / global_step,"train_loss_epoch":epoch_tr_loss/epoch_step, "train_loss_ent": entity_loss/epoch_step,"epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
             if (global_step+1) % args.save_steps== 0:
@@ -608,7 +763,9 @@ def train(args):
                 wandb.log({"train_loss_tot": tot_tr_loss / global_step, "epoch": _,"step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
                 model.eval()
                 with torch.no_grad():
-                    evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
+                    #evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
+                    evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model,
+                             device, global_step, **val_loaders)
                 model.train()
             if (global_step+1) % args.save_steps== 0:
                  # Save model checkpoint
@@ -672,7 +829,9 @@ def train(args):
                 wandb.log({"train_loss_tot":  tot_tr_loss / global_step, "epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
                 model.eval()
                 with torch.no_grad():
-                    evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
+                    #evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
+                    evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model,
+                             device, global_step, **val_loaders)
                 model.train()
             if (global_step+1) % args.save_steps== 0:
                  # Save model checkpoint

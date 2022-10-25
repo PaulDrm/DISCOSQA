@@ -8,19 +8,30 @@ from tqdm import tqdm
 import os
 import pickle
 from Pretraining.utils import *
-
+from tqdm import tqdm
 
 ## Todo changed
 #tokenizer = BertTokenizer.from_pretrained('/data/csl/resources/Bert/bert-base-cased', do_lower_case = False)
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
 
+import random
+
+def decision(probability):
+    return random.random() < probability
+
+
+
 def get_vocab(args, vocab):
-    kb = json.load(open(os.path.join(args.input_dir, 'esa_kb.json')))
+    #kb = json.load(open(os.path.join(args.input_dir, 'esa_kb.json')))
+    kb = json.load(open(os.path.join(args.input_dir, 'kb.json')))
     entities = kb['entities']
     for eid in entities:
         relations = entities[eid]['relations']
         for relation in relations:
-            r = relation['relation']
+            if relation.get('relation') == None:
+                r= relation['predicate']
+            else:
+                r = relation['relation']
             if relation['direction'] == 'backward':
                 r = '[inverse] ' + r
             if not r in vocab['relation2id']:
@@ -61,8 +72,9 @@ def get_vocab(args, vocab):
     #         function = f['function']
     #         if not function in vocab['function2id']:
     #             vocab['function2id'][function] = len(vocab['function2id'])
-    # vocab['id2function'] = [function for function, id in vocab['function2id'].items()]
 
+    vocab['id2function'] = [function for function, id in vocab['function2id'].items()]
+    vocab['id2operator'] = [function for function, id in vocab['operator2id'].items()]
     
 def get_relation_dataset(args, vocab):
     ## Todo changed
@@ -209,6 +221,50 @@ def get_entity_dataset(args, vocab):
             for item in dataset:
                 f.write(json.dumps(item) + '\n')
 
+def get_operator_dataset(args, vocab):
+    train = [json.loads(line.strip()) for line in open(os.path.join(args.input_dir, 'train.json'))][0]
+    dev = [json.loads(line.strip()) for line in open(os.path.join(args.input_dir, 'val.json'))][0]
+
+    for name, raw_data in zip(['train', 'dev'], [train, dev]):
+        dataset = []
+        for item in tqdm(raw_data):
+            text = item['question']
+            program = item['program']
+            data = []
+            relations = []
+            for idx, f in enumerate(program):
+                function = f['function']
+                if function == 'FilterYear' or function == 'FilterData' or function == 'FilterNum':
+                    inputs = f['inputs']
+                    r = inputs[2]
+                    if not r in vocab['operator2id']:
+                        continue
+                    r = vocab['operator2id'][r]
+                    relations.append([idx + 1, r])
+                function_id = vocab['function2id'][function]
+                data.append({'function': function_id})
+            if len(relations) == 0:
+                if decision(0.05):
+                    relations.append([0, vocab['operator2id']['<PAD>']])
+                else:
+                    continue
+            dataset.append({'question': text, 'program': data, 'operations': relations})
+        # verbose = True
+        # if verbose:
+        #     for idx in range(100):
+        #         print('*'*10)
+        #         text = dataset[idx]['question']
+        #         print(text)
+        #         text = tokenizer.tokenize(text)
+        #         for f in dataset[idx]['program']:
+        #             function_id = f['function']
+        #             print(vocab['id2function'][function_id])
+        #         for pos, r in dataset[idx]['relations']:
+        #             print(pos, vocab['id2relation'][r])
+        with open(os.path.join(args.output_dir, 'operator', '%s.json' % (name)), 'w') as f:
+            for item in dataset:
+                f.write(json.dumps(item) + '\n')
+
 def get_attribute_dataset(args, vocab):
 
     train = [json.loads(line.strip()) for line in open(os.path.join(args.input_dir, 'train.json'))][0]
@@ -223,7 +279,7 @@ def get_attribute_dataset(args, vocab):
             concepts = []
             for idx, f in enumerate(program):
                 function = f['function']
-                if function == 'QueryAttr':
+                if function == 'QueryAttr' or function == 'FilterYear' or function == 'FilterData' or function == 'FilterNum':
                     # if function == 'FilterConcept'
                     inputs = f['inputs']
                     c = inputs[0]
@@ -252,55 +308,6 @@ def get_attribute_dataset(args, vocab):
         with open(os.path.join(args.output_dir, 'attribute', '%s.json' % (name)), 'w') as f:
             for item in dataset:
                 f.write(json.dumps(item) + '\n')
-
-
-# def encode_relation(args, vocab):
-#     encoded_inputs = tokenizer(vocab['id2relation'], padding = True)
-#     print(encoded_inputs.keys())
-#     print(len(encoded_inputs['input_ids'][0]))
-#     print(len(encoded_inputs['token_type_ids'][0]))
-#     print(len(encoded_inputs['attention_mask'][0]))
-#     print(tokenizer.decode(encoded_inputs['input_ids'][0]))
-#     max_seq_length = len(encoded_inputs['input_ids'][0])
-#     input_ids_list = encoded_inputs['input_ids']
-#     token_type_ids_list = encoded_inputs['token_type_ids']
-#     attention_mask_list = encoded_inputs['attention_mask']
-#     input_ids_list = np.array(input_ids_list, dtype=np.int32)
-#     token_type_ids_list = np.array(token_type_ids_list, dtype=np.int32)
-#     attention_mask_list = np.array(attention_mask_list, dtype=np.int32)
-#     return input_ids_list, token_type_ids_list, attention_mask_list
-#
-# def encode_concept(args, vocab):
-#     encoded_inputs = tokenizer(vocab['id2concept'], padding = True)
-#     print(encoded_inputs.keys())
-#     print(len(encoded_inputs['input_ids'][0]))
-#     print(len(encoded_inputs['token_type_ids'][0]))
-#     print(len(encoded_inputs['attention_mask'][0]))
-#     print(tokenizer.decode(encoded_inputs['input_ids'][0]))
-#     max_seq_length = len(encoded_inputs['input_ids'][0])
-#     input_ids_list = encoded_inputs['input_ids']
-#     token_type_ids_list = encoded_inputs['token_type_ids']
-#     attention_mask_list = encoded_inputs['attention_mask']
-#     input_ids_list = np.array(input_ids_list, dtype=np.int32)
-#     token_type_ids_list = np.array(token_type_ids_list, dtype=np.int32)
-#     attention_mask_list = np.array(attention_mask_list, dtype=np.int32)
-#     return input_ids_list, token_type_ids_list, attention_mask_list
-#
-# def encode_entity(args, vocab):
-#     encoded_inputs = tokenizer(vocab['id2entity'], padding = True)
-#     print(encoded_inputs.keys())
-#     print(len(encoded_inputs['input_ids'][0]))
-#     print(len(encoded_inputs['token_type_ids'][0]))
-#     print(len(encoded_inputs['attention_mask'][0]))
-#     print(tokenizer.decode(encoded_inputs['input_ids'][0]))
-#     max_seq_length = len(encoded_inputs['input_ids'][0])
-#     input_ids_list = encoded_inputs['input_ids']
-#     token_type_ids_list = encoded_inputs['token_type_ids']
-#     attention_mask_list = encoded_inputs['attention_mask']
-#     input_ids_list = np.array(input_ids_list, dtype=np.int32)
-#     token_type_ids_list = np.array(token_type_ids_list, dtype=np.int32)
-#     attention_mask_list = np.array(attention_mask_list, dtype=np.int32)
-#     return input_ids_list, token_type_ids_list, attention_mask_list
 
 def encode_kb_entity(args, vocab, pred_type):
 
@@ -383,6 +390,74 @@ def encode_relation_dataset(args, vocab, dataset):
     relation_pos_list = np.array(relation_pos_list, dtype=np.int32)
     relation_id_list = np.array(relation_id_list, dtype=np.int32)
     
+    return input_ids_list, token_type_ids_list, attention_mask_list, function_ids_list, relation_pos_list, relation_id_list
+
+
+def encode_operator_dataset(args, vocab, dataset):
+    def get_function_ids(program):
+        function_ids = [f['function'] for f in program]
+        return function_ids
+
+    tmp = []
+    for item in dataset:
+        question = item['question']
+        program = item['program']
+        relations = item['operations']
+        for relation in relations:
+            tmp.append({'question': question, 'program': program, 'operation': relation})
+    print('dataset size: {}'.format(len(dataset)))
+    dataset = tmp
+    print('new dataset size: {}'.format(len(dataset)))
+    questions = []
+    for item in dataset:
+        question = item['question']
+        questions.append(question)
+    encoded_inputs = tokenizer(questions, padding=True)
+    # print(encoded_inputs.keys())
+    # print(len(encoded_inputs['input_ids'][0]))
+    # print(len(encoded_inputs['token_type_ids'][0]))
+    # print(len(encoded_inputs['attention_mask'][0]))
+    # print(tokenizer.decode(encoded_inputs['input_ids'][0]))
+    max_seq_length = len(encoded_inputs['input_ids'][0])
+    function_ids_list = []
+    for item in tqdm(dataset):
+        program = item['program']
+        program = [{'function': vocab['function2id']['<START>']}] + program + [
+            {'function': vocab['function2id']['<END>']}]
+        function_ids = get_function_ids(program)
+        function_ids_list.append(function_ids)
+    max_func_len = max([len(function_ids) for function_ids in function_ids_list])
+    print('max_func_len: {}'.format(max_func_len))
+    for function_ids in function_ids_list:
+        while len(function_ids) < max_func_len:
+            function_ids.append(vocab['function2id']['<PAD>'])
+        assert len(function_ids) == max_func_len
+    relation_pos_list = []
+    relation_id_list = []
+    for item in dataset:
+        relation = item['operation']
+        relation_pos_list.append([relation[0]])
+        relation_id_list.append([relation[1]])
+
+    input_ids_list = encoded_inputs['input_ids']
+    token_type_ids_list = encoded_inputs['token_type_ids']
+    attention_mask_list = encoded_inputs['attention_mask']
+    # verbose = False
+    # if verbose:
+    #     for idx in range(10):
+    #         question = tokenizer.decode(input_ids_list[idx])
+    #         functions = [vocab['id2function'][id] for id in function_ids_list[idx]]
+    #         relation_pos = relation_pos_list[idx][0]
+    #         relation_id = vocab['id2relation'][relation_id_list[idx][0]]
+    #         print(question, functions, relation_pos, relation_id)
+
+    input_ids_list = np.array(input_ids_list, dtype=np.int32)
+    token_type_ids_list = np.array(token_type_ids_list, dtype=np.int32)
+    attention_mask_list = np.array(attention_mask_list, dtype=np.int32)
+    function_ids_list = np.array(function_ids_list, dtype=np.int32)
+    relation_pos_list = np.array(relation_pos_list, dtype=np.int32)
+    relation_id_list = np.array(relation_id_list, dtype=np.int32)
+
     return input_ids_list, token_type_ids_list, attention_mask_list, function_ids_list, relation_pos_list, relation_id_list
 
 
@@ -592,7 +667,7 @@ def encode_attribute_dataset(args, vocab, dataset):
 
 
 def main():
-    train =False
+    train =True
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_dir', required = True, type = str)
     parser.add_argument('--output_dir', required = True, type = str)
@@ -608,6 +683,8 @@ def main():
         os.makedirs(os.path.join(args.output_dir, 'entity'))
     if not os.path.isdir(os.path.join(args.output_dir, 'attribute')):
         os.makedirs(os.path.join(args.output_dir, 'attribute'))
+    if not os.path.isdir(os.path.join(args.output_dir, 'operator')):
+        os.makedirs(os.path.join(args.output_dir, 'operator'))
 
     vocab = {
         'relation2id': {
@@ -648,6 +725,10 @@ def main():
         "QFilterDate": 28,
         "VerifyDate": 29
       },
+      "operator2id": {'<PAD>': 0, '=': 1,
+                      '<': 2, '!=': 3
+                      , '>': 4
+      },
         'entity2id': {
             '<PAD>': 0
          },
@@ -678,6 +759,42 @@ def main():
             print(o.shape)
             pickle.dump(o, f)
 
+    from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
+    batch_num = 64
+    model = load_model()
+    print(outputs[0].shape)
+    print(outputs[1].shape)
+    print(outputs[2].shape)
+
+    for idx in range(3):
+        print('*'*10)
+        print(outputs[0][idx])
+    inputs = torch.as_tensor(outputs[0])
+    masks = torch.as_tensor(outputs[1])
+    tags = torch.as_tensor(outputs[2])
+
+    data = TensorDataset(inputs, masks, tags)
+    data_sampler = SequentialSampler(data)
+    dataloader = DataLoader(data, sampler=data_sampler, batch_size=batch_num)
+    attribute_embeddings = []
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    with torch.no_grad():
+        for i, batch in enumerate(tqdm(dataloader)):
+            if i == 1:
+                break
+            inputs = batch[0].to(device)
+            masks = batch[1].to(device)
+            tags = batch[2].to(device)
+
+            attribute_embeddings += model.bert(input_ids=inputs,
+                                           attention_mask=masks,
+                                           token_type_ids=tags)[1].cpu()
+    attribute_embeddings = torch.stack(attribute_embeddings)
+    with open(os.path.join(args.output_dir, 'entity', 'entity_embeddings_test.pt'), 'wb') as f:
+        #for o in attribute_embeddings:
+            #print(o.shape)
+        pickle.dump(attribute_embeddings, f)
+
     #outputs = encode_concept(args, vocab)
     outputs = encode_kb_entity(args, vocab, 'concept')
     with open(os.path.join(args.output_dir, 'concept', 'concept.pt'), 'wb') as f:
@@ -697,6 +814,7 @@ def main():
         get_concept_dataset(args, vocab)
         get_entity_dataset(args, vocab)
         get_attribute_dataset(args, vocab)
+        get_operator_dataset(args, vocab)
         # vocab = json.load(open(os.path.join(args.output_dir, 'vocab.json')))
         for name in ['train', 'dev']:
             dataset = []
@@ -746,6 +864,19 @@ def main():
             assert len(outputs) == 6
             print('shape of input_ids, token_type_ids, attention_mask, function_ids， relation_pos, relation_id:')
             with open(os.path.join(args.output_dir, 'attribute', '{}.pt'.format(name)), 'wb') as f:
+                for o in outputs:
+                    print(o.shape)
+                    pickle.dump(o, f)
+
+        for name in ['train', 'dev']:
+            dataset = []
+            with open(os.path.join(args.output_dir, 'operator', '%s.json' % (name))) as f:
+                for line in f:
+                    dataset.append(json.loads(line.strip()))
+            outputs = encode_operator_dataset(args, vocab, dataset)
+            assert len(outputs) == 6
+            print('shape of input_ids, token_type_ids, attention_mask, function_ids， relation_pos, relation_id:')
+            with open(os.path.join(args.output_dir, 'operator', '{}.pt'.format(name)), 'wb') as f:
                 for o in outputs:
                     print(o.shape)
                     pickle.dump(o, f)

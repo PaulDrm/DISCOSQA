@@ -468,7 +468,6 @@ class RelationPT(BertPreTrainedModel):
                 # print('operator_id', kb_id.size())
                 kb_id = kb_id.squeeze(-1)
                 outputs['operator_loss'] = nn.CrossEntropyLoss()(operation_logits,kb_id)
-
                 return outputs
             embeddings_kb = self.bert(input_ids=kb_inputs['input_ids'], \
                                       attention_mask=kb_inputs['attention_mask'], \
@@ -509,8 +508,8 @@ class RelationPT(BertPreTrainedModel):
                 kb_logits = f_word_h @ embeddings_kb.t()  # [bsz, num_relationis]
                 outputs['attribute_logits'] = kb_logits
                 kb_id = kb_id.squeeze(-1)
-                print('relation_logits',  kb_logits.size())
-                print('relation_id', kb_id.size())
+                #print('relation_logits',  kb_logits.size())
+                #print('relation_id', kb_id.size())
                 outputs['attribute_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 return outputs
 
@@ -573,6 +572,7 @@ class RelationPT(BertPreTrainedModel):
                 operation_logits = self.operation_classifier(f_word_h)
                 outputs['operator_logits'] = operation_logits
                 outputs['pred_operator'] = torch.argmax(operation_logits, dim=1)
+                #outputs['operator_loss'] = nn.CrossEntropyLoss()(operation_logits, kb_id)
                 return outputs
 
             if pred_type == 'entity':
@@ -587,11 +587,13 @@ class RelationPT(BertPreTrainedModel):
                 embeddings_kb = self.entity_classifier(embeddings_kb)  # [num_relations, dim_h]
                 kb_logits = f_word_h @ embeddings_kb.t()  # [bsz, num_relationis]
                 outputs['entity_logits'] = kb_logits
-                # kb_id = kb_id.squeeze(-1)
+                #
                 # print('entity_logits', kb_logits.size())
                 # print('entity_id', kb_id.size())
-                # outputs['entity_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
+
                 outputs['pred_entity'] = torch.argmax(kb_logits, dim=1)
+                #kb_id = kb_id.squeeze(-1)
+                #outputs['entity_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 return outputs
 
             elif pred_type == 'concept':
@@ -601,7 +603,7 @@ class RelationPT(BertPreTrainedModel):
                 # kb_id = kb_id.squeeze(-1)
                 # print('concept_logits', kb_logits.size())
                 # print('concept_id', kb_id.size())
-                # outputs['concept_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
+                #outputs['concept_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 outputs['pred_concept'] = torch.argmax(kb_logits, dim=1)
                 return outputs
 
@@ -612,7 +614,7 @@ class RelationPT(BertPreTrainedModel):
                 # kb_id = kb_id.squeeze(-1)
                 # print('relation_logits',  kb_logits.size())
                 # print('relation_id', kb_id.size())
-                # outputs['relation_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
+                #outputs['relation_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 outputs['pred_relation'] = torch.argmax(kb_logits, dim=1)
                 return outputs
 
@@ -623,7 +625,7 @@ class RelationPT(BertPreTrainedModel):
                 # kb_id = kb_id.squeeze(-1)
                 # print('relation_logits',  kb_logits.size())
                 # print('relation_id', kb_id.size())
-                # outputs['attribute_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
+                #outputs['attribute_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 outputs['pred_attribute'] = torch.argmax(kb_logits, dim=1)
                 return outputs
 

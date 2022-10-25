@@ -1,7 +1,6 @@
 import os
 import torch
 
-#import torch.nn as nn
 import argparse
 import shutil
 #from tqdm import tqdm
@@ -17,7 +16,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(me
 logFormatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
 rootLogger = logging.getLogger()
 import torch.optim as optim
-
+import torch.nn as nn
 import wandb
 #from IPython import embed
 import pickle
@@ -39,6 +38,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     pbar = ProgressBar(n_total=len(val_loaders['operator_val_loader']), desc="Evaluating")
     correct = 0
     tot = 0
+    val_loss = 0
     for step, batch in enumerate(val_loaders['operator_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
@@ -66,6 +66,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             pred_relation = outputs['pred_operator']
             gt_relation = batch[5]
             gt_relation = gt_relation.squeeze(-1)
+            val_loss += float(nn.CrossEntropyLoss()(outputs['operator_logits'], gt_relation).item())
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
             # print(correct)
@@ -81,7 +82,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
-    wandb.log({'acc_func': func_metric.result(), 'acc_operations': acc, 'step': global_step})
+    wandb.log({'acc_func': func_metric.result(), 'acc_operations': acc, "op_val_loss":val_loss, 'step': global_step})
     logging.info('**** operation results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -93,6 +94,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     pbar = ProgressBar(n_total=len(val_loaders['attribute_val_loader']), desc="Evaluating")
     correct = 0
     tot = 0
+    val_loss = 0
     for step, batch in enumerate(val_loaders['attribute_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
@@ -119,6 +121,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             pred_relation = outputs['pred_attribute']
             gt_relation = batch[5]
             gt_relation = gt_relation.squeeze(-1)
+            val_loss += float(nn.CrossEntropyLoss()(outputs['attribute_logits'], gt_relation).item())
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
             # print(correct)
@@ -134,7 +137,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
-    wandb.log({'acc_func': func_metric.result(), 'acc_attributes': acc, 'step': global_step})
+    wandb.log({'acc_func': func_metric.result(), 'acc_attributes': acc,"att_val_loss":val_loss, 'step': global_step})
     logging.info('**** attribute results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -144,6 +147,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     pbar = ProgressBar(n_total=len(val_loaders['relation_val_loader']), desc="Evaluating")
     correct = 0
     tot = 0
+    val_loss = 0
     for step, batch in enumerate(val_loaders['relation_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
@@ -168,6 +172,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             pred_relation = outputs['pred_relation']
             gt_relation = batch[5]
             gt_relation = gt_relation.squeeze(-1)
+            val_loss += float(nn.CrossEntropyLoss()(outputs['relation_logits'], gt_relation).item())
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
             # print(correct)
@@ -183,7 +188,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
-    wandb.log({'acc_func': func_metric.result(), 'acc_relations': acc, 'step': global_step})
+    wandb.log({'acc_func': func_metric.result(), 'acc_relations': acc,"rel_val_loss":val_loss, 'step': global_step})
     logging.info('**** relation results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -193,6 +198,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     pbar = ProgressBar(n_total=len(val_loaders['concept_val_loader']), desc="Evaluating")
     correct = 0
     tot = 0
+    val_loss = 0
     for step, batch in enumerate(val_loaders['concept_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
@@ -210,13 +216,14 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
                 'relation_info': None,
                 'concept_info': (batch[4], None),
                 'entity_info':  None,
-             #   'entity_embeddings': None
+             #  'entity_embeddings': None
             }
             outputs = model(**inputs)
             pred_functions = outputs['pred_functions'].cpu().tolist()
             pred_relation = outputs['pred_concept']
             gt_relation = batch[5]
             gt_relation = gt_relation.squeeze(-1)
+            val_loss += float(nn.CrossEntropyLoss()(outputs['concept_logits'], gt_relation).item())
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
             # print(correct)
@@ -234,7 +241,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     logging.info('**** concept results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
-    wandb.log({'acc_func': func_metric.result(), 'acc_concepts':acc ,'step': global_step})
+    wandb.log({'acc_func': func_metric.result(), 'acc_concepts':acc , "cons_val_loss":val_loss, 'step': global_step})
 
     # Entities!
     with torch.no_grad():
@@ -250,7 +257,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     func_metric = FunctionAcc(val_loaders['entity_val_loader'].vocab['function2id']['<END>'])
     pbar = ProgressBar(n_total=len(val_loaders['entity_val_loader']), desc="Evaluating")
     correct = 0
-    tot = 0    
+    tot = 0
+    val_loss = 0
     for step, batch in enumerate(val_loaders['entity_eval_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
@@ -275,6 +283,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             pred_relation = outputs['pred_entity']
             gt_relation = batch[5]
             gt_relation = gt_relation.squeeze(-1)
+            val_loss += float(nn.CrossEntropyLoss()(outputs['entity_logits'], gt_relation).item())
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
             # print(correct)
@@ -292,7 +301,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     logging.info('**** entity results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
-    wandb.log({'acc_func': func_metric.result(), 'acc_entities': acc, 'step': global_step})
+    wandb.log({'acc_func': func_metric.result(), 'acc_entities': acc, "acc_val_loss":val_loss ,'step': global_step})
 
 def train(args):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -329,8 +338,8 @@ def train(args):
 
     operator_train_pt = os.path.join(args.input_dir, 'operator', 'train.pt')
     operator_val_pt = os.path.join(args.input_dir, 'operator', 'dev.pt')
-    operator_train_loader = DataLoader(vocab_json, attribute_train_pt, args.train_batch_size, training=True)
-    operator_val_loader = DataLoader(vocab_json, attribute_val_pt, args.val_batch_size)
+    operator_train_loader = DataLoader(vocab_json, operator_train_pt, args.train_batch_size, training=True)
+    operator_val_loader = DataLoader(vocab_json, operator_val_pt, args.val_batch_size)
 
     val_loaders = {'entity_val_loader': entity_val_loader,
                    'concept_val_loader': concept_val_loader,

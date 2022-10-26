@@ -14,8 +14,9 @@ def main():
     print("load ckpt from {}".format(save_dir))
     config = config_class.from_pretrained(save_dir)#, num_labels = len(label_list))
     model = model_class.from_pretrained(save_dir, config = config)
-    checkpoint = save_dir.split('\\')[-1]
-    model.push_to_hub(f"{name}-{checkpoint}", use_temp_dir=True)#, organization="my-awesome-org")
+    # checkpoint = save_dir.split('\\')[-1]
+    checkpoint = save_dir.split("checkpoint")[1]
+    model.push_to_hub(f"{name}{checkpoint}", use_temp_dir=True)#, organization="my-awesome-org")
 
 if __name__ == '__main__':
     main()

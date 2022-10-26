@@ -98,9 +98,9 @@ def load_model():
 @st.experimental_singleton
 def load_embeddings(input_dir, _model, device):
     print("loading embeddings")
-
     ## Loads embeddings
-    with open(os.path.abspath(input_dir + "entity/entity_embeddings_test.pt"), 'rb') as f:
+    #with open(os.path.abspath(input_dir + "entity/entity_embeddings_test.pt"), 'rb') as f:
+    with open(os.path.abspath(input_dir + "entity/entity_embeddings.pt"), 'rb') as f:
         _model.entity_embeddings = pickle.load(f)
 
     # print(st.session_state.get('attribute_embeddings')==None)
@@ -228,17 +228,19 @@ def main():
     vocab = load_vocab(path)
     device = 'cpu'#torch.device("cuda" if torch.cuda.is_available() else "cpu")
     input_dir = './processed/'
-    #argument_inputs = load_classes(input_dir + "entity/entity_small.pt", device)
+    model = load_model()
+    argument_inputs = load_classes(input_dir + "entity/entity_small.pt", device)
 
     # ## Todo needs replacement
-    # ents = tokenizer.batch_decode(argument_inputs['input_ids'], skip_special_tokens=True)
-    # vocab['entity2id'] = {}
-    # for entity in ents:
-    #     if not entity in vocab['entity2id']:
-    #         vocab['entity2id'][entity] = len(vocab['entity2id'])
-    # vocab['id2entity'] = [entity for entity, iid in vocab['entity2id'].items()]
-    model = load_model()
+    #argument_inputs = load_classes(input_dir + "entity/entity.pt", device)
+    ents = tokenizer.batch_decode(argument_inputs['input_ids'], skip_special_tokens=True)
+    vocab['entity2id'] = {}
+    for entity in ents:
+        if not entity in vocab['entity2id']:
+            vocab['entity2id'][entity] = len(vocab['entity2id'])
+    vocab['id2entity'] = [entity for entity, iid in vocab['entity2id'].items()]
     model.config.vocab = vocab
+
     ################################################################
 
     #st.set_page_config(layout='wide')
@@ -263,7 +265,6 @@ def main():
         #st.session_state.kg_output = None
         #st.session_state.changed = False
         st.session_state.results = {}
-
 
 
     # argument_inputs = load_classes(input_dir + "entity/entity.pt", device)

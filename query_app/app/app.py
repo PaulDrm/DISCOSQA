@@ -80,7 +80,8 @@ def load_model():
     Load the model from checkpoint
     """
 
-    save_dir = "PaulD/checkpoint-14399"
+    #save_dir = "PaulD/checkpoint-14399"
+    save_dir = "PaulD/IOA_261022-11999"
     config_class, model_class = (BertConfig, RelationPT)
     print("load ckpt from {}".format(save_dir))
     config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))

@@ -7,7 +7,7 @@ import torch.nn as nn
 import random
 import os
 import time
-from Pretraining.model import RelationPT
+#from Pretraining.model import RelationPT
 from transformers import (BertConfig, BertModel, BertTokenizer, BertPreTrainedModel)
 
 
@@ -87,8 +87,8 @@ def load_model():
     n_gpu = torch.cuda.device_count()
     if torch.cuda.is_available():  #
         model.cuda()
-        if n_gpu > 1:
-            model = torch.nn.DataParallel(model)
+        #if n_gpu > 1:
+        #    model = torch.nn.DataParallel(model)
     return model
 
 def pad_and_cat(a, padding_value, padding_dim=1):

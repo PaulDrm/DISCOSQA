@@ -82,7 +82,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
-    wandb.log({'acc_func': func_metric.result(), 'acc_operations': acc, "op_val_loss":val_loss, 'step': global_step})
+    if args.wandb:
+        wandb.log({'acc_func': func_metric.result(), 'acc_operations': acc, "op_val_loss":val_loss, 'step': global_step})
     logging.info('**** operation results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -137,7 +138,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
-    wandb.log({'acc_func': func_metric.result(), 'acc_attributes': acc,"att_val_loss":val_loss, 'step': global_step})
+    if args.wandb:
+        wandb.log({'acc_func': func_metric.result(), 'acc_attributes': acc,"att_val_loss":val_loss, 'step': global_step})
     logging.info('**** attribute results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -188,7 +190,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
-    wandb.log({'acc_func': func_metric.result(), 'acc_relations': acc,"rel_val_loss":val_loss, 'step': global_step})
+    if args.wandb:
+        wandb.log({'acc_func': func_metric.result(), 'acc_relations': acc,"rel_val_loss":val_loss, 'step': global_step})
     logging.info('**** relation results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -241,7 +244,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     logging.info('**** concept results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
-    wandb.log({'acc_func': func_metric.result(), 'acc_concepts':acc , "cons_val_loss":val_loss, 'step': global_step})
+    if args.wandb:
+        wandb.log({'acc_func': func_metric.result(), 'acc_concepts':acc , "cons_val_loss":val_loss, 'step': global_step})
 
     # Entities!
     with torch.no_grad():
@@ -259,7 +263,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     correct = 0
     tot = 0
     val_loss = 0
-    for step, batch in enumerate(val_loaders['entity_eval_loader']):
+    for step, batch in enumerate(val_loaders['entity_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
         # print(batch[4].size())
@@ -301,14 +305,15 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     logging.info('**** entity results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
-    wandb.log({'acc_func': func_metric.result(), 'acc_entities': acc, "acc_val_loss":val_loss ,'step': global_step})
+    if args.wandb:
+        wandb.log({'acc_func': func_metric.result(), 'acc_entities': acc, "ent_val_loss":val_loss ,'step': global_step})
 
 def train(args):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     #device = 'cpu'
     ## breaks loops for test run case
 
-    test = 1
+    test = 0
     #print(args.batch_size)
     logging.info("Create train_loader and val_loader.........")
     vocab_json = os.path.join(args.input_dir, 'vocab.json')

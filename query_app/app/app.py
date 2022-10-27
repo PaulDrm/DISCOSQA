@@ -96,13 +96,15 @@ def load_model():
     #       model = torch.nn.DataParallel(model)
     return model
 
-@st.experimental_singleton
+#@st.experimental_singleton
 def load_embeddings(input_dir, _model, device):
     print("loading embeddings")
     ## Loads embeddings
     #with open(os.path.abspath(input_dir + "entity/entity_embeddings_test.pt"), 'rb') as f:
-    with open(os.path.abspath(input_dir + "entity/entity_embeddings.pt"), 'rb') as f:
-        _model.entity_embeddings = pickle.load(f)
+    if _model.entity_embeddings == None:
+
+        with open(os.path.abspath(input_dir + "entity/entity_embeddings.pt"), 'rb') as f:
+            _model.entity_embeddings = pickle.load(f)
 
     # print(st.session_state.get('attribute_embeddings')==None)
 
@@ -113,7 +115,7 @@ def load_embeddings(input_dir, _model, device):
                                               attention_mask=argument_inputs['attention_mask'],
                                               token_type_ids=argument_inputs['token_type_ids'])[1]
             #set_state_if_absent('attribute_embeddings', attribute_embeddings)
-            st.session_state.attribute_embeddings = attribute_embeddings
+        st.session_state.attribute_embeddings = attribute_embeddings
 
     if st.session_state.get('concept_embeddings') == None:
         argument_inputs = load_classes(input_dir + "concept/concept.pt", device)
@@ -122,9 +124,9 @@ def load_embeddings(input_dir, _model, device):
                                             attention_mask=argument_inputs['attention_mask'],
                                             token_type_ids=argument_inputs['token_type_ids'])[1]
             #set_state_if_absent('concept_embeddings', concept_embeddings)
-            st.session_state.concept_embeddings = concept_embeddings
+        st.session_state.concept_embeddings = concept_embeddings
 
-    argument_inputs = load_classes(input_dir + "relation/relation.pt", device)
+    ##argument_inputs = load_classes(input_dir + "relation/relation.pt", device)
     # with torch.no_grad():
     #     relation_embeddings = _model.bert(input_ids=argument_inputs['input_ids'],
     #                                      attention_mask=argument_inputs['attention_mask'],

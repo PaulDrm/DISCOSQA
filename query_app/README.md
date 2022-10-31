@@ -36,3 +36,10 @@ to answer natural language queries by accessing multiple database sources.
 - run `docker run -p 8501:8501 --name ioa_streamlit_demo ioa_demo_app`
 - Open an internet browser and type `localhost:8501` in address line to get to app
 
+#### Evaluation
+
+- Clone repository locally
+- download files from https://strathcloud.sharefile.eu/d-s14533191c46f4b768c588d74556048dc
+- insert `entity_embeddings.pt` in `query_app/app/test_data/entity`
+- from ./app folder run `python -m Pretraining.train_eval --input_dir ./test_data --output_dir ./evaluate --save_dir ./evaluate --model_name_or_path PaulD/IOA_261022-11999 --val_batch_size=8`
+

@@ -9,7 +9,7 @@ import os
 import pickle
 from Pretraining.utils import *
 from tqdm import tqdm
-
+from Pretraining.model import RelationPT
 ## Todo changed
 #tokenizer = BertTokenizer.from_pretrained('/data/csl/resources/Bert/bert-base-cased', do_lower_case = False)
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
@@ -20,10 +20,32 @@ def decision(probability):
     return random.random() < probability
 
 
+def load_model():
+
+    """
+    Load the model from checkpoint
+    """
+
+    #save_dir = "PaulD/checkpoint-14399"
+    save_dir = "PaulD/IOA_261022-11999"
+    config_class, model_class = (BertConfig, RelationPT)
+    print("load ckpt from {}".format(save_dir))
+    config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
+    model = model_class.from_pretrained(save_dir, config=config)
+    #path = './processed/vocab.json'
+    #model.config.vocab = load_vocab(path)
+
+    n_gpu = torch.cuda.device_count()
+    if torch.cuda.is_available():  #
+        model.cuda()
+        #if n_gpu > 1:
+        #    model = torch.nn.DataParallel(model)
+    return model
+
 
 def get_vocab(args, vocab):
-    #kb = json.load(open(os.path.join(args.input_dir, 'esa_kb.json')))
-    kb = json.load(open(os.path.join(args.input_dir, 'kb.json')))
+    kb = json.load(open(os.path.join(args.input_dir, 'esa_kb.json')))
+    #kb = json.load(open(os.path.join(args.input_dir, 'kb.json')))
     entities = kb['entities']
     for eid in entities:
         relations = entities[eid]['relations']
@@ -667,7 +689,7 @@ def encode_attribute_dataset(args, vocab, dataset):
 
 
 def main():
-    train =True
+    train =False
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_dir', required = True, type = str)
     parser.add_argument('--output_dir', required = True, type = str)

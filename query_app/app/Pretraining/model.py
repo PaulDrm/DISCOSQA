@@ -6,6 +6,8 @@ from transformers import (BertConfig, BertModel,  BertPreTrainedModel)
 from Pretraining.utils import *
 from Pretraining.BiGRU import GRU, BiGRU
 import pickle
+import re
+import numpy as np
 
 from sys import implementation
 import torch
@@ -315,8 +317,15 @@ class RelationPT(BertPreTrainedModel):
                             if function == self.vocab['function2id']['Relate']:
                                 argument_pos.append([idx])
                         elif pred_type == 'attribute':
-                            if function == self.vocab['function2id']['QueryAttr']:
+                            #if function == self.vocab['function2id']['QueryAttr']:#or :
+                            if any([function == self.vocab['function2id'][qualifier] for qualifier in
+                                     ['QueryAttr', 'FilterYear', 'FilterDate', 'FilterNum']]):
                                 argument_pos.append([idx])
+                        elif pred_type == 'operator':
+                            if any([function == self.vocab['function2id'][qualifier] for qualifier in
+                                    ['FilterYear', 'FilterDate', 'FilterNum']]):
+                                argument_pos.append([idx])
+
                                 # inputs = f['inputs']
                     #           #c = inputs[0]
                     #           #if not c in vocab['concept2id']:
@@ -326,7 +335,7 @@ class RelationPT(BertPreTrainedModel):
                     if len(argument_pos) == 0:
                         argument_pos.append([0])  # , vocab['entity2id']['<PAD>']])
                     arguments_maps.append(argument_pos)
-
+                ## PADS sequence for max length of arguments in batch (Max two entities in one query in batch --> pad to length two
                 max_args = max([len(example) for example in arguments_maps])
                 # print(arguments_maps)
                 for example in arguments_maps:
@@ -343,16 +352,27 @@ class RelationPT(BertPreTrainedModel):
                 # print("Printing tensors for hidden layer "+ f"{pred_type}")
                 # print(arg_f_word_h.shape)
                 #print(input_embeddings)
+
+                #if pred_type == 'operator':
+
                 if pred_type == 'concept':
                     class_embeddings = self.concept_classifier(input_embeddings)  ##[num_args, dim_h]
                 elif pred_type == 'entity':
-                    class_embeddings = self.entity_classifier(
-                        input_embeddings)  # input_embeddings#model.entity_classifier(input_embeddings)
+                    class_embeddings = self.entity_classifier(input_embeddings)  # input_embeddings#model.entity_classifier(input_embeddings)
                 elif pred_type == 'attribute':
                     class_embeddings = self.attribute_classifier(input_embeddings)
                     # class_embeddings = model.relation_classifier(input_embeddings)
                 elif pred_type == 'relation':
                     class_embeddings = self.relation_classifier(input_embeddings)
+
+                elif pred_type == 'operator':
+                    operation_logits = self.operation_classifier(arg_f_word_h)
+                    pred_concepts = [
+                        [[argument_pos[0] for argument_pos in argument_map] for argument_map in arguments_maps],
+                        torch.argmax(operation_logits, dim=2).cpu().numpy()]
+                    return pred_concepts, arg_f_word_h, operation_logits
+
+
 
                     # print("")
                 # print("Printing tensors for input embeddings "+ f"{pred_type}")
@@ -369,7 +389,7 @@ class RelationPT(BertPreTrainedModel):
                 pred_concepts = [
                     [[argument_pos[0] for argument_pos in argument_map] for argument_map in arguments_maps],
                     torch.argmax(argument_logits, dim=2).cpu().numpy()]
-                return pred_concepts, arg_f_word_h, class_embeddings
+                return pred_concepts, arg_f_word_h, argument_logits
             # pred_concepts = pred_arguments(programs, f_word_h, concept_embeddings, 'concept')
             outputs['pred_attributes'], hidden_att, att_embeds = pred_arguments(programs, f_word_h,
                                                                                     attribute_embeddings,
@@ -380,25 +400,57 @@ class RelationPT(BertPreTrainedModel):
             outputs['pred_relations'], _, _ = pred_arguments(programs, f_word_h, relation_embeddings, 'relation')
             outputs['pred_concepts'], _, _ = pred_arguments(programs, f_word_h, concept_embeddings, 'concept')
 
+            outputs['pred_operators'], _, _ = pred_arguments(programs, f_word_h, "", 'operator')
+
+            #outputs['pred_values'],_,_ = pred_arguments(programs, "","", 'values')
+
         ## Transforms raw predictions into KG entities
-        outputs['pred_entities'][1] = [[self.config.vocab['id2entity'][pred[0]]] for pred in outputs['pred_entities'][1]]
-        ## Todo needs to be changed
-        # outputs['pred_concepts'][1]=[[atts[pred[0]]] for pred in outputs.get('pred_concepts',[[],[]])[1]]
-        outputs['pred_concepts'][1] = [[self.config.vocab['id2concept'][pred[0]]] for pred in outputs['pred_concepts'][1]]
-        outputs['pred_attributes'][1] = [[self.config.vocab['id2attribute'][pred[0]]] for pred in outputs['pred_attributes'][1]]
-        ## Todo needs to be changed
-        outputs['pred_relations'][1] = [[self.config.vocab['id2relation'][pred[0]]] for pred in outputs['pred_relations'][1]]
+        ## Calculated Topk predicted indices of entities
+        ## TopK
+        topk = 5
+        outputs['topk_entities'] = torch.topk(ent_embeds, topk, dim=2).indices.cpu().tolist()
+        ## Transform indices into entities
+        outputs['topk_entities'] = [
+            [list(map(lambda entity: self.config.vocab['id2entity'][entity], group)) for group in example] for example
+            in outputs['topk_entities']]
+        ## Calculates scores and zips them together wiit predicted entities in first step ['Seymour Cassel',  'Sheldon Leonard',  'Mitch Pileggi',  'Gatineau',  '67th Academy Awards'], [0.85, 0.10, 0.02,0.01,0.01]
+        transform1 = [list(zip(output[0], output[1])) for output in list(zip(outputs['topk_entities'], np.round(
+            torch.topk(torch.softmax(ent_embeds, dim=2), topk, dim=2).values.cpu().numpy(), 4)))]
+        transform2 = [[list(zip(scores[0], scores[1])) for scores in output] for output in transform1]
+        outputs['topk_entities'] = [outputs['pred_entities'][0], transform2]
+
+
+
+        # outputs['pred_entities'][1] = [[self.config.vocab['id2entity'][pred[0]]] for pred in outputs['pred_entities'][1]
+        # outputs['pred_concepts'][1] = [[self.config.vocab['id2concept'][pred[0]]] for pred in outputs['pred_concepts'][1]]
+        # outputs['pred_attributes'][1] = [[self.config.vocab['id2attribute'][pred[0]]] for pred in outputs['pred_attributes'][1]]
+        #outputs['pred_relations'][1] = [[self.config.vocab['id2relation'][pred[0]]] for pred in outputs['pred_relations'][1]]
+
+        ## Transform indices into entities
+        outputs['pred_entities'][1] = [list(map(lambda entity: self.config.vocab['id2entity'][entity], group)) for
+                                       group in outputs['pred_entities'][1]]
+
+        outputs['pred_concepts'][1] = [list(map(lambda entity: self.config.vocab['id2concept'][entity], group)) for
+                                       group in outputs['pred_concepts'][1]]
+
+        outputs['pred_attributes'][1] = [list(map(lambda entity: self.config.vocab['id2attribute'][entity], group)) for
+                                       group in outputs['pred_attributes'][1]]
+
+        outputs['pred_relations'][1] = [list(map(lambda entity: self.config.vocab['id2relation'][entity], group)) for
+                                         group in outputs['pred_relations'][1]]
+        ### Todo might need to be changed
+        #outputs['pred_operators'][1] = [[self.config.vocab['id2operator'][pred[0]]] for pred in
+        #                                outputs['pred_operators'][1]]
+
+        outputs['pred_operators'][1] = [list(map(lambda entity: self.config.vocab['id2operator'][entity], group)) for
+                                        group in outputs['pred_operators'][1]]
         #print(outputs['pred_functions'])
         #print(self.config.vocab['id2function'])
-        #predictions = [[self.config.vocab['id2function'][str(function.item())] for function in program] for program in
-        #               outputs['pred_functions'].cpu()]
-        predictions = [[self.config.vocab['id2function'][function.item()] for function in program] for program in
-                       outputs['pred_functions'].cpu()]
-
         ## Creates dictionary structure of prediction [{'function':"Find", 'inputs': []}, {'function':"Relate", 'inputs':[]}, ...]
         parsed = []
-        for prediction, entities_pos, entities_pred in zip(predictions, outputs['pred_entities'][0],
-                                                           outputs['pred_entities'][1]):
+        predictions = [[self.config.vocab['id2function'][function.item()] for function in program] for program in
+                       outputs['pred_functions'].cpu()]
+        for prediction in predictions:
             # print(prediction[1:prediction.index('<END>')])
             # print(entities_pos)
             # print(entities_pred)
@@ -406,23 +458,30 @@ class RelationPT(BertPreTrainedModel):
 
             parsed.append(temp)
             #print({'function':function,'input':[]})
-        ## Fills dictionary structure with right inputs  [{'function':"Find", 'inputs': ['COS B']}, {'function':"Relate", 'inputs':['LaunchVehicle' ]}, ...]
-        for key in list(outputs.keys() - {'pred_functions'}):
-            for i, parse in enumerate(parsed):
 
-                # parse[outputs[key][0][i][0]-1]['input'] = parse[outputs[key][0][i][0]-1]['input'] + list(outputs[key][1][i])
-                # check = 0
-                # preds= []
-                # parse[outputs['pred_entities'][0][i][0]-1]['input'] = parse[outputs['pred_entities'][0][i][0]-1]['input'] + list(outputs['pred_entities'][1][i])
-                for j, pos in enumerate(outputs[key][0][i]):
-                    # print(pos-1)
-                    # print(i)
-                    # print(outputs[key][1][i][j])
-                    # print(parse[pos-1]['function'])
-                    # parse[outputs[key][0][i][pos]-1]['input'] = parse[outputs[key][0][i][0]-1]['input'] + list(outputs[key][1][i])
+        ## Fills dictionary structure with right inputs  [{'function':"Find", 'inputs': ['COS B']}, {'function':"Relate", 'inputs':['LaunchVehicle' ]}, ...]
+        ## Do not include following keys in prediction
+        for key in list(outputs.keys() - {'pred_functions','pred_operators', 'topk_entities'}):
+            for num_batch, parse in enumerate(parsed):
+
+                ## for each argument in prediction
+                for argument_num, pos in enumerate(outputs[key][0][num_batch]):
+                    ## if argument is pad --> skip
                     if pos != 0:
-                        parse[pos - 1]['inputs'] = parse[pos - 1]['inputs'] + [outputs[key][1][i][j]]
-        return parsed
+                        ## add argument to right function
+                        parse[pos - 1]['inputs'] = parse[pos - 1]['inputs'] + [outputs[key][1][num_batch][argument_num]]
+        ## Insert operators last to retain position required for KG query
+        key ='pred_operators'
+        #print(outputs[key])
+        for num_batch, parse in enumerate(parsed):
+
+            ## for each argument in prediction
+            for argument_num, pos in enumerate(outputs[key][0][num_batch]):
+                ## if argument is pad --> skip
+                if pos != 0:
+                    ## add argument to right function
+                    parse[pos - 1]['inputs'] = parse[pos - 1]['inputs'] + [outputs[key][1][num_batch][argument_num]]
+        return parsed, outputs
 
     ## adapted to attributes + values
 

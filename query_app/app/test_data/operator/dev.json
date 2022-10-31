@@ -1,0 +1,7 @@
+{"question": "How many fragmentation events happened prior to 1971?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many payload fragmentation debris objects reentered before 2012? ", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many rocket body objects with a mass above 1000 kg are in the database?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "How many payload objects with a height above 1 m did reenter after 2015?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 4], [4, 4]]}
+{"question": "How many launches started in 2006?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "What launch vehicles exist with a GTO capacity above 5500?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "How many launch vehicles have a Leo capacity above 8000 tonnes?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}

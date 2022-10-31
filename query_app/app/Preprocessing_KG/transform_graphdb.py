@@ -89,6 +89,29 @@ def main():
                                                                                     'type': 'quantity', 'unit': 'm'},
                                                                                 'qualifiers': {}}]
 
+                    elif r['o'].get('datatype', "").split('XMLSchema#')[1] == 'unsignedInt':
+                        entity['attributes'] = entity.get('attributes', []) + [{'key': r['pred']['value'].split('#')[1],
+                                                                                'value': {'value': r['o']['value'],
+                                                                                          'type': 'string'},
+                                                                                'qualifiers': {}}]
+
+                    elif r['o'].get('datatype', "").split('XMLSchema#')[1] == 'boolean':
+                        entity['attributes'] = entity.get('attributes', []) + [{'key': r['pred']['value'].split('#')[1],
+                                                                                'value': {'value': r['o']['value'],
+                                                                                          'type': 'string'},
+                                                                                'qualifiers': {}}]
+
+                    elif r['o'].get('datatype', "").split('XMLSchema#')[1] == 'nonNegativeInteger':
+                        entity['attributes'] = entity.get('attributes',[]) +[{'key':r['pred']['value'].split('#')[1],'value': {'value':float(r['o']['value']), 'type':'quantity', 'unit':'m'}, 'qualifiers':{} }]
+
+
+
+
+                    else:
+                        print("Datatype not recognised")
+                        print(r['o'].get('datatype', ""))
+
+
                 else:
                     entity['attributes'] = entity.get('attributes', []) + [
                         {'key': r['pred']['value'].split('#')[1], 'value': {'value': r['o']['value'], 'type': 'string'},

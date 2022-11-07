@@ -41,7 +41,7 @@ class KB(object):
 					obj_id = rel_info['object']
 					if obj_id in kb['concepts']:
 						rel_info_for_con = {
-							## Todo changed here --> 'relation' to 'predicate' to get ino
+							## Todo changed here --> 'relation' to 'predicate' to get info
 							#'relation': rel_info['relation'],
 							'relation': rel_info['predicate'],
 							'direction': 'forward' if rel_info['direction']=='backward' else 'backward',
@@ -50,6 +50,23 @@ class KB(object):
 							}
 						if rel_info_for_con not in self.entities[obj_id]['relations']:
 							self.entities[obj_id]['relations'].append(rel_info_for_con)
+		print('process entities')
+		## adds inverse relationships between entities --> commented here as this step is done during convertion
+		## of GraphDB KG into .json KG
+		# for eid, ent_info in tqdm(self.entities.items()):
+		# 	for rel_info in self.entities[eid]['relations']:
+		# 		obj_id = rel_info['object']
+		# 		if obj_id in self.entities:
+		# 			rel_info_for_con = {
+		# 				## Todo changed here --> 'relation' to 'predicate' to get info
+		# 				# 'relation': rel_info['relation'],
+		# 				'relation': rel_info['relation'],
+		# 				'direction': 'forward',  # if rel_info['direction']=='backward' else 'backward',
+		# 				'object': eid,
+		# 				'qualifiers': deepcopy(rel_info['qualifiers']),
+		# 			}
+		# 			if rel_info_for_con not in self.entities[obj_id]['relations']:
+		# 				self.entities[obj_id]['relations'].append(rel_info_for_con)
 			#else:
 			#	print("No relationships found")
 			#	print(eid)

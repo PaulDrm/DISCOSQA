@@ -238,6 +238,7 @@ class KoPLEngine(object):
 	def Relate(self, entities, relation, direction):
 		"""
 		找出与输入实体有特定关系的所有实体及对应的三元组
+		Find all entities that have a specific relationship with the input entity and the corresponding triples
 
 		Args:
 			entities (tuple): 二元组，第一个成员是实体列表，第二个是None或三元组列表
@@ -246,6 +247,7 @@ class KoPLEngine(object):
 
 		Returns:
 			:obj:`tuple`: 返回一个二元组，第一个成员是与输入实体有特定关系的实体列表，第二个成员是对应的三元组列表
+			Returns a binary group, the first member of which is a list of entities with a specific relationship to the input entity, and the second member is a list of corresponding triples
 		"""
 		entity_ids, _ = entities
 		res_ids = []
@@ -520,13 +522,14 @@ class KoPLEngine(object):
 	def QueryRelation(self, s_entities, t_entities):
 		"""
 		查询实体之间的关系
+		Querying the relationship between entities
 
 		Args:
-			s_entities (tuple): 二元组，第一个成员是一个实体列表，第二个成员是None或者三元组列表
+			s_entities (tuple): 二元组，第一个成员是一个实体列表，第二个成员是None或者三元组列表 Binary group, the first member is a list of entities, the second member is None or a list of triples
 			t_entities (tuple): 二元组，第一个成员是一个实体列表，第二个成员是None或者三元组列表
 
 		Returns:
-			:obj:`list`: 返回关系列表，每个关系是string
+			:obj:`list`: 返回关系列表，每个关系是string Returns a list of relations, each of which is a string
 		"""
 		entity_ids_1, _ = s_entities
 		entity_ids_2, _ = t_entities

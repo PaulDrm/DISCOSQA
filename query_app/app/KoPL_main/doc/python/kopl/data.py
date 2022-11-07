@@ -51,6 +51,9 @@ class KB(object):
 			}
 		}
 		'''
+		## allows to query based on a relation, direction, and entity,
+		## for indexes in the list of relations of that entity to get the right set of
+		## relations
 		self.relation_inv_index = defaultdict(lambda: defaultdict(list))
 		# self.relation_inv_index = {}
 		'''
@@ -58,6 +61,7 @@ class KB(object):
 			(sub_id, obj_id): [idx1, idx2] # index in self.entities[sub_id]['relations']
 		}
 		'''
+		## for query relations
 		self.forward_relation_index = defaultdict(list)
 
 		# store entities that have attribute

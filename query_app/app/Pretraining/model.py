@@ -415,7 +415,7 @@ class RelationPT(BertPreTrainedModel):
             in outputs['topk_entities']]
         ## Calculates scores and zips them together wiit predicted entities in first step ['Seymour Cassel',  'Sheldon Leonard',  'Mitch Pileggi',  'Gatineau',  '67th Academy Awards'], [0.85, 0.10, 0.02,0.01,0.01]
         transform1 = [list(zip(output[0], output[1])) for output in list(zip(outputs['topk_entities'], np.round(
-            torch.topk(torch.softmax(ent_embeds, dim=2), topk, dim=2).values.cpu().numpy(), 4)))]
+            torch.topk(torch.softmax(ent_embeds, dim=2), topk, dim=2).values.cpu().numpy(), 4).astype(float)))]
         transform2 = [[list(zip(scores[0], scores[1])) for scores in output] for output in transform1]
         outputs['topk_entities'] = [outputs['pred_entities'][0], transform2]
 

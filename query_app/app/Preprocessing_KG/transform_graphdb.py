@@ -2,6 +2,7 @@ from SPARQLWrapper import SPARQLWrapper, JSON
 import json
 import time
 from tqdm import tqdm
+from copy import deepcopy
 def main():
 
     ## is slower
@@ -122,7 +123,7 @@ def main():
             elif "/resource/" in r['o']['value']:
                 # entity['relations'] =  entity.get('relations',[]) +[{'predicate':r['pred']['value'].split('#')[1],'object': r['o']['value'],'direction':'forward', 'qualifiers':{} }]
                 entity['relations'] = entity.get('relations', []) + [
-                    {'relation': r['pred']['value'].split('#')[1], 'object': r['o']['value'], 'direction': 'forward',
+                    {'relation': r['pred']['value'].split('#')[1], 'object': r['o']['value'].split('/resource/')[1], 'direction': 'forward',
                      'qualifiers': {}}]
 
             ## names
@@ -146,6 +147,25 @@ def main():
     # entities
     concepts = {iid: {'name': concept, 'instanceOf': []} for concept, iid in concepts_names.items()}
     kb_base = {'concepts': concepts, 'entities': entities}  # ['root'] =
+    print('process entities')
+    for eid, ent_info in tqdm(kb_base['entities'].items()):
+        ### Todo changed here --> not all objects include relationships: rule to check beforehand
+        # if kb['entities'][eid].get('relations') != None:
+        for rel_info in kb_base['entities'][eid]['relations']:
+            obj_id = rel_info['object']
+            if obj_id in kb_base['entities']:
+                rel_info_for_con = {
+                    ## Todo changed here --> 'relation' to 'predicate' to get ino
+                    # 'relation': rel_info['relation'],
+                    'relation': rel_info['relation'],
+                    'direction': 'forward',  # if rel_info['direction']=='backward' else 'backward',
+                    'object': eid,
+                    'qualifiers': deepcopy(rel_info['qualifiers']),
+                }
+                if rel_info_for_con not in kb_base['entities'][obj_id]['relations']:
+                    kb_base['entities'][obj_id]['relations'].append(rel_info_for_con)
+
+
 
     with open('esa_kb.json', 'w') as fp:
         json.dump(kb_base, fp)

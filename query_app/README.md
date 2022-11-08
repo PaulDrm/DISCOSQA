@@ -16,8 +16,9 @@ to answer natural language queries by accessing multiple database sources.
 -  1. `curl 'https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=8517f6ec%2D785b%2D4bcd%2Dbaf9%2D3fb8b392a729' -o entity_embeddings.pt`
    2. `curl 'https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=1640221151a7487f8aba59a42f49ce5b&e=mW99HU' -O esa_kb.json`
   
-    in respective folders 
     in respective folders  
+- Steps for using SUTIME (getting time values from query): Download maven from https://maven.apache.org/download.cgi
+- Follow installation steps on https://maven.apache.org/install.html (Set path variables accordingly )
 - run Streamlit app with `streamlit run app.py`
 - A window should open in your internet browser, otherwise open an internet browser and type `localhost:8501` in address line
 

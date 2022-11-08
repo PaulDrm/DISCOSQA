@@ -18,25 +18,33 @@ import pandas as pd
 from dateutil import parser
 from sutime import SUTime
 
-def predict_year(sentence):
+def predict_year(sentence, sutime):
     """
     predict year from sentence with Python wrapper of SUTime
     sentence:string : phrase which contains a year
     """
-    sutime = SUTime(mark_time_ranges=True, include_range=True)
+
     parse = sutime.parse(sentence)
     parse = parser.parse(parse[0]['value']).year
 
     return parse
 
-def predict_date(sentence):
+def predict_date(sentence,sutime):
     """
     predict year from sentence with Python wrapper of SUTime
     sentence:string : phrase which contains a year
     """
-    sutime = SUTime(mark_time_ranges=True, include_range=True)
+
     parse = sutime.parse(sentence)
     return parse#['value']
+
+@st.experimental_singleton
+def load_sftipars():
+    """
+    Returns: Stanford time parser
+    """
+    sutime = SUTime(mark_time_ranges=True, include_range=True)
+    return sutime
 
 def predict_num(sentence):
     """
@@ -289,7 +297,7 @@ def main():
     device = 'cpu'#torch.device("cuda" if torch.cuda.is_available() else "cpu")
     input_dir = './processed/'
     model = load_model()
-
+    sutime = load_sftipars()
     model.config.vocab = vocab
 
     ################################################################
@@ -392,10 +400,10 @@ def main():
         for count, function in enumerate(object):
             if function['function'] == 'FilterYear':
                 #function['inputs'] = function['inputs'] + [predict_year(query)]
-                function['inputs'].insert(1, str(predict_year(query)))
+                function['inputs'].insert(1, str(predict_year(query, sutime)))
             elif function['function'] == 'FilterDate':
                 #function['inputs'] = function['inputs'] + [predict_date(query)]
-                function['inputs'].insert(1, str(predict_date(query)[0]['value']))
+                function['inputs'].insert(1, str(predict_date(query, sutime)[0]['value']))
         ##### Number values
             elif function['function'] == 'FilterNum':
                 #function['inputs'] = function['inputs'] + [predict_num(query)]

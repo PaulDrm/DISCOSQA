@@ -331,6 +331,7 @@ def main():
     ## Other functionalities
     set_state_if_absent('feedback', False)
     set_state_if_absent('comment', '')
+    set_state_if_absent('user', '')
 
     ## KG visualisation
     set_state_if_absent("nodes", [])
@@ -358,10 +359,17 @@ def main():
 
 
     st.title("Demo for querying KG with ProgramTransfer method")
+
+    user = st.text_input("Enter user name", "")
+
+    st.session_state.results['user'] = user
+
     st.markdown(""" *Note: do not use keywords, but full-fledged questions.*""")
     # Enter a prediction of a model for querying the KB
     query = st.text_input('Enter a query for the KG', value=st.session_state.question, on_change=reset_results)
-    print(query)
+    #print(query)
+
+
 
     col1, col2 = st.columns(2)
     col1.markdown("<style>.stButton button {width:100%;}</style>", unsafe_allow_html=True)
@@ -446,7 +454,7 @@ def main():
                 ## if argument is pad --> skip
                 if pos != 0:
                     ## add argument to right function
-                    parse[pos - 1]['inputs'] = parse[pos - 1]['inputs'] + [outputs[key][1][num_batch][argument_num]]
+                    parse[pos - 1]['inputs'] = parse[pos - 1]['inputs'] + [outputs[key][1][num_batch][argument_num]][0:2]
 
         st.session_state.results['topk_results'] = mod#[0]
         st.session_state.results['time'] = str(time.time())
@@ -466,12 +474,14 @@ def main():
     ## FEEDBACK
     ###############################################################
 
+    def clear_feedback():
+        st.session_state.feedback = False
 
-    comment = st.text_area('Additional comment for feedback',"", key = "comment")
 
-
+    comment = st.text_area('Additional comment for feedback',"", key = "comment", on_change =clear_feedback)
 
     def clear_text():
+
         st.session_state.results['comment'] = comment
         st.session_state.comment = ""
 
@@ -511,7 +521,7 @@ def main():
 
     # Get results for query
     #if run_query and query:
-    print(st.session_state.results.get('program'))
+    #print(st.session_state.results.get('program'))
     if st.session_state.results.get('program') != None:
 
         st.caption("Results", unsafe_allow_html=False)
@@ -543,9 +553,9 @@ def main():
 
         #if st.session_state.program != program:
         #    st.session_state.program = program
-
+        print(program)
         results = eval(parse_program(program))
-        st.write(f"Predicted program: {str(program)}")
+        st.write(f"Predicted program: {str(st.session_state.results['topk_results'])}")
         st.write(f'Results for the query "{query} are: ')
         st.session_state.results['answer'] = str(results)
         if program[-1]['function'] == 'QueryAttr':
@@ -560,12 +570,13 @@ def main():
         if program[-1]['function'] == 'Count' and filt_y:
             # if st.session_state.modification == None:
             index = index_y
+
             current = program
+            print(current)
             programs = []
-            programs.append(
-                {current[index]['inputs'][0]: current[index]['inputs'][1], 'result': eval(parse_program(current))})
+            programs.append({current[index]['inputs'][0]: current[index]['inputs'][1], 'result': eval(parse_program(current))})
             # st.write(int(current[index]['inputs'][1]))
-            if st.session_state.program[index]['inputs'][2] == '=':
+            if current[index]['inputs'][2] == '=':
                 for i in range(1, 6, bin):
                     temp = deepcopy(current)  # [index]['inputs'
                     value1 = str(int(temp[index]['inputs'][1]) + i)
@@ -680,7 +691,7 @@ def main():
                 ### TODO adapt the pipeline possibly produce error and send feedback
                 pass
 
-            if st.session_state.program[index]['inputs'][2] == '=':
+            if current[index]['inputs'][2] == '=':
 
                 for idx, function in enumerate(current):
                     if function['function'] == "FilterConcept":

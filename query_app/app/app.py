@@ -469,9 +469,10 @@ def main():
 
     comment = st.text_area('Additional comment for feedback',"", key = "comment")
 
-    st.session_state.results['comment'] = comment
+
 
     def clear_text():
+        st.session_state.results['comment'] = comment
         st.session_state.comment = ""
 
     button_col1, button_col2, _ = st.columns([1, 1, 6])
@@ -482,6 +483,7 @@ def main():
     if button1 and not st.session_state.feedback:  # key=f"{result['context']}{count}1",
         print('saving results...')
         st.write("Thanks for your feedback!")
+        print(st.session_state.results)
         #st.session_state.comment = ""
         st.session_state.results['time'] = str(time.time())
         st.session_state.results['label'] = "True"
@@ -548,6 +550,8 @@ def main():
         st.session_state.results['answer'] = str(results)
         if program[-1]['function'] == 'QueryAttr':
             st.write([result.value for result in results])
+        elif what_check:
+            st.write([engine.kb.entities[id]['name'] for id in results[0]])
         #elif len(results) == 0:
         #    st.write("Results empty. Please try to rephrase question or submit feedback.")
         else:

@@ -75,6 +75,19 @@ def load_vocab(path):
     return vocab
 
 def parse_program(program):
+    """
+    Transforms predicted program from neural networks
+    into form that can be excecuted on KOPL database
+    [{'function': 'Find', 'inputs': ['Gaia'], 'dependencies':[]},{'function': 'QueryAttr', 'inputs': ['CosparID'], 'dependencies':[1]}]
+    -->
+    engine.QueryAttr(engine.Find('Gaia'), 'CosparID'))
+    Args:
+        program: prediction of RelationPT model
+
+    Returns: string: return KOPL program in string form that can be excecuted on the KOPLEngine class with eval(
+
+    """
+
     string = ""
     for function in reversed(program):
         if function.get('dependencies') != []:
@@ -267,11 +280,11 @@ def one_hop(engine, entity_ids, streamlit_state):
 
 def log_data():
 
-    with open("./IOA_test.json", 'r') as f:
+    with open("./query_results/queries.json", 'r') as f:
         dataset = json.load(f)
 
     dataset.append(st.session_state.results)
-    with open("./IOA_test.json", 'w+') as f:
+    with open("./query_results/queries.json", 'w+') as f:
         json.dump(dataset, f)
 
 DEFAULT_QUESTION_AT_STARTUP = os.getenv("DEFAULT_QUESTION_AT_STARTUP", "What is the mass of COS B?")
@@ -279,6 +292,8 @@ DEFAULT_QUESTION_AT_STARTUP = os.getenv("DEFAULT_QUESTION_AT_STARTUP", "What is 
 def set_state_if_absent(key, value):
     if key not in st.session_state:
         st.session_state[key] = value
+
+
 
 def main():
     ################################################################
@@ -315,6 +330,7 @@ def main():
 
     ## Other functionalities
     set_state_if_absent('feedback', False)
+    set_state_if_absent('comment', '')
 
     ## KG visualisation
     set_state_if_absent("nodes", [])
@@ -329,11 +345,14 @@ def main():
         #st.session_state.changed = False
         st.session_state.results = {}
         st.session_state.feedback = False
+        st.session_state.comment = ''
+        st.session_state.program = []
 
 
     load_embeddings(input_dir, model,device)
 
-    with open("./IOA_test.json", 'r') as f:
+    ### Train dataset for random questions
+    with open("./test_data/IOA_test.json", 'r') as f:
         df = pd.read_json(f)
 
 
@@ -412,6 +431,7 @@ def main():
             elif function['function'] == 'Relate':
                 function['inputs'].append('forward')
 
+        st.session_state.results['question'] = query
         st.session_state.results['program'] = object
 
         ###############################################################
@@ -429,8 +449,8 @@ def main():
                     parse[pos - 1]['inputs'] = parse[pos - 1]['inputs'] + [outputs[key][1][num_batch][argument_num]]
 
         st.session_state.results['topk_results'] = mod#[0]
-
-        st.write(f"Predicted program: {str(object)}")
+        st.session_state.results['time'] = str(time.time())
+        log_data()
 
         #st.write(st.session_state.results)
 
@@ -442,15 +462,28 @@ def main():
     #         st.write(result[0].value)
 
 
-
     ###############################################################
     ## FEEDBACK
     ###############################################################
+
+
+    comment = st.text_area('Additional comment for feedback',"", key = "comment")
+
+    st.session_state.results['comment'] = comment
+
+    def clear_text():
+        st.session_state.comment = ""
+
     button_col1, button_col2, _ = st.columns([1, 1, 6])
-    button1 = button_col1.button("👍", help="Correct answer")
-    button2 = button_col2.button("👎", help="Wrong answer")
+    button1 = button_col1.button("👍", help="Correct answer",  on_click=clear_text)
+    button2 = button_col2.button("👎", help="Wrong answer", on_click=clear_text)
+
+
     if button1 and not st.session_state.feedback:  # key=f"{result['context']}{count}1",
         print('saving results...')
+        st.write("Thanks for your feedback!")
+        #st.session_state.comment = ""
+        st.session_state.results['time'] = str(time.time())
         st.session_state.results['label'] = "True"
         st.session_state.feedback = True
         log_data()
@@ -460,6 +493,9 @@ def main():
 
     if button2 and not st.session_state.feedback:  # key=f"{result['context']}{count}2",
         print('saving results...')
+        st.write("Thanks for your feedback!")
+        #st.session_state.comment = ""
+        st.session_state.results['time'] = str(time.time())
         st.session_state.results['label'] = "False"
         st.session_state.feedback = True
         log_data()
@@ -472,7 +508,11 @@ def main():
     ###############################################################
 
     # Get results for query
-    if run_query and query:
+    #if run_query and query:
+    print(st.session_state.results.get('program'))
+    if st.session_state.results.get('program') != None:
+
+        st.caption("Results", unsafe_allow_html=False)
 
         filt_y = 0
         filt_n = 0
@@ -480,7 +520,7 @@ def main():
         what_check = 0
         index_vis = []
         find_check = 0
-        program = object
+        program = st.session_state.results.get('program')
         for idx, function in enumerate(program):
             if function['function'] == "What":
                 program = program[:-1]
@@ -499,12 +539,13 @@ def main():
                 find_check = 1
                 index_vis.append(idx)
 
-        if st.session_state.program != program:
-            st.session_state.program = program
+        #if st.session_state.program != program:
+        #    st.session_state.program = program
 
-        results = eval(parse_program(st.session_state.program))
+        results = eval(parse_program(program))
+        st.write(f"Predicted program: {str(program)}")
         st.write(f'Results for the query "{query} are: ')
-        st.session_state.results['answer'] = results
+        st.session_state.results['answer'] = str(results)
         if program[-1]['function'] == 'QueryAttr':
             st.write([result.value for result in results])
         #elif len(results) == 0:
@@ -515,7 +556,7 @@ def main():
         if program[-1]['function'] == 'Count' and filt_y:
             # if st.session_state.modification == None:
             index = index_y
-            current = st.session_state.program
+            current = program
             programs = []
             programs.append(
                 {current[index]['inputs'][0]: current[index]['inputs'][1], 'result': eval(parse_program(current))})
@@ -616,7 +657,7 @@ def main():
         if program[-1]['function'] == 'Count' and filt_n:
             # if st.session_state.modification == None:
             index = index_n
-            current = st.session_state.program
+            current = program
             programs = []
             programs.append(
                 {current[index]['inputs'][0]: int(current[index]['inputs'][1]), 'result': eval(parse_program(current))})
@@ -785,10 +826,5 @@ def main():
     # kg_output = agraph(nodes=st.session_state['nodes'],
     #                    edges=st.session_state['edges'],
     #                    config=config)
-
-
-
-
-
 
 main()

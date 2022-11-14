@@ -403,7 +403,7 @@ def main():
 
     # Get results for query
     if run_query and query:
-        reset_results()
+        #reset_results()
         st.session_state.question = query
 
         ## Get prediction

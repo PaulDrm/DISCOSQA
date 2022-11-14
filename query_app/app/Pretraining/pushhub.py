@@ -2,10 +2,40 @@ from transformers import (BertConfig, BertModel, BertTokenizer, BertPreTrainedMo
 from .model import RelationPT
 import argparse
 
+from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
+import os
+import pickle
+from tqdm.notebook import tqdm
+import torch
+
+from huggingface_hub import HfApi
+
+
+
+def load_classes(path):
+  with open(os.path.abspath(path), 'rb') as f:
+      input_ids = pickle.load(f)
+      token_type_ids = pickle.load(f)
+      attention_mask = pickle.load(f)
+      # input_ids = torch.LongTensor(input_ids[:512,:]).to(device)
+      # token_type_ids = torch.LongTensor(token_type_ids[:512,:]).to(device)
+      # attention_mask = torch.LongTensor(attention_mask[:512,:]).to(device)
+      input_ids = torch.LongTensor(input_ids)#.to(device)
+      token_type_ids = torch.LongTensor(token_type_ids)#.to(device)
+      attention_mask = torch.LongTensor(attention_mask)#.to(device)
+  argument_inputs = {
+    'input_ids': input_ids,
+    'token_type_ids': token_type_ids,
+    'attention_mask': attention_mask
+  }
+  return argument_inputs
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--save_dir', required=True, help='path to saved model checkpoints')
     parser.add_argument('--name', required=True, help='Name to save model with')
+    parser.add_argument('--input_dir', help= 'Name to input directory for entity files')
     args = parser.parse_args()
     name = args.name
     save_dir = args.save_dir#'/content/drive/MyDrive/IOA/ProgramTransfer/models/checkpoint-14399'
@@ -13,10 +43,51 @@ def main():
     config_class, model_class, tokenizer_class = (BertConfig, RelationPT, BertTokenizer)
     print("load ckpt from {}".format(save_dir))
     config = config_class.from_pretrained(save_dir)#, num_labels = len(label_list))
+    tokenizer = tokenizer_class.from_pretrained("bert-base-cased")
     model = model_class.from_pretrained(save_dir, config = config)
     # checkpoint = save_dir.split('\\')[-1]
     checkpoint = save_dir.split("checkpoint")[1]
+
+
+    print("pushing tokenizer")
+    tokenizer.push_to_hub(f"{name}{checkpoint}")
+    print("pushing model")
     model.push_to_hub(f"{name}{checkpoint}", use_temp_dir=True)#, organization="my-awesome-org")
+
+    api = HfApi()
+
+    if torch.cuda.is_available() or True:
+        batch_num = 128
+        #argument_inputs = load_classes(input_dir + "esa/new/entity_3110.pt", )
+        argument_inputs = load_classes(args.input_dir)
+        data = TensorDataset(argument_inputs['input_ids'], argument_inputs['attention_mask'],
+                             argument_inputs['token_type_ids'])
+        data_sampler = SequentialSampler(data)
+        dataloader = DataLoader(data, sampler=data_sampler, batch_size=batch_num)
+
+        attribute_embeddings = []
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        with torch.no_grad():
+            for i, batch in enumerate(tqdm(dataloader)):
+                # if i == 1:
+                #    break
+                inputs = batch[0].to(device)
+                masks = batch[1].to(device)
+                tags = batch[2].to(device)
+
+                attribute_embeddings += model.bert(input_ids=inputs,
+                                                   attention_mask=masks,
+                                                   token_type_ids=tags)[1].cpu()
+        attribute_embeddings = torch.stack(attribute_embeddings)
+        with open(os.path.join(args.input_dir, 'entity_embeddings_1411.pt'), 'wb') as f:
+           pickle.dump(attribute_embeddings, f)
+
+        api.upload_file(
+            path_or_fileobj=args.input_dir + '/entity_embeddings_1411.pt',
+            path_in_repo="entity_embeddings_1411.pt",
+            repo_id=f"PaulD/{name}{checkpoint}",
+            repo_type="model",
+        )
 
 if __name__ == '__main__':
     main()

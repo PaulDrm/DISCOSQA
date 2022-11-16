@@ -2,19 +2,24 @@ from KoPL_main.src.kopl.kopl import KoPLEngine
 from Pretraining.utils import *
 from Pretraining.model import RelationPT
 from transformers import (BertConfig, BertModel, BertTokenizer, BertPreTrainedModel)
-import json
-import copy
-import time
+import huggingface_hub
+
+
 import streamlit as st
-import pickle
-import os
 from streamlit_agraph import agraph, Node, Edge, Config
-import re
+
+import time
+import os
+import pickle
+import json
+
+import copy
 from copy import deepcopy
 
 import altair as alt
 import pandas as pd
 
+import re
 from dateutil import parser
 from sutime import SUTime
 
@@ -141,7 +146,8 @@ def load_model():
 
     #save_dir = "PaulD/checkpoint-14399"
     #save_dir = "PaulD/IOA_261022-11999"
-    save_dir = "PaulD/IOA_ft_07112022-33"
+    #save_dir = "PaulD/IOA_ft_07112022-33"
+    save_dir = "PaulD/IOA_ft_15112022-33"
     config_class, model_class = (BertConfig, RelationPT)
     print("load ckpt from {}".format(save_dir))
     config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
@@ -149,6 +155,9 @@ def load_model():
     path = './processed/vocab.json'
     model.config.vocab = load_vocab(path)
 
+    with open(huggingface_hub.hf_hub_download(save_dir, 'entity_embeddings_1411.pt'), 'rb') as f:
+        #embeddings = pickle.load(f)
+        model.entity_embeddings = pickle.load(f)
     #n_gpu = torch.cuda.device_count()
     #if torch.cuda.is_available():  #
     #    model.cuda()
@@ -161,14 +170,14 @@ def load_embeddings(input_dir, _model, device):
     print("loading embeddings")
     ## Loads embeddings
 
-    if _model.entity_embeddings == None:
+    #if _model.entity_embeddings == None:
 
         #with open(os.path.abspath(input_dir + "entity/entity_embeddings.pt"), 'rb') as f:
         #with open(os.path.abspath(input_dir + "entity/entity_embeddings_test.pt"), 'rb') as f:
         #with open(os.path.abspath(input_dir + "entity/entity_embeddings_3110.pt"), 'rb') as f:
-        with open(os.path.abspath(input_dir + "entity/entity_embeddings_0711.pt"), 'rb') as f:
+        #with open(os.path.abspath(input_dir + "entity/entity_embeddings_0711.pt"), 'rb') as f:
 
-            _model.entity_embeddings = pickle.load(f)
+        #    _model.entity_embeddings = pickle.load(f)
 
     # print(st.session_state.get('attribute_embeddings')==None)
 
@@ -287,7 +296,7 @@ def log_data():
     with open("./query_results/queries.json", 'w+') as f:
         json.dump(dataset, f)
 
-DEFAULT_QUESTION_AT_STARTUP = os.getenv("DEFAULT_QUESTION_AT_STARTUP", "What is the mass of COS B?")
+DEFAULT_QUESTION_AT_STARTUP = os.getenv("DEFAULT_QUESTION_AT_STARTUP", "What are the comments for fragmentations events which are related to objects operated by the European Space Agency?")#What is the mass of COS B?")
 
 def set_state_if_absent(key, value):
     if key not in st.session_state:
@@ -427,14 +436,28 @@ def main():
         for count, function in enumerate(object):
             if function['function'] == 'FilterYear':
                 #function['inputs'] = function['inputs'] + [predict_year(query)]
-                function['inputs'].insert(1, str(predict_year(query, sutime)))
+                try: function['inputs'].insert(1, str(predict_year(query, sutime)))
+                except IndexError:
+                    # st.write(f"Containing no year in query, predicted program false")
+                    st.error("🐞 &nbsp;&nbsp; An error occurred during the request. Feedback automatically sent! Please try to rephrase query or ask something else.")
+
             elif function['function'] == 'FilterDate':
                 #function['inputs'] = function['inputs'] + [predict_date(query)]
-                function['inputs'].insert(1, str(predict_date(query, sutime)[0]['value']))
+                try: function['inputs'].insert(1, str(predict_date(query, sutime)[0]['value']))
+                except IndexError:
+                    # st.write(f"Containing no year in query, predicted program false")
+                    st.error("🐞 &nbsp;&nbsp; An error occurred during the request. Feedback automatically sent! Please try to rephrase query or ask something else.")
+
         ##### Number values
             elif function['function'] == 'FilterNum':
                 #function['inputs'] = function['inputs'] + [predict_num(query)]
-                function['inputs'].insert(1, str(predict_num(query)[0]))
+                try: function['inputs'].insert(1, str(predict_num(query)[0]))
+                except IndexError:
+                    # st.write(f"Containing no year in query, predicted program false")
+                    #st.session_state.results['question'] = query
+                    st.session_state.results['comment'] = "Containing no number in query, predicted program false"
+                    st.error("🐞 &nbsp;&nbsp; An error occurred during the request. Feedback automatically sent! Please try to rephrase query or ask something else.")
+
 
             elif function['function'] == 'Relate':
                 function['inputs'].append('forward')
@@ -708,7 +731,7 @@ def main():
                 #     programs.append({temp[index]['inputs'][0]: value1, 'result': eval(parse_program(deepcopy(temp)))})#'result': eval(parse_program(deepcopy(temp)))})
                 #     temp[index]['inputs'][1] = value2
                 #     programs.append({temp[index]['inputs'][0]: value2, 'result': eval(parse_program(deepcopy(temp)))})
-                st.write(starting_point)
+                #st.write(starting_point)
                 for i in range(1, 6):
                     temp = deepcopy(current)  # [index]['inputs'
                     if starting_point + i < len(values):
@@ -745,7 +768,7 @@ def main():
                         conc = engine.Find(function['inputs'][0])
                         values = engine.kb.concept_key_values[conc[0][0]][current[index]['inputs'][0]]
                         values = [item.value for item in values]
-
+                bin = int(max(values)) // 10
                 for i in range(int(current[index]['inputs'][1]) + int(bin), int(max(values)), int(bin)):
                     # print(i)
                     temp = deepcopy(current)  # [index]['inputs'

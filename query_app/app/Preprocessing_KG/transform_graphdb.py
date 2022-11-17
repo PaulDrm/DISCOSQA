@@ -122,9 +122,17 @@ def main():
             ## relations
             elif "/resource/" in r['o']['value']:
                 # entity['relations'] =  entity.get('relations',[]) +[{'predicate':r['pred']['value'].split('#')[1],'object': r['o']['value'],'direction':'forward', 'qualifiers':{} }]
-                entity['relations'] = entity.get('relations', []) + [
-                    {'relation': r['pred']['value'].split('#')[1], 'object': r['o']['value'].split('/resource/')[1], 'direction': 'forward',
-                     'qualifiers': {}}]
+
+                #if r['pred']['value'].split('#')[1] == "initial_orbit" or r['pred']['value'].split('#')[1] == "destination_orbit":
+                if r['pred']['value'].split('#')[1] == "initial_orbit" or r['pred']['value'].split('#')[1] == "destination_orbit":
+                    #print('lol')
+                    entity['relations'] = entity.get('relations', []) + [
+                        {'relation': 'orbit', 'object': r['o']['value'].split('/resource/')[1], 'direction':'forward', 'qualifiers':{} }]
+
+                else:
+                    entity['relations'] = entity.get('relations', []) + [
+                        {'relation': r['pred']['value'].split('#')[1], 'object': r['o']['value'].split('/resource/')[1], 'direction': 'forward',
+                         'qualifiers': {}}]
 
             ## names
             elif "predicates-ontology#name" in r['pred']['value']:

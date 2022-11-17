@@ -690,7 +690,7 @@ def encode_attribute_dataset(args, vocab, dataset):
 
 
 def main():
-    train =True
+    train =False
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_dir', required = True, type = str)
     parser.add_argument('--train_file_path', required = True, type = str)

@@ -147,7 +147,7 @@ def load_model():
     #save_dir = "PaulD/checkpoint-14399"
     #save_dir = "PaulD/IOA_261022-11999"
     #save_dir = "PaulD/IOA_ft_07112022-33"
-    save_dir = "PaulD/IOA_ft_15112022-33"
+    save_dir = "PaulD/IOA_ft_17112022-33"
     config_class, model_class = (BertConfig, RelationPT)
     print("load ckpt from {}".format(save_dir))
     config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
@@ -155,7 +155,7 @@ def load_model():
     path = './processed/vocab.json'
     model.config.vocab = load_vocab(path)
 
-    with open(huggingface_hub.hf_hub_download(save_dir, 'entity_embeddings_1411.pt'), 'rb') as f:
+    with open(huggingface_hub.hf_hub_download(save_dir, 'entity_embeddings_1711.pt'), 'rb') as f:
         #embeddings = pickle.load(f)
         model.entity_embeddings = pickle.load(f)
     #n_gpu = torch.cuda.device_count()
@@ -246,45 +246,49 @@ def one_hop(engine, entity_ids, streamlit_state):
         #st.json(entity_inf)
         node = Node(id=entity_id,label=entity_inf['name'],
                           size=25,shape="diamond")
-        nodes = append_node(nodes, node)
-        for count, att in enumerate(entity_inf['attributes']):
-            node = Node(id=entity_id + str(count),
-                              label=att['key']+ ": " +insert_newlines(str(att['value'].value)[0:200],every=64),
-                              size=10,
-                              color="318ce7",
-                              shape="dot"
-                              # "circularImage", image, circularImage, diamond, dot, star, triangle, triangleDown, hexagon, square and icon
-                              # image="http://mar)
-                              )
+        if len(nodes) < 60:
             nodes = append_node(nodes, node)
+            for count, att in enumerate(entity_inf['attributes']):
+                node = Node(id=entity_id + str(count),
+                                  label=att['key']+ ": " +insert_newlines(str(att['value'].value)[0:200],every=64),
+                                  size=10,
+                                  color="318ce7",
+                                  shape="dot"
+                                  # "circularImage", image, circularImage, diamond, dot, star, triangle, triangleDown, hexagon, square and icon
+                                  # image="http://mar)
+                                  )
+                nodes = append_node(nodes, node)
 
-            edges.append(Edge(source=entity_id + str(count),
-                              target=entity_id,
-                              color="FDD2BS"))
+                edges.append(Edge(source=entity_id + str(count),
+                                  target=entity_id,
+                                  color="FDD2BS"))
 
-        for count, rel in enumerate(entity_inf['relations']):
+            for count, rel in enumerate(entity_inf['relations']):
 
-            if engine.kb.entities.get(rel['object']) != None:
-                #    #engine.kb.entities[ ['name']
-                node = Node(id=rel['object'],
-                            label=engine.kb.entities[rel['object']]['name'],
-                            size=25,
-                            color="318ce7",
-                            shape="diamond"
-                            )
-                if len(nodes)< 50:
-                    nodes = append_node(nodes, node)
+                if engine.kb.entities.get(rel['object']) != None:
+                    #    #engine.kb.entities[ ['name']
+                    node = Node(id=rel['object'],
+                                label=engine.kb.entities[rel['object']]['name'],
+                                size=25,
+                                color="318ce7",
+                                shape="diamond"
+                                )
+                    if len(nodes)< 40:
+                        nodes = append_node(nodes, node)
 
-                    #print(entity_id[0])
-                    edges.append(Edge(source=entity_id,
-                                      target=rel['object'],
-                                      color="003153",
-                                      label=rel['relation']
-                                      ))
-                else:
-                    st.write(f"Visualisation of relations for {engine.kb.entities[entity_id]['name']} was limited to 50 to increase performance")
-                    break
-
+                        #print(entity_id[0])
+                        edges.append(Edge(source=entity_id,
+                                          target=rel['object'],
+                                          color="003153",
+                                          label=rel['relation']
+                                          ))
+                    else:
+                        st.write(f"Visualisation of relations for {engine.kb.entities[entity_id]['name']} was limited to 50 to increase performance")
+                        break
+        else:
+            st.write(
+                f"Visualisation of Entities was limited to 60 to increase performance. Entity: {engine.kb.entities[entity_id]['name']} not included in visualisation")
+            break
     return nodes, edges
 
 def log_data():

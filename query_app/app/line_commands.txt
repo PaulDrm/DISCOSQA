@@ -1,0 +1,37 @@
+python -m Pretraining.preprocess --input_dir C:/Users/pauld/Projects/IOA/2_2_ProgrammTransfer/dataset --output_dir ./kqa_processed
+
+python -m Pretraining.pushhub --save_dir ./train/checkpoint-11999 --name IOA_261022
+
+python -m Pretraining.pushhub --save_dir ./train/checkpoint-11999 --name IOA_261022_test --input_dir ./processed/entity
+
+
+python -m  Preprocessing_KG.transform_graphdb
+
+python -m Pretraining.preprocess_ESA --train_file_path ./test_data/IOA_test.json --output_dir ./test_data --input_dir ./test_data
+
+## Evaluation
+python -m Pretraining.train_eval --input_dir ./test_data --output_dir ./evaluate --save_dir ./evaluate --model_name_or_path PaulD/IOA_261022-11999 --val_batch_size=8
+
+python -m Pretraining.train --input_dir ./test_data --output_dir ./fine_tuning --save_dir ./fine_tuning --model_name_or_path PaulD/IOA_261022-11999 --val_batch_size=32 --train_batch_size=32 --learning_rate=1e-5 --save_steps==2 --logging_steps==1 --num_train_epochs=10
+
+
+python -m Pretraining.preprocess_ESA --input_dir ./Preprocessing_KG --train_file_path ./test_data/IOA_test.json --output_dir ./test_data
+
+python -m Pretraining.preprocess_ESA --input_dir ./Preprocessing_KG --train_file_path ./test_data/IOA_test.json --output_dir ./test_data
+
+https://maven.apache.org/install.html
+
+curl 'https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=8517f6ec%2D785b%2D4bcd%2Dbaf9%2D3fb8b392a729' -o entity_embeddings_3110.pt
+
+curl 'https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=1640221151a7487f8aba59a42f49ce5b&e=mW99HU' -o esa_kb.json
+
+curl 'https://groundflex.sharepoint.com/:u:/r/sites/ESAIOA/Freigegebene%20Dokumente/General/3.%20WPs/WP4%20-%20Knowledge%20Graph/Knowledge%20Graph/Share%20Files/IOA_prediction_data/entity_embeddings_3110.pt?csf=1&web=1&e=mi9V8R'
+
+
+curl 'https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=8517f6ec%2D785b%2D4bcd%2Dbaf9%2D3fb8b392a729' -o entity_embeddings.pt
+
+https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=1640221151a7487f8aba59a42f49ce5b&e=Ush42i
+
+curl 'https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=8517f6ec%2D785b%2D4bcd%2Dbaf9%2D3fb8b392a729'
+
+cu

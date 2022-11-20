@@ -148,6 +148,7 @@ def load_model():
     #save_dir = "PaulD/IOA_261022-11999"
     #save_dir = "PaulD/IOA_ft_07112022-33"
     save_dir = "PaulD/IOA_ft_17112022-33"
+    save_dir = "PaulD/IOA_ft_latest"
     config_class, model_class = (BertConfig, RelationPT)
     print("load ckpt from {}".format(save_dir))
     config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
@@ -155,7 +156,7 @@ def load_model():
     path = './processed/vocab.json'
     model.config.vocab = load_vocab(path)
 
-    with open(huggingface_hub.hf_hub_download(save_dir, 'entity_embeddings_1711.pt'), 'rb') as f:
+    with open(huggingface_hub.hf_hub_download(save_dir, 'entity_embeddings.pt'), 'rb') as f:
         #embeddings = pickle.load(f)
         model.entity_embeddings = pickle.load(f)
     #n_gpu = torch.cuda.device_count()

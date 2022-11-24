@@ -489,6 +489,7 @@ class RelationPT(BertPreTrainedModel):
                 input_ids=None, token_type_ids=None, attention_mask=None, function_ids=None, relation_info=None,
                 concept_info=None, entity_info=None, attribute_info=None, operator_info= None):
 
+        ## encode query with base BERT model
         outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
         sequence_output = outputs[0]  # [bsz, max_seq_length, hidden_size]
         pooler_output = outputs[1]  # [bsz, hidden_size]
@@ -498,15 +499,22 @@ class RelationPT(BertPreTrainedModel):
 
         def train(kb_inputs, kb_info, sequence_output, pooler_output, function_ids, pred_type):
 
-            # PREDICT functions
+            ##### PREDICT functions
             ## predicts the functions for the corresponding query for training
             func_emb = self.word_dropout(self.function_embeddings(function_ids))
             func_lens = function_ids.size(1) - function_ids.eq(0).long().sum(dim=1)
+
+            ## predict hidden layers in GRU
             f_word_h, _, _ = self.function_decoder(func_emb, func_lens.cpu(),
                                                    h_0=pooler_output.unsqueeze(0))  # [bsz, max_prog, dim_h]
+
+            ## calculate attention between hidden layers of GRU and token embeddings
             attn = torch.softmax(torch.bmm(f_word_h, sequence_output.permute(0, 2, 1)), dim=2)  # [bsz, max_prog, max_q]
             attn_word_h = torch.bmm(attn, sequence_output)  # [bsz, max_prog, dim_h]
+
+            ## add attention to hidden layer output of GRU
             f_word_h = f_word_h + attn_word_h  # # [bsz, max_prog, dim_h]
+            ## calculate logits of function predictor
             function_logits = self.function_classifier(f_word_h)
             outputs['function_logits'] = function_logits
             outputs['function_loss'] = nn.CrossEntropyLoss()(function_logits.permute(0, 2, 1)[:, :, :-1],
@@ -516,10 +524,12 @@ class RelationPT(BertPreTrainedModel):
             bsz = function_ids.size(0)
             kb_pos, kb_id = kb_info
 
+            ## get "attentionised" hidden layer output of specific position in predictions
             dim_h = f_word_h.size(-1)
             kb_pos = kb_pos.repeat(1, dim_h).view(bsz, 1, dim_h)
             f_word_h = torch.gather(f_word_h, 1, kb_pos).squeeze(1)  # [bsz, dim_h]
 
+            ## if operation, use hidden layer for classification
             if pred_type == 'operation':
                 operation_logits = self.operation_classifier(f_word_h)
                 outputs['operator_logits'] = operation_logits
@@ -528,12 +538,17 @@ class RelationPT(BertPreTrainedModel):
                 kb_id = kb_id.squeeze(-1)
                 outputs['operator_loss'] = nn.CrossEntropyLoss()(operation_logits,kb_id)
                 return outputs
+
+            ## else embed the to be linked entities / relations / attributes / etc.
             embeddings_kb = self.bert(input_ids=kb_inputs['input_ids'], \
                                       attention_mask=kb_inputs['attention_mask'], \
                                       token_type_ids=kb_inputs['token_type_ids'])[1]  # [num_relations, dim_h]
 
+            ## chose type of prediction
             if pred_type == 'entity':
+                ## transform embeddings in classifier layer
                 embeddings_kb = self.entity_classifier(embeddings_kb)  # [num_relations, dim_h]
+                ## calculate dot product with "attentionised" hidden layer
                 kb_logits = f_word_h @ embeddings_kb.t()  # [bsz, num_relationis]
                 outputs['entity_logits'] = kb_logits
                 kb_id = kb_id.squeeze(-1)

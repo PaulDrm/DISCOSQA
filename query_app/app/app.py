@@ -383,8 +383,6 @@ def main():
     query = st.text_input('Enter a query for the KG', value=st.session_state.question, on_change=reset_results)
     #print(query)
 
-
-
     col1, col2 = st.columns(2)
     col1.markdown("<style>.stButton button {width:100%;}</style>", unsafe_allow_html=True)
     col2.markdown("<style>.stButton button {width:100%;}</style>", unsafe_allow_html=True)

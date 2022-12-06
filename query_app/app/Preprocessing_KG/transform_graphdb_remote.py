@@ -3,6 +3,7 @@ import json
 import time
 from tqdm import tqdm
 from copy import deepcopy
+import re
 def main():
 
     ## is slower
@@ -10,9 +11,13 @@ def main():
     #     "http://localhost:7200/repositories/IOA_objects"
     # )
 
+    # sparql = SPARQLWrapper(
+    #     "http://127.0.0.1:7200/repositories/IOA_objects"
+    # )
     sparql = SPARQLWrapper(
-        "http://127.0.0.1:7200/repositories/IOA_objects"
+        "http://localhost:7200/repositories/ioa-kg-repo"
     )
+    sparql.setCredentials('admin', 'root')
     sparql.setReturnFormat(JSON)
 
     #via a SPARQL endpoint
@@ -47,9 +52,6 @@ def main():
                     """
                             )
 
-        elif 
-
-
         else:
             print("Skippin following entity in extraction..")
             print(extract['subj']['value'])
@@ -63,6 +65,11 @@ def main():
         #         """)
         # ret = sparql.queryAndConvert()
         if extract['subj']['value'].split("/resource/")[1] in entities:
+            continue
+
+        if re.match(r"(PID_[0-9]+(?![a-zA-Z]))", extract['subj']['value'].split("/resource/")[1]):
+            print("Skippin following entity in extraction..")
+            print(extract['subj']['value'])
             continue
 
         results = sparql.queryAndConvert()
@@ -152,8 +159,6 @@ def main():
 
         if entity.get('name')== None:
             entity['name'] = extract['subj']['value'].split("/resource/")[1]
-
-        if entity.get('name') ==
 
         entities[extract['subj']['value'].split("/resource/")[1]] = entity
     print("Extraction time: ", time.time() - start_extract)

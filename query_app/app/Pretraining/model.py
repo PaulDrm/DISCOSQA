@@ -250,21 +250,26 @@ class RelationPT(BertPreTrainedModel):
             #attention_mask = inputs['attention_mask']
             #token_type_ids = inputs['token_type_ids']
 
+            ## Embbed query
             outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
             sequence_output = outputs[0]  # [bsz, max_seq_length, hidden_size]
             pooler_output = outputs[1]  # [bsz, hidden_size]
             outputs = {}
+            ## additional variables
             sequence_output = self.dropout(sequence_output)
             bsz = input_ids.size(0)
             device = input_ids.device
             start_id = self.vocab['function2id']['<START>']
             end_id = self.vocab['function2id']['<END>']
             finished = torch.zeros((bsz,)).byte().to(device)  # record whether <END> is produced
+            ##set start
             latest_func = torch.LongTensor([start_id] * bsz).to(device)  # [bsz, ]
             programs = [latest_func]
             last_h = pooler_output.unsqueeze(0)
             for i in range(self.max_program_len):
+                ## Get last program embedding
                 p_word_emb = self.word_dropout(self.function_embeddings(latest_func)).unsqueeze(1)  # [bsz, 1, dim_w]
+                ## Forward one step GRU
                 p_word_h, last_h = self.function_decoder.forward_one_step(p_word_emb, last_h)  # [bsz, 1, dim_h]
                 # attention over question words
                 attn = torch.softmax(torch.bmm(p_word_h, sequence_output.permute(0, 2, 1)), dim=2)  # [bsz, 1, max_q]

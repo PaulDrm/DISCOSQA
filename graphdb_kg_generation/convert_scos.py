@@ -46,12 +46,13 @@ def row2rdf_activity(dfRow, missionName):
 
 def row2rdf_event(dfRow, missionName):
     """Converts data from row of event DataFrame to rdf triples"""
-    
-    rdf_str = f"<PID_{dfRow.name}> a ioa:Event ;\n"
+    #TPCF_NAME 	
+    #rdf_str = f"<PID_{dfRow.name}> a ioa:Event ;\n"
+    rdf_str = f"<PID_{dfRow.TPCF_NAME}> a ioa:Event ;\n"
     rdf_str += f"  pred:instance_of ioa:Event ;\n"
     rdf_str += f"  ioa:Description '{dfRow['PID_DESCR']}'^^xsd:string ;\n"
-
-    rdf_str += f"  ioa:APICall '/uberlog/entries?mission={missionName}&eventDateFrom={{}}&eventDateTo={{}}&text={dfRow['PID_DESCR'].replace(' ','%20')}'^^xsd:string ;\n"
+    rdf_str += f"  ioa:PID_Event '{dfRow['PID_EVENT']}'^^xsd:string ;\n"
+    #rdf_str += f"  ioa:APICall '/uberlog/entries?mission={missionName}&eventDateFrom={{}}&eventDateTo={{}}&text={dfRow['PID_DESCR'].replace(' ','%20')}'^^xsd:string ;\n"
     rdf_str += f"  ioa:parent <{dfRow['parent_name']}> ."
     
     return rdf_str

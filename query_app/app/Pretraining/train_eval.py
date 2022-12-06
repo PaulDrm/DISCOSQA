@@ -24,7 +24,7 @@ import pickle
 os.environ["WANDB_API_KEY"] = "7ee09b0cec0f14411947fcf09144f4a72c09c411"
 os.environ["CUDA_LAUNCH_BLOCKING"]="1"
 
-def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, device,global_step, prefix = '',**val_loaders):
+def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, device,global_step=0, prefix = '',**val_loaders):
 
     ## relation_eval_loader, concept_eval_loader, entity_eval_loader, attribute_eval_loader
 
@@ -33,7 +33,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
         os.makedirs(eval_output_dir)
 
     ############################ Eval!
-    ## Opertors!
+    ## Operators!
     nb_eval_steps = 0
     func_metric = FunctionAcc(val_loaders['operator_val_loader'].vocab['function2id']['<END>'])
     pbar = ProgressBar(n_total=len(val_loaders['operator_val_loader']), desc="Evaluating")
@@ -83,8 +83,10 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
+    log = {'acc_func': func_metric.result(), 'acc_operations': acc, "op_val_loss":val_loss, 'step': global_step}
+
     if args.wandb:
-        wandb.log({'acc_func': func_metric.result(), 'acc_operations': acc, "op_val_loss":val_loss, 'step': global_step})
+        wandb.log(log)
     logging.info('**** operation results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -139,8 +141,9 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
+    log = {'acc_func': func_metric.result(), 'acc_attributes': acc,"att_val_loss":val_loss, 'step': global_step}
     if args.wandb:
-        wandb.log({'acc_func': func_metric.result(), 'acc_attributes': acc,"att_val_loss":val_loss, 'step': global_step})
+        wandb.log(log)
     logging.info('**** attribute results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -191,8 +194,9 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
+    log = {'acc_func': func_metric.result(), 'acc_relations': acc,"rel_val_loss":val_loss, 'step': global_step}
     if args.wandb:
-        wandb.log({'acc_func': func_metric.result(), 'acc_relations': acc,"rel_val_loss":val_loss, 'step': global_step})
+        wandb.log(log)
     logging.info('**** relation results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -245,8 +249,9 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     logging.info('**** concept results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
+    log = {'acc_func': func_metric.result(), 'acc_concepts':acc , "cons_val_loss":val_loss, 'step': global_step}
     if args.wandb:
-        wandb.log({'acc_func': func_metric.result(), 'acc_concepts':acc , "cons_val_loss":val_loss, 'step': global_step})
+        wandb.log(log)
 
     # Entities!
     # with torch.no_grad():
@@ -254,9 +259,9 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     #                                     attention_mask=entity_inputs['attention_mask'],
     #                                     token_type_ids=entity_inputs['token_type_ids'])[1]
 
-    with open(os.path.abspath(args.input_dir + "/entity/entity_embeddings_3110.pt"), 'rb') as f:
+    #with open(os.path.abspath(args.input_dir + "/entity/entity_embeddings_3110.pt"), 'rb') as f:
 
-        model.entity_embeddings = pickle.load(f)
+    #    model.entity_embeddings = pickle.load(f)
     #with open('c_embeddings.pt', 'wb') as f: #os.path.join(args.output_dir,
     #           # for o in concept_embeddings:
     #            # print(o)
@@ -310,8 +315,9 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     logging.info('**** entity results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
+    log = {'acc_func': func_metric.result(), 'acc_entities': acc, "ent_val_loss":val_loss, 'step': global_step}
     if args.wandb:
-        wandb.log({'acc_func': func_metric.result(), 'acc_entities': acc, "ent_val_loss":val_loss ,'step': global_step})
+        wandb.log(log)
 
 def train(args):
     device = 'cuda' if torch.cuda.is_available() else 'cpu'

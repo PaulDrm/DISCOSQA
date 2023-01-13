@@ -1,5 +1,5 @@
 from transformers import (BertConfig, BertModel, BertTokenizer, BertPreTrainedModel)
-from .model import RelationPT
+from .model_rob import RelationPT
 import argparse
 
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
@@ -48,7 +48,7 @@ def main():
     # checkpoint = save_dir.split('\\')[-1]
     checkpoint = save_dir.split("checkpoint")[1]
 
-
+    checkpoint= ""
     print("pushing tokenizer")
     tokenizer.push_to_hub(f"{name}{checkpoint}")
     print("pushing model")
@@ -56,15 +56,15 @@ def main():
 
     api = HfApi()
 
-    if torch.cuda.is_available() or True:
+    if torch.cuda.is_available():
         batch_num = 128
-        #argument_inputs = load_classes(input_dir + "esa/new/entity_3110.pt", )
-        argument_inputs = load_classes(args.input_dir)
+        argument_inputs = load_classes(args.input_dir + "/entity.pt", )
+        #argument_inputs = load_classes(args.input_dir)
         data = TensorDataset(argument_inputs['input_ids'], argument_inputs['attention_mask'],
                              argument_inputs['token_type_ids'])
         data_sampler = SequentialSampler(data)
         dataloader = DataLoader(data, sampler=data_sampler, batch_size=batch_num)
-
+        model.cuda()
         attribute_embeddings = []
         device = 'cuda' if torch.cuda.is_available() else 'cpu'
         with torch.no_grad():
@@ -79,12 +79,12 @@ def main():
                                                    attention_mask=masks,
                                                    token_type_ids=tags)[1].cpu()
         attribute_embeddings = torch.stack(attribute_embeddings)
-        with open(os.path.join(args.input_dir, 'entity_embeddings_1411.pt'), 'wb') as f:
+        with open(os.path.join(args.input_dir, 'entity_embeddings.pt'), 'wb') as f:
            pickle.dump(attribute_embeddings, f)
 
         api.upload_file(
-            path_or_fileobj=args.input_dir + '/entity_embeddings_1411.pt',
-            path_in_repo="entity_embeddings_1411.pt",
+            path_or_fileobj=args.input_dir + '/entity_embeddings.pt',
+            path_in_repo="entity_embeddings.pt",
             repo_id=f"PaulD/{name}{checkpoint}",
             repo_type="model",
         )

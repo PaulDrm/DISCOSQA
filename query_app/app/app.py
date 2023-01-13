@@ -1,6 +1,6 @@
 from KoPL_main.src.kopl.kopl import KoPLEngine
 from Pretraining.utils import *
-from Pretraining.model import RelationPT
+from Pretraining.model_rob import RelationPT
 from transformers import (BertConfig, BertModel, BertTokenizer, BertPreTrainedModel)
 import huggingface_hub
 

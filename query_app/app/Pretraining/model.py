@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 #from transformers import *
 from transformers import (BertConfig, BertModel,  BertPreTrainedModel)
+from transformers import (AutoConfig, AutoModel, RobertaPreTrainedModel)
 from Pretraining.utils import *
 from Pretraining.BiGRU import GRU, BiGRU
 import pickle
@@ -178,7 +179,7 @@ from sys import implementation
 import torch
 # from transformers import AutoModelForCausalLM
 # from transformers import AutoTokenizer
-from transformers import (BertModel, BertPreTrainedModel)
+#from transformers import (BertModel, BertPreTrainedModel)
 
 
 class RelationPT(BertPreTrainedModel):
@@ -189,7 +190,7 @@ class RelationPT(BertPreTrainedModel):
 
         super(RelationPT, self).__init__(config)
         self.vocab = config.vocab
-        self.bert = BertModel(config)
+        self.bert = BertModel(config)#AutoModel(config)#
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.num_functions = len(config.vocab['function2id'])
         self.function_embeddings = nn.Embedding(self.num_functions, config.hidden_size)
@@ -741,3 +742,4 @@ class RelationPT(BertPreTrainedModel):
             outputs = evaluate('', operator_info, sequence_output, pooler_output, function_ids, 'operation')
 
         return outputs
+

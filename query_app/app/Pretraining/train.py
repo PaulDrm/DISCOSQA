@@ -411,7 +411,8 @@ def train(args):
     config_class, model_class, tokenizer_class = (BertConfig, RelationPT, BertTokenizer)
     config = config_class.from_pretrained(args.model_name_or_path, num_labels = len(label_list))
     config.update({'vocab': vocab})
-    tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path, do_lower_case = False)
+    tokenizer = tokenizer_class.from_pretrained('bert-base-cased', do_lower_case=False)
+    #tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path, do_lower_case = False)
     model = model_class.from_pretrained(args.model_name_or_path, config = config)
     model = model.to(device)
     # logging.info(model)
@@ -463,17 +464,17 @@ def train(args):
     global_step = 0
     steps_trained_in_current_epoch = 0
     # Check if continuing training from a checkpoint
-    if os.path.exists(args.model_name_or_path) and "checkpoint" in args.model_name_or_path:
-        # set global_step to gobal_step of last saved checkpoint from model path
-        global_step = int(args.model_name_or_path.split("-")[-1].split("/")[0])
-        epochs_trained = global_step // (len(relation_train_loader) // args.gradient_accumulation_steps)
-        steps_trained_in_current_epoch = global_step % (len(relation_train_loader) // args.gradient_accumulation_steps)
-        logging.info("  Continuing training from checkpoint, will skip to saved global_step")
-        logging.info("  Continuing training from epoch %d", epochs_trained)
-        logging.info("  Continuing training from global step %d", global_step)
-        logging.info("  Will skip the first %d steps in the first epoch", steps_trained_in_current_epoch)
-    logging.info('Checking...')
-    logging.info("===================Dev==================")
+    # if os.path.exists(args.model_name_or_path) and "checkpoint" in args.model_name_or_path:
+    #     # set global_step to gobal_step of last saved checkpoint from model path
+    #     global_step = int(args.model_name_or_path.split("-")[-1].split("/")[0])
+    #     epochs_trained = global_step // (len(relation_train_loader) // args.gradient_accumulation_steps)
+    #     steps_trained_in_current_epoch = global_step % (len(relation_train_loader) // args.gradient_accumulation_steps)
+    #     logging.info("  Continuing training from checkpoint, will skip to saved global_step")
+    #     logging.info("  Continuing training from epoch %d", epochs_trained)
+    #     logging.info("  Continuing training from global step %d", global_step)
+    #     logging.info("  Will skip the first %d steps in the first epoch", steps_trained_in_current_epoch)
+    # logging.info('Checking...')
+    # logging.info("===================Dev==================")
     # evaluate(args, concept_inputs, relation_inputs, model, relation_val_loader, concept_val_loader, device)
     tot_tr_loss, logging_loss = 0.0, 0.0
     model.zero_grad()

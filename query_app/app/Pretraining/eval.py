@@ -3,15 +3,22 @@ import argparse
 
 from Pretraining.utils import *
 from Pretraining.model import RelationPT
+from Pretraining.model_rob import RelationPT_rob
 from Pretraining.data import DataLoader
 from transformers import (BertConfig, BertModel, BertTokenizer, BertPreTrainedModel)
 from Pretraining.lr_scheduler import get_linear_schedule_with_warmup
 from Pretraining.metric import *
+
+from transformers import (RobertaConfig, RobertaModel,AutoTokenizer, RobertaPreTrainedModel)
+
 #from Pretraining.eval import evaluate
 import torch
 import torch.nn as nn
 import json
-
+from torch.utils.data import TensorDataset, SequentialSampler # DataLoader, RandomSampler, SequentialSampler
+from pathlib import Path
+from tqdm import tqdm
+import pickle
 import logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s')
 logFormatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
@@ -23,7 +30,7 @@ def log_data(log):
         dataset = json.load(f)
 
     dataset.append(log)
-    with open("./query_results/queries.json", 'w+') as f:
+    with open("./eval/results.json", 'w+') as f:
         json.dump(dataset, f)
 
 def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, device, global_step=0,
@@ -87,8 +94,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     log = {'checkpoint':checkpoint, 'acc_func': func_metric.result(), 'acc_operations': acc, "op_val_loss": val_loss, 'step': global_step}
     log_data(log)
-    if args.wandb:
-        wandb.log(log)
+    #if args.wandb:
+    #    wandb.log(log)
     logging.info('**** operation results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -144,8 +151,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     log = {'checkpoint': checkpoint, 'acc_func': func_metric.result(), 'acc_attributes': acc, "att_val_loss": val_loss, 'step': global_step}
     log_data(log)
-    if args.wandb:
-        wandb.log(log)
+    #if args.wandb:
+    #    wandb.log(log)
     logging.info('**** attribute results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -198,8 +205,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     log = {'checkpoint':checkpoint, 'acc_func': func_metric.result(), 'acc_relations': acc, "rel_val_loss": val_loss, 'step': global_step}
     log_data(log)
-    if args.wandb:
-        wandb.log(log)
+    #if args.wandb:
+    #wandb.log(log)
     logging.info('**** relation results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -254,8 +261,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     logging.info('acc: {}'.format(acc))
     log = {'checkpoint':checkpoint, 'acc_func': func_metric.result(), 'acc_concepts': acc, "cons_val_loss": val_loss, 'step': global_step}
     log_data(log)
-    if args.wandb:
-        wandb.log(log)
+    #if args.wandb:
+    #    wandb.log(log)
 
     # Entities!
     # with torch.no_grad():
@@ -277,10 +284,12 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     correct = 0
     tot = 0
     val_loss = 0
+    results = []
     for step, batch in enumerate(val_loaders['entity_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
         # print(batch[4].size())
+
         with torch.no_grad():
             batch = tuple(t.to(device) for t in batch)
             inputs = {
@@ -309,6 +318,22 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             gt_functions = batch[3].cpu().tolist()
             for pred, gt in zip(pred_functions, gt_functions):
                 func_metric.update(pred, gt)
+            end_id = val_loaders['entity_val_loader'].vocab['function2id']['<END>']
+            boolean = []
+            for pred, label in zip(pred_functions, gt_functions):
+                for i in range(min(len(pred), len(label))):
+                    if label[i] != pred[i]:
+                        match = False
+                        boolean.append(True)
+                        break
+                    if pred[i] == end_id and label[i] == end_id:
+                        boolean.append(False)
+                        break
+            tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
+            sents = tokenizer.batch_decode(inputs['input_ids'].to('cpu'))
+
+            for des, val, pred, label in zip(boolean, sents, pred_functions, gt_functions):
+                results.append({'question': val, 'prediction': pred, 'functions': label, 'label': des})
         nb_eval_steps += 1
         pbar(step)
     logging.info('')
@@ -320,6 +345,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     logging.info('**** entity results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
     log = {'checkpoint':checkpoint, 'acc_func': func_metric.result(), 'acc_entities': acc, "ent_val_loss": val_loss, 'step': global_step}
+    with open(f'./eval/function_predictions_{checkpoint}.json', 'w') as fp:
+        json.dump(results, fp)
     log_data(log)
 
     #if args.wandb:
@@ -331,11 +358,11 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
 def embed_ents(model,args):
     batch_num = 128
     # argument_inputs = load_classes(input_dir + "esa/new/entity_3110.pt", )
-    argument_inputs = load_classes(args.data_dir + "/entity/entity.pt")
+    argument_inputs = load_classes(args.data_dir + "/entity/entity.pt",'cpu')
     data = TensorDataset(argument_inputs['input_ids'], argument_inputs['attention_mask'],
                          argument_inputs['token_type_ids'])
     data_sampler = SequentialSampler(data)
-    dataloader = DataLoader(data, sampler=data_sampler, batch_size=batch_num)
+    dataloader = torch.utils.data.DataLoader(data, sampler=data_sampler, batch_size=batch_num)
 
     attribute_embeddings = []
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -352,9 +379,9 @@ def embed_ents(model,args):
                                                token_type_ids=tags)[1].cpu()
     attribute_embeddings = torch.stack(attribute_embeddings)
 
-    model.entity_embeddings = attribute_embeddings
+    model.entity_embeddings = attribute_embeddings.cuda()
 
-def load_classes(path):
+def load_classes(path,device):
   with open(os.path.abspath(path), 'rb') as f:
       input_ids = pickle.load(f)
       token_type_ids = pickle.load(f)
@@ -362,9 +389,9 @@ def load_classes(path):
       # input_ids = torch.LongTensor(input_ids[:512,:]).to(device)
       # token_type_ids = torch.LongTensor(token_type_ids[:512,:]).to(device)
       # attention_mask = torch.LongTensor(attention_mask[:512,:]).to(device)
-      input_ids = torch.LongTensor(input_ids)#.to(device)
-      token_type_ids = torch.LongTensor(token_type_ids)#.to(device)
-      attention_mask = torch.LongTensor(attention_mask)#.to(device)
+      input_ids = torch.LongTensor(input_ids).to(device)
+      token_type_ids = torch.LongTensor(token_type_ids).to(device)
+      attention_mask = torch.LongTensor(attention_mask).to(device)
   argument_inputs = {
     'input_ids': input_ids,
     'token_type_ids': token_type_ids,
@@ -377,7 +404,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--models_dir', type=str, default='./train/')
     parser.add_argument('--data_dir', type=str, default='./test_data/')
-
+    parser.add_argument('--val_batch_size', type=int, default=128)
+    #parser.add_argument('--save_dir', type=int, default=128)
 
     args = parser.parse_args()
     vocab_json = os.path.join(args.data_dir, 'vocab.json')
@@ -399,14 +427,18 @@ def main():
                    'operator_val_loader': operator_val_loader,
                    'relation_val_loader': relation_val_loader,
                    }
+    models_path = Path(args.models_dir)
+    for model_dir in models_path.iterdir():
+        if not model_dir.is_dir():
+            continue
+        #config_class, model_class = (BertConfig, RelationPT)
 
-    for model_dir in args.model_dir():
+        config_class, model_class = (RobertaConfig, RelationPT_rob)
 
-        config_class, model_class = (BertConfig, RelationPT)
         print("load ckpt from {}".format(model_dir))
         config = config_class.from_pretrained(model_dir)  # , num_labels = len(label_list))
         model = model_class.from_pretrained(model_dir, config=config)
-        device = "gpu" if torch.cuda.is_available() else "cpu"
+        device = "cuda" if torch.cuda.is_available() else "cpu"
         if torch.cuda.is_available():  #
             model.cuda()
 
@@ -436,10 +468,12 @@ def main():
         #                                      attention_mask=argument_inputs['attention_mask'],
         #                                      token_type_ids=argument_inputs['token_type_ids'])[1]
 
-        checkpoint = model_dir.split('\\')[-1]
+        checkpoint = str(model_dir).split('\\')[-1]
         entity_inputs = []
         evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model,device, global_step=checkpoint, **val_loaders)
 
+if __name__ == '__main__':
+    main()
 
 
 

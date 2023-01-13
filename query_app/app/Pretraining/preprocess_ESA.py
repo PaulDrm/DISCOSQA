@@ -13,34 +13,34 @@ from Pretraining.model import RelationPT
 ## Todo changed
 #tokenizer = BertTokenizer.from_pretrained('/data/csl/resources/Bert/bert-base-cased', do_lower_case = False)
 tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
-
+#tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case = False)
 import random
 
 def decision(probability):
     return random.random() < probability
 
 
-def load_model():
-
-    """
-    Load the model from checkpoint
-    """
-
-    #save_dir = "PaulD/checkpoint-14399"
-    save_dir = "PaulD/IOA_261022-11999"
-    config_class, model_class = (BertConfig, RelationPT)
-    print("load ckpt from {}".format(save_dir))
-    config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
-    model = model_class.from_pretrained(save_dir, config=config)
-    #path = './processed/vocab.json'
-    #model.config.vocab = load_vocab(path)
-
-    n_gpu = torch.cuda.device_count()
-    if torch.cuda.is_available():  #
-        model.cuda()
-        #if n_gpu > 1:
-        #    model = torch.nn.DataParallel(model)
-    return model
+# def load_model():
+#
+#     """
+#     Load the model from checkpoint
+#     """
+#
+#     #save_dir = "PaulD/checkpoint-14399"
+#     save_dir = "PaulD/IOA_261022-11999"
+#     config_class, model_class = (BertConfig, RelationPT)
+#     print("load ckpt from {}".format(save_dir))
+#     config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
+#     model = model_class.from_pretrained(save_dir, config=config)
+#     #path = './processed/vocab.json'
+#     #model.config.vocab = load_vocab(path)
+#
+#     n_gpu = torch.cuda.device_count()
+#     if torch.cuda.is_available():  #
+#         model.cuda()
+#         #if n_gpu > 1:
+#         #    model = torch.nn.DataParallel(model)
+#     return model
 
 
 def get_vocab(args, vocab):
@@ -104,7 +104,7 @@ def get_relation_dataset(args, vocab):
     # train = json.load(open(os.path.join(args.input_dir, 'train.json')))
     # dev = json.load(open(os.path.join(args.input_dir, 'val.json')))
     train = [json.loads(line.strip()) for line in open(os.path.join(args.train_file_path))][0]
-    dev = [json.loads(line.strip()) for line in open(os.path.join(args.train_file_path))][0]
+    dev = [json.loads(line.strip()) for line in open(os.path.join(args.valid_file_path))][0]
 
     for name, raw_data in zip(['train', 'dev'], [train, dev]):
         dataset = []
@@ -155,7 +155,7 @@ def get_concept_dataset(args, vocab):
     # dev = [json.loads(line.strip()) for line in open(os.path.join(args.input_dir, 'val.json'))]
 
     train = [json.loads(line.strip()) for line in open(args.train_file_path)][0]
-    dev = [json.loads(line.strip()) for line in open(args.train_file_path)][0]
+    dev = [json.loads(line.strip()) for line in open(args.valid_file_path)][0]
     for name, raw_data in zip(['train', 'dev'], [train, dev]):
         dataset = []
         for item in tqdm(raw_data):
@@ -202,7 +202,7 @@ def get_entity_dataset(args, vocab):
     # train = [json.loads(line.strip()) for line in open(os.path.join(args.input_dir, 'train.json'))]
     # dev = [json.loads(line.strip()) for line in open(os.path.join(args.input_dir, 'val.json'))]
     train = [json.loads(line.strip()) for line in open(args.train_file_path)][0]
-    dev = [json.loads(line.strip()) for line in open(args.train_file_path)][0]
+    dev = [json.loads(line.strip()) for line in open(args.valid_file_path)][0]
 
     for name, raw_data in zip(['train', 'dev'], [train, dev]):
         dataset = []
@@ -246,7 +246,7 @@ def get_entity_dataset(args, vocab):
 
 def get_operator_dataset(args, vocab):
     train = [json.loads(line.strip()) for line in open(args.train_file_path)][0]
-    dev = [json.loads(line.strip()) for line in open(args.train_file_path)][0]
+    dev = [json.loads(line.strip()) for line in open(args.valid_file_path)][0]
 
     for name, raw_data in zip(['train', 'dev'], [train, dev]):
         dataset = []
@@ -291,7 +291,7 @@ def get_operator_dataset(args, vocab):
 def get_attribute_dataset(args, vocab):
 
     train = [json.loads(line.strip()) for line in open(args.train_file_path)][0]
-    dev = [json.loads(line.strip()) for line in open(args.train_file_path)][0]
+    dev = [json.loads(line.strip()) for line in open(args.valid_file_path)][0]
 
     for name, raw_data in zip(['train', 'dev'], [train, dev]):
         dataset = []
@@ -334,7 +334,7 @@ def get_attribute_dataset(args, vocab):
 
 def encode_kb_entity(args, vocab, pred_type):
 
-    encoded_inputs = tokenizer(vocab[f'id2{pred_type}'], padding=True)
+    encoded_inputs = tokenizer(vocab[f'id2{pred_type}'], padding=True, return_token_type_ids = True)
     print(encoded_inputs.keys())
     print(len(encoded_inputs['input_ids'][0]))
     print(len(encoded_inputs['token_type_ids'][0]))
@@ -368,7 +368,7 @@ def encode_relation_dataset(args, vocab, dataset):
     for item in dataset:
         question = item['question']
         questions.append(question)
-    encoded_inputs = tokenizer(questions, padding = True)
+    encoded_inputs = tokenizer(questions, padding = True, return_token_type_ids = True)
     # print(encoded_inputs.keys())
     # print(len(encoded_inputs['input_ids'][0]))
     # print(len(encoded_inputs['token_type_ids'][0]))
@@ -435,7 +435,7 @@ def encode_operator_dataset(args, vocab, dataset):
     for item in dataset:
         question = item['question']
         questions.append(question)
-    encoded_inputs = tokenizer(questions, padding=True)
+    encoded_inputs = tokenizer(questions, padding=True, return_token_type_ids = True)
     # print(encoded_inputs.keys())
     # print(len(encoded_inputs['input_ids'][0]))
     # print(len(encoded_inputs['token_type_ids'][0]))
@@ -503,7 +503,7 @@ def encode_concept_dataset(args, vocab, dataset):
     for item in dataset:
         question = item['question']
         questions.append(question)
-    encoded_inputs = tokenizer(questions, padding = True)
+    encoded_inputs = tokenizer(questions, padding = True, return_token_type_ids = True)
     # print(encoded_inputs.keys())
     # print(len(encoded_inputs['input_ids'][0]))
     # print(len(encoded_inputs['token_type_ids'][0]))
@@ -570,7 +570,7 @@ def encode_entity_dataset(args, vocab, dataset):
     for item in dataset:
         question = item['question']
         questions.append(question)
-    encoded_inputs = tokenizer(questions, padding=True)
+    encoded_inputs = tokenizer(questions, padding=True, return_token_type_ids = True)
     # print(encoded_inputs.keys())
     # print(len(encoded_inputs['input_ids'][0]))
     # print(len(encoded_inputs['token_type_ids'][0]))
@@ -639,7 +639,7 @@ def encode_attribute_dataset(args, vocab, dataset):
     for item in dataset:
         question = item['question']
         questions.append(question)
-    encoded_inputs = tokenizer(questions, padding=True)
+    encoded_inputs = tokenizer(questions, padding=True, return_token_type_ids = True)
     # print(encoded_inputs.keys())
     # print(len(encoded_inputs['input_ids'][0]))
     # print(len(encoded_inputs['token_type_ids'][0]))
@@ -690,10 +690,11 @@ def encode_attribute_dataset(args, vocab, dataset):
 
 
 def main():
-    train =False
+    train =True
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_dir', required = True, type = str)
     parser.add_argument('--train_file_path', required = True, type = str)
+    parser.add_argument('--valid_file_path', required=True, type=str)
     parser.add_argument('--output_dir', required = True, type = str)
     args = parser.parse_args()
     print(args)
@@ -783,41 +784,41 @@ def main():
             print(o.shape)
             pickle.dump(o, f)
 
-    from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
-    batch_num = 64
-    model = load_model()
-    print(outputs[0].shape)
-    print(outputs[1].shape)
-    print(outputs[2].shape)
-
-    for idx in range(3):
-        print('*'*10)
-        print(outputs[0][idx])
-    inputs = torch.as_tensor(outputs[0])
-    masks = torch.as_tensor(outputs[1])
-    tags = torch.as_tensor(outputs[2])
-
-    data = TensorDataset(inputs, masks, tags)
-    data_sampler = SequentialSampler(data)
-    dataloader = DataLoader(data, sampler=data_sampler, batch_size=batch_num)
-    attribute_embeddings = []
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    with torch.no_grad():
-        for i, batch in enumerate(tqdm(dataloader)):
-            if i == 1:
-                break
-            inputs = batch[0].to(device)
-            masks = batch[1].to(device)
-            tags = batch[2].to(device)
-
-            attribute_embeddings += model.bert(input_ids=inputs,
-                                           attention_mask=masks,
-                                           token_type_ids=tags)[1].cpu()
-    attribute_embeddings = torch.stack(attribute_embeddings)
-    with open(os.path.join(args.output_dir, 'entity', 'entity_embeddings_test.pt'), 'wb') as f:
-        #for o in attribute_embeddings:
-            #print(o.shape)
-        pickle.dump(attribute_embeddings, f)
+    # from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
+    # batch_num = 64
+    # model = load_model()
+    # print(outputs[0].shape)
+    # print(outputs[1].shape)
+    # print(outputs[2].shape)
+    #
+    # for idx in range(3):
+    #     print('*'*10)
+    #     print(outputs[0][idx])
+    # inputs = torch.as_tensor(outputs[0])
+    # masks = torch.as_tensor(outputs[1])
+    # tags = torch.as_tensor(outputs[2])
+    #
+    # data = TensorDataset(inputs, masks, tags)
+    # data_sampler = SequentialSampler(data)
+    # dataloader = DataLoader(data, sampler=data_sampler, batch_size=batch_num)
+    # attribute_embeddings = []
+    # device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    # with torch.no_grad():
+    #     for i, batch in enumerate(tqdm(dataloader)):
+    #         if i == 1:
+    #             break
+    #         inputs = batch[0].to(device)
+    #         masks = batch[1].to(device)
+    #         tags = batch[2].to(device)
+    #
+    #         attribute_embeddings += model.bert(input_ids=inputs,
+    #                                        attention_mask=masks,
+    #                                        token_type_ids=tags)[1].cpu()
+    # attribute_embeddings = torch.stack(attribute_embeddings)
+    # with open(os.path.join(args.output_dir, 'entity', 'entity_embeddings_test.pt'), 'wb') as f:
+    #     #for o in attribute_embeddings:
+    #         #print(o.shape)
+    #     pickle.dump(attribute_embeddings, f)
 
     #outputs = encode_concept(args, vocab)
     outputs = encode_kb_entity(args, vocab, 'concept')

@@ -10,9 +10,11 @@ import pickle
 from Pretraining.utils import *
 from tqdm import tqdm
 from Pretraining.model import RelationPT
+from Pretraining.model_rob import RelationPT_rob
 ## Todo changed
 #tokenizer = BertTokenizer.from_pretrained('/data/csl/resources/Bert/bert-base-cased', do_lower_case = False)
-tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
+#tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
+tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case = False)
 
 import random
 
@@ -44,7 +46,7 @@ def load_model():
 
 
 def get_vocab(args, vocab):
-    kb = json.load(open(os.path.join(args.input_dir, 'esa_kb.json')))
+    kb = json.load(open(os.path.join(args.input_dir, 'kb.json')))
     #kb = json.load(open(os.path.join(args.input_dir, 'kb.json')))
     entities = kb['entities']
     for eid in entities:
@@ -333,7 +335,7 @@ def get_attribute_dataset(args, vocab):
 
 def encode_kb_entity(args, vocab, pred_type):
 
-    encoded_inputs = tokenizer(vocab[f'id2{pred_type}'], padding=True)
+    encoded_inputs = tokenizer(vocab[f'id2{pred_type}'], padding=True, return_token_type_ids = True)
     print(encoded_inputs.keys())
     print(len(encoded_inputs['input_ids'][0]))
     print(len(encoded_inputs['token_type_ids'][0]))
@@ -367,7 +369,7 @@ def encode_relation_dataset(args, vocab, dataset):
     for item in dataset:
         question = item['question']
         questions.append(question)
-    encoded_inputs = tokenizer(questions, padding = True)
+    encoded_inputs = tokenizer(questions, padding = True,return_token_type_ids = True)
     # print(encoded_inputs.keys())
     # print(len(encoded_inputs['input_ids'][0]))
     # print(len(encoded_inputs['token_type_ids'][0]))
@@ -434,7 +436,7 @@ def encode_operator_dataset(args, vocab, dataset):
     for item in dataset:
         question = item['question']
         questions.append(question)
-    encoded_inputs = tokenizer(questions, padding=True)
+    encoded_inputs = tokenizer(questions, padding=True, return_token_type_ids = True)
     # print(encoded_inputs.keys())
     # print(len(encoded_inputs['input_ids'][0]))
     # print(len(encoded_inputs['token_type_ids'][0]))
@@ -502,7 +504,7 @@ def encode_concept_dataset(args, vocab, dataset):
     for item in dataset:
         question = item['question']
         questions.append(question)
-    encoded_inputs = tokenizer(questions, padding = True)
+    encoded_inputs = tokenizer(questions, padding = True, return_token_type_ids = True)
     # print(encoded_inputs.keys())
     # print(len(encoded_inputs['input_ids'][0]))
     # print(len(encoded_inputs['token_type_ids'][0]))
@@ -569,7 +571,7 @@ def encode_entity_dataset(args, vocab, dataset):
     for item in dataset:
         question = item['question']
         questions.append(question)
-    encoded_inputs = tokenizer(questions, padding=True)
+    encoded_inputs = tokenizer(questions, padding=True, return_token_type_ids = True)
     # print(encoded_inputs.keys())
     # print(len(encoded_inputs['input_ids'][0]))
     # print(len(encoded_inputs['token_type_ids'][0]))
@@ -638,7 +640,7 @@ def encode_attribute_dataset(args, vocab, dataset):
     for item in dataset:
         question = item['question']
         questions.append(question)
-    encoded_inputs = tokenizer(questions, padding=True)
+    encoded_inputs = tokenizer(questions, padding=True, return_token_type_ids = True)
     # print(encoded_inputs.keys())
     # print(len(encoded_inputs['input_ids'][0]))
     # print(len(encoded_inputs['token_type_ids'][0]))
@@ -671,7 +673,7 @@ def encode_attribute_dataset(args, vocab, dataset):
     verbose = False
     if verbose:
         for idx in range(10):
-            question = tokenizer.decode(input_ids_list[idx])
+            question = tokenizer.decode(input_ids_list[idx], return_token_type_ids = True)
             functions = [vocab['id2function'][id] for id in function_ids_list[idx]]
             relation_pos = relation_pos_list[idx][0]
             relation_id = vocab['id2attribute'][relation_id_list[idx][0]]
@@ -689,7 +691,7 @@ def encode_attribute_dataset(args, vocab, dataset):
 
 
 def main():
-    train =False
+    train =True
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_dir', required = True, type = str)
     parser.add_argument('--output_dir', required = True, type = str)
@@ -800,22 +802,22 @@ def main():
     dataloader = DataLoader(data, sampler=data_sampler, batch_size=batch_num)
     attribute_embeddings = []
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    with torch.no_grad():
-        for i, batch in enumerate(tqdm(dataloader)):
-            if i == 1:
-                break
-            inputs = batch[0].to(device)
-            masks = batch[1].to(device)
-            tags = batch[2].to(device)
-
-            attribute_embeddings += model.bert(input_ids=inputs,
-                                           attention_mask=masks,
-                                           token_type_ids=tags)[1].cpu()
-    attribute_embeddings = torch.stack(attribute_embeddings)
-    with open(os.path.join(args.output_dir, 'entity', 'entity_embeddings_test.pt'), 'wb') as f:
-        #for o in attribute_embeddings:
-            #print(o.shape)
-        pickle.dump(attribute_embeddings, f)
+    # with torch.no_grad():
+    #     for i, batch in enumerate(tqdm(dataloader)):
+    #         if i == 1:
+    #             break
+    #         inputs = batch[0].to(device)
+    #         masks = batch[1].to(device)
+    #         tags = batch[2].to(device)
+    #
+    #         attribute_embeddings += model.bert(input_ids=inputs,
+    #                                        attention_mask=masks,
+    #                                        token_type_ids=tags)[1].cpu()
+    # attribute_embeddings = torch.stack(attribute_embeddings)
+    # with open(os.path.join(args.output_dir, 'entity', 'entity_embeddings_test.pt'), 'wb') as f:
+    #     #for o in attribute_embeddings:
+    #         #print(o.shape)
+    #     pickle.dump(attribute_embeddings, f)
 
     #outputs = encode_concept(args, vocab)
     outputs = encode_kb_entity(args, vocab, 'concept')

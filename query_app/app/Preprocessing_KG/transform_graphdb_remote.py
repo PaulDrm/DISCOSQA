@@ -4,6 +4,7 @@ import time
 from tqdm import tqdm
 from copy import deepcopy
 import re
+
 def main():
 
     ## is slower

@@ -601,8 +601,9 @@ class RelationPT_rob(RobertaPreTrainedModel):
             finished = torch.zeros((bsz,)).byte().to(device)  # record whether <END> is produced
             latest_func = torch.LongTensor([start_id] * bsz).to(device)  # [bsz, ]
             programs = [latest_func]
-            logits = []
             last_h = pooler_output.unsqueeze(0)
+
+            function_logits = []
             for i in range(self.max_program_len):
                 p_word_emb = self.word_dropout(self.function_embeddings(latest_func)).unsqueeze(1)  # [bsz, 1, dim_w]
                 p_word_h, last_h = self.function_decoder.forward_one_step(p_word_emb, last_h)  # [bsz, 1, dim_h]
@@ -614,6 +615,7 @@ class RelationPT_rob(RobertaPreTrainedModel):
 
                 # predict function
                 logit_func = self.function_classifier(p_word_h).squeeze(1)  # [bsz, num_func]
+                function_logits.append(logit_func)
 
                 latest_func = torch.argmax(logit_func, dim=1)  # [bsz, ]
                 programs.append(latest_func)
@@ -623,6 +625,26 @@ class RelationPT_rob(RobertaPreTrainedModel):
                     break
             programs = torch.stack(programs, dim=1)  # [bsz, max_prog]
             outputs['pred_functions'] = programs
+
+            function_ids[function_ids == 0] = -100
+
+            ## Transforms list of logit tensor for each time step to tensor
+            function_logits = torch.stack(function_logits, dim=1)
+
+            ## eventually pads tensor depending on if prediction of max_length is correct
+            current_shape = function_logits.shape
+            pad_top = max(0, max(func_lens) - current_shape[1])  #
+            padding = (0, 0, 0, pad_right)
+            padded_tensor = torch.nn.functional.pad(function_logits, padding, "constant", 0)
+
+            ## Cuts function_ids down to max programn length
+            function_ids = function_ids.narrow(1, 0, max(func_lens))
+
+            ## Calculates validation loss from predicted programs (padded_tensor) and
+            ## ground truth (function_ids), which are indexed after the starting program
+            loss = torch.nn.CrossEntropyLoss()(padded_tensor.permute(0, 2, 1),
+                                               function_ids[:, 1:])
+            outputs['function_loss'] = loss
 
             func_emb = self.word_dropout(self.function_embeddings(function_ids))
             func_lens = function_ids.size(1) - function_ids.eq(0).long().sum(dim=1)

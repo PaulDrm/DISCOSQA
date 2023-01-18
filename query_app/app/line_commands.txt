@@ -51,17 +51,11 @@ python -m Pretraining.preprocess_ESA --input_dir ./Preprocessing_KG --train_file
 
 https://maven.apache.org/install.html
 
-curl 'https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=8517f6ec%2D785b%2D4bcd%2Dbaf9%2D3fb8b392a729' -o entity_embeddings_3110.pt
-
-curl 'https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=1640221151a7487f8aba59a42f49ce5b&e=mW99HU' -o esa_kb.json
-
-curl 'https://groundflex.sharepoint.com/:u:/r/sites/ESAIOA/Freigegebene%20Dokumente/General/3.%20WPs/WP4%20-%20Knowledge%20Graph/Knowledge%20Graph/Share%20Files/IOA_prediction_data/entity_embeddings_3110.pt?csf=1&web=1&e=mi9V8R'
+python -m transformers.convert_roberta_original_pytorch_checkpoint_to_pytorch \
+			--roberta_checkpoint_path C:/Users/pauld/Projects/IOA/3_10_Keplermodels/esa_ioa_kepler_checkpoints/esa_ioa_concat_checkpoint_best.pt path_to_KEPLER_checkpoint \
+			--pytorch_dump_folder_path ./Kepler \
 
 
-curl 'https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=8517f6ec%2D785b%2D4bcd%2Dbaf9%2D3fb8b392a729' -o entity_embeddings.pt
+python -m Pretraining.transform_Keplercp --roberta_checkpoint_path C:/Users/pauld/Projects/IOA/3_10_Keplermodels/esa_ioa_kepler_checkpoints/esa_ioa_concat --pytorch_dump_folder_path ./Kepler 
 
-https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=1640221151a7487f8aba59a42f49ce5b&e=Ush42i
-
-curl 'https://groundflex.sharepoint.com/sites/ESAIOA/_layouts/15/download.aspx?UniqueId=8517f6ec%2D785b%2D4bcd%2Dbaf9%2D3fb8b392a729'
-
-cu
+python -m Pretraining.transform_Keplercp --roberta_checkpoint_path C:/Users/pauld/Projects/IOA/3_10_Keplermodels/esa_ioa_kepler_checkpoints/esa_ioa_concat_checkpoint_best.pt --pytorch_dump_folder_path ./Kepler 

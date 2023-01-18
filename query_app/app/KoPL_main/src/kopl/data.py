@@ -113,7 +113,6 @@ class KB(object):
 					self.concept_to_entity[c].add(ent_id)
 			else:
 				## Todo changed here to print if entity does not have name, entity id is name
-
 				#print('entity name not specified')
 				#print(ent_id)
 				self.name_to_id[ent_id].append(ent_id)

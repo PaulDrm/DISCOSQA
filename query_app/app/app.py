@@ -79,6 +79,46 @@ def load_vocab(path):
     vocab['id2function'] = invert_dict(vocab['function2id'])
     return vocab
 
+
+def dependencies_parser(program, main):
+    """
+    Adds dependencies to predicted program of RelationPT model,
+    by conditionally self calling function
+    [{'function': 'Find', 'inputs': ['Jewish people']},
+    {'function': 'Relate', 'inputs': ['ethnic group', 'backward']},
+    {'function': 'Find', 'inputs': ['John Houseman']},
+    {'function': 'And',  'inputs': []},
+    {'function': 'Find', 'inputs': ['Academy Award for Best Picture']},
+    {'function': 'And',  'inputs': ['nominated for', 'for work']}]
+    -->
+    [{'function': 'Find', 'inputs': ['Jewish people'], 'dependencies': []},
+     {'function': 'Relate','inputs': ['ethnic group', 'backward'],'dependencies': [0]},
+     {'function': 'Find', 'inputs': ['John Houseman'], 'dependencies': []},{'function': 'And', 'inputs': [], 'dependencies': [1, 2]},
+     {'function': 'Find','inputs': ['Academy Award for Best Picture'],'dependencies': []},
+     {'function': 'And','inputs': ['nominated for', 'for work'],'dependencies': [3, 4]}]
+    Args:
+        program: prediction of RelationPT model
+
+    Returns: string: index for depdencies
+    """
+
+    def get_reverse_index(index, program):
+        return len(program) - index - 1
+
+    for index, function in enumerate(reversed(program)):
+
+        if function['function'] == 'And' or function['function'] == 'Or':
+            second_dependency = dependencies_parser(program[:get_reverse_index(index, program)], 0)
+            print(second_dependency)
+            function.update({'dependencies': [second_dependency - 1, get_reverse_index(index, program) - 1]})
+        elif function['function'] == 'Find' or function['function'] == 'FindAll':
+            function.update({'dependencies': []})
+            if not main:
+                return get_reverse_index(index, program)
+        else:
+            function.update({'dependencies': [get_reverse_index(index, program) - 1]})
+
+
 def parse_program(program):
     """
     Transforms predicted program from neural networks

@@ -137,6 +137,9 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
             # print(correct)
+
+
+
             tot += len(pred_relation)
             gt_functions = batch[3].cpu().tolist()
             for pred, gt in zip(pred_functions, gt_functions):

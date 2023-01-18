@@ -1,7 +1,10 @@
 from KoPL_main.src.kopl.kopl import KoPLEngine
 from Pretraining.utils import *
-from Pretraining.model_rob import RelationPT
+from Pretraining.model import RelationPT
+from Pretraining.model_rob import RelationPT_rob
+
 from transformers import (BertConfig, BertModel, BertTokenizer, BertPreTrainedModel)
+from transformers import (RobertaConfig, RobertaModel,AutoTokenizer, RobertaPreTrainedModel)
 import huggingface_hub
 
 
@@ -75,7 +78,7 @@ def invert_dict(d):
 
 
 def load_vocab(path):
-    vocab = json.load(open(path))
+    vocab = json.load(open(path+"vocab.json"))
     vocab['id2function'] = invert_dict(vocab['function2id'])
     return vocab
 
@@ -123,7 +126,7 @@ def parse_program(program):
     """
     Transforms predicted program from neural networks
     into form that can be excecuted on KOPL database
-    [{'function': 'Find', 'inputs': ['Gaia'], 'dependencies':[]},{'function': 'QueryAttr', 'inputs': ['CosparID'], 'dependencies':[1]}]
+    [{'function': 'Find', 'inputs': ['Gaia'], 'dependencies':[]},{'function': 'QueryAttr', 'inputs': ['CosparID'], 'dependencies':[0]}]
     -->
     engine.QueryAttr(engine.Find('Gaia'), 'CosparID'))
     Args:
@@ -135,27 +138,38 @@ def parse_program(program):
 
     string = ""
     for function in reversed(program):
-        if function.get('dependencies') != []:
-            addition = parse_program(program[:-1])
+        if len(function.get('dependencies')) == 1:  # function.get('dependencies') != []:
+            # addition = parse_program(program[:-1])
+            addition = parse_program(program[:function.get('dependencies')[0] + 1])
             # print(function['function'])
             if function['inputs'] != []:
                 string += addition + ','
                 string = "engine." + function['function'] + '(' + string + ", ".join(
-                    [f"'{inp}'" for inp in function['inputs']]) + ")"
+                    [f'"{inp}"' for inp in function['inputs']]) + ")"
             else:
                 string += addition
                 string = "engine." + function['function'] + '(' + string + ", ".join(
-                    [f"'{inp}'" for inp in function['inputs']]) + ")"
+                    [f'"{inp}"' for inp in function['inputs']]) + ")"
             return string
+
+        elif len(function.get('dependencies')) > 1:
+            # print('lol')
+            addition = "(" + ", ".join([parse_program(program[:dep + 1]) for dep in function.get('dependencies')])
+            # for dep in function.get('dependencies'):
+            #    addition += parse_program(program[:dep+1]) + ", "
+
+            addition = "engine." + function['function'] + addition + ")"
+            string = addition
+            return string
+
         else:
             # print(program)
             # print(function['function'])
             # string += "engine."+function['function'] + "("+"', '".join(function['inputs'])+")"#+','
             # string += "engine."+function['function'] + "("+"', '".join(function['inputs'])+")"#+','
             string += "engine." + function['function'] + '(' + string + ", ".join(
-                [f"'{inp}'" for inp in function['inputs']]) + ")"
+                [f'"{inp}"' for inp in function['inputs']]) + ")"
             return string
-
 
 def load_classes(path,device):
   with open(os.path.abspath(path), 'rb') as f:
@@ -178,7 +192,7 @@ def load_classes(path,device):
   }
   return argument_inputs
 @st.experimental_singleton
-def load_model():
+def load_model(model_type):
 
     """
     Load the model from checkpoint
@@ -189,12 +203,21 @@ def load_model():
     #save_dir = "PaulD/IOA_ft_07112022-33"
     save_dir = "PaulD/IOA_ft_17112022-33"
     save_dir = "PaulD/IOA_ft_latest"
-    config_class, model_class = (BertConfig, RelationPT)
-    print("load ckpt from {}".format(save_dir))
-    config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
-    model = model_class.from_pretrained(save_dir, config=config)
-    path = './processed/vocab.json'
-    model.config.vocab = load_vocab(path)
+    if model_type == "roberta":
+        config_class, model_class, tokenizer_class = (RobertaConfig, RelationPT_rob, AutoTokenizer)
+        config = config_class.from_pretrained(save_dir)  # , num_labels=len(label_list))
+        # config.update({'vocab': vocab})
+        #tokenizer = tokenizer_class.from_pretrained('roberta-base', do_lower_case=False)
+        # tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path, do_lower_case=False)
+        # tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path, do_lower_case = False)
+        model = model_class.from_pretrained(save_dir, config=config)
+    else:
+        config_class, model_class = (BertConfig, RelationPT)
+        print("load ckpt from {}".format(save_dir))
+        config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
+        model = model_class.from_pretrained(save_dir, config=config)
+        #path = './processed/vocab.json'
+        model.config.vocab = load_vocab(path)
 
     with open(huggingface_hub.hf_hub_download(save_dir, 'entity_embeddings.pt'), 'rb') as f:
         #embeddings = pickle.load(f)
@@ -257,7 +280,7 @@ def load_embeddings(input_dir, _model, device):
 
 @st.experimental_singleton
 def load_tokenizer(path):
-    tokenizer_class = BertTokenizer
+    tokenizer_class = AutoTokenizer
     tokenizer = tokenizer_class.from_pretrained(path, do_lower_case=False)
     return tokenizer
 
@@ -291,7 +314,8 @@ def one_hop(engine, entity_ids, streamlit_state):
             nodes = append_node(nodes, node)
             for count, att in enumerate(entity_inf['attributes']):
                 node = Node(id=entity_id + str(count),
-                                  label=att['key']+ ": " +insert_newlines(str(att['value'].value)[0:200],every=64),
+                                  #label=att['key']+ ": " +insert_newlines(str(att['value'].value)[0:200],every=64) + att.get('unit', ),
+                                  label = str(att['key'])+ " "+ str(att['value'].value)+" "+ att['value'].unit if att['value'].unit != None else str(att['key'])+ " "+ str(att['value'].value),
                                   size=10,
                                   color="318ce7",
                                   shape="dot"
@@ -348,7 +372,6 @@ def set_state_if_absent(key, value):
         st.session_state[key] = value
 
 
-
 def main():
     ################################################################
     ##### Load KG engine
@@ -359,13 +382,16 @@ def main():
 
     ##### Load Model
     # save_dir = '/content/drive/MyDrive/IOA/ProgramTransfer/models/checkpoint-14399'
-    tokenizer =load_tokenizer('bert-base-cased')
+    #tokenizer =load_tokenizer('bert-base-cased')
+    tokenizer = load_tokenizer("PaulD/IOA_ft_latest")
 
-    path = './processed/vocab.json'
-    vocab = load_vocab(path)
+    input_dir = './processed_rob/'
+    #path = './processed/vocab.json'
+    vocab = load_vocab(input_dir)
     device = 'cpu'#torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    input_dir = './processed/'
-    model = load_model()
+    #input_dir = './processed/'
+    #input_dir = './processed_rob/'
+    model = load_model("roberta")
     sutime = load_sftipars()
     model.config.vocab = vocab
 
@@ -407,20 +433,22 @@ def main():
     load_embeddings(input_dir, model,device)
 
     ### Train dataset for random questions
-    with open("./test_data/IOA_test.json", 'r') as f:
-        df = pd.read_json(f)
+    # with open("./test_data/IOA_test.json", 'r') as f:
+    #     df = pd.read_json(f)
+
+    with open("./IOA_test.json", 'r') as f:
+         df = pd.read_json(f)
 
 
+    st.title("Query DiscosWeb database with normal language")
 
-    st.title("Demo for querying KG with ProgramTransfer method")
-
-    user = st.text_input("Enter user name", "")
+    user = st.text_input("Enter user name for feedback purpose", "")
 
     st.session_state.results['user'] = user
 
-    st.markdown(""" *Note: do not use keywords, but full-fledged questions.*""")
+    st.markdown(""" *Note: Try to not use keywords, but full-fledged questions.*""")
     # Enter a prediction of a model for querying the KB
-    query = st.text_input('Enter a query for the KG', value=st.session_state.question, on_change=reset_results)
+    query = st.text_input('Enter a query for the data base', value=st.session_state.question, on_change=reset_results)
     #print(query)
 
     col1, col2 = st.columns(2)
@@ -459,20 +487,21 @@ def main():
         st.session_state.question = query
 
         ## Get prediction
-        inputs = tokenizer([query], return_tensors='pt', padding=True)
+        inputs = tokenizer([query], return_tensors='pt',padding='max_length', max_length=42, return_token_type_ids = True)
         inputs = {key: inputs[key].to(device) for key in inputs.keys()}
         object, outputs = model.demo(**inputs, relation_embeddings=st.session_state.relation_embeddings, concept_embeddings=st.session_state.concept_embeddings,attribute_embeddings=st.session_state.attribute_embeddings)#[0]
-
+        print(object)
         ## Transform prediction
         object = object[0]
+
         #outputs = outputs[0]
         ##### Dependencies
-        for count, function in enumerate(object):
-            if count == 0:
-                function.update({'dependencies': []})
-            else:
-                function.update({'dependencies': [-1 + count]})
-
+        # for count, function in enumerate(object):
+        #     if count == 0:
+        #         function.update({'dependencies': []})
+        #     else:
+        #         function.update({'dependencies': [-1 + count]})
+        dependencies_parser(object, 1)
 
         ## Predict values
         ##### Time values
@@ -625,7 +654,7 @@ def main():
         st.write(f'Results for the query "{query} are: ')
         st.session_state.results['answer'] = str(results)
         if program[-1]['function'] == 'QueryAttr':
-            st.write([result.value for result in results])
+            st.write([str(result.value) + str(result.unit) if result.unit != None else str(result.value) for result in results ])
         elif what_check:
             st.write([engine.kb.entities[id]['name'] for id in results[0]])
         #elif len(results) == 0:
@@ -882,7 +911,7 @@ def main():
                     entity_ids = entity_ids + engine.kb.name_to_id[program[idx]['inputs'][0]]
 
             st.session_state.nodes, st.session_state.edges = one_hop(engine, entity_ids, st.session_state)
-
+            print([node.label for node in st.session_state.nodes])
             config = Config(width=900,
                             height=900,
                             # **kwargs

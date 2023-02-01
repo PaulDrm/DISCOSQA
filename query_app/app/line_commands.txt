@@ -12,6 +12,8 @@ python -m  Preprocessing_KG.transform_graphdb
 
 python -m Pretraining.preprocess_ESA --train_file_path ./test_data/IOA_test.json --output_dir ./test_data --input_dir ./test_data
 
+python -m Pretraining.preprocess_ESA --train_file_path ./processed/ioa_valid_1001.json --output_dir ./processed --input_dir ./Preprocessing_KG --valid_file_path ./processed/ioa_valid_1001.json
+
 python -m Pretraining.eval --models_dir ./train_ioa_kep_concat --data_dir ./processed_ioa/
 
 python -m Pretraining.eval --models_dir ./train_pret_cosmic --data_dir ./processed_ioa_rob/

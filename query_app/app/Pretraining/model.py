@@ -9,6 +9,7 @@ from Pretraining.BiGRU import GRU, BiGRU
 import pickle
 import re
 import numpy as np
+import copy
 
 from sys import implementation
 import torch
@@ -194,9 +195,12 @@ class RelationPT(BertPreTrainedModel):
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.num_functions = len(config.vocab['function2id'])
         self.function_embeddings = nn.Embedding(self.num_functions, config.hidden_size)
-        self.function_decoder = GRU(config.hidden_size, config.hidden_size, num_layers=1, dropout=0.2)
+        #self.function_decoder = GRU(config.hidden_size, config.hidden_size, num_layers=1, dropout=0.2)
+        self.function_decoder = GRU(config.hidden_size, config.hidden_size, num_layers=config.dec_hidden_layers, dropout=0.2)
+
         self.function_classifier = nn.Sequential(
             nn.Linear(config.hidden_size, 1024),
+            nn.LayerNorm(1024),
             nn.ReLU(),
             nn.Linear(1024, self.num_functions),
         )
@@ -207,18 +211,21 @@ class RelationPT(BertPreTrainedModel):
 
         self.relation_classifier = nn.Sequential(
             nn.Linear(config.hidden_size, 1024),
+            nn.LayerNorm(1024),
             nn.ReLU(),
             nn.Linear(1024, config.hidden_size),
         )
 
         self.concept_classifier = nn.Sequential(
             nn.Linear(config.hidden_size, 1024),
+            nn.LayerNorm(1024),
             nn.ReLU(),
             nn.Linear(1024, config.hidden_size),
         )
         # ## Todo classifier changed
         self.entity_classifier = nn.Sequential(
             nn.Linear(config.hidden_size, 1024),
+            nn.LayerNorm(1024),
             nn.ReLU(),
             nn.Linear(1024, config.hidden_size),
         )
@@ -226,6 +233,7 @@ class RelationPT(BertPreTrainedModel):
         # ## Todo classifier changed
         self.attribute_classifier = nn.Sequential(
             nn.Linear(config.hidden_size, 1024),
+            nn.LayerNorm(1024),
             nn.ReLU(),
             nn.Linear(1024, config.hidden_size),
         )
@@ -237,6 +245,7 @@ class RelationPT(BertPreTrainedModel):
 
         self.operation_classifier = nn.Sequential(
             nn.Linear(config.hidden_size, 1024),
+            nn.LayerNorm(1024),
             nn.ReLU(),
             nn.Linear(1024, 5),
         )
@@ -244,33 +253,29 @@ class RelationPT(BertPreTrainedModel):
         self.hidden_size = config.hidden_size
         self.init_weights()
 
-    def demo(self, input_ids, token_type_ids, attention_mask, relation_embeddings = None, attribute_embeddings = None,concept_embeddings = None):
+    def demo(self, input_ids, token_type_ids, attention_mask, relation_embeddings=None, attribute_embeddings=None,
+             concept_embeddings=None):
 
         with torch.no_grad():
-            #input_ids = inputs['input_ids']
-            #attention_mask = inputs['attention_mask']
-            #token_type_ids = inputs['token_type_ids']
+            # input_ids = inputs['input_ids']
+            # attention_mask = inputs['attention_mask']
+            # token_type_ids = inputs['token_type_ids']
 
-            ## Embbed query
             outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
             sequence_output = outputs[0]  # [bsz, max_seq_length, hidden_size]
             pooler_output = outputs[1]  # [bsz, hidden_size]
             outputs = {}
-            ## additional variables
             sequence_output = self.dropout(sequence_output)
             bsz = input_ids.size(0)
             device = input_ids.device
             start_id = self.vocab['function2id']['<START>']
             end_id = self.vocab['function2id']['<END>']
             finished = torch.zeros((bsz,)).byte().to(device)  # record whether <END> is produced
-            ##set start
             latest_func = torch.LongTensor([start_id] * bsz).to(device)  # [bsz, ]
             programs = [latest_func]
             last_h = pooler_output.unsqueeze(0)
             for i in range(self.max_program_len):
-                ## Get last program embedding
                 p_word_emb = self.word_dropout(self.function_embeddings(latest_func)).unsqueeze(1)  # [bsz, 1, dim_w]
-                ## Forward one step GRU
                 p_word_h, last_h = self.function_decoder.forward_one_step(p_word_emb, last_h)  # [bsz, 1, dim_h]
                 # attention over question words
                 attn = torch.softmax(torch.bmm(p_word_h, sequence_output.permute(0, 2, 1)), dim=2)  # [bsz, 1, max_q]
@@ -323,9 +328,9 @@ class RelationPT(BertPreTrainedModel):
                             if function == self.vocab['function2id']['Relate']:
                                 argument_pos.append([idx])
                         elif pred_type == 'attribute':
-                            #if function == self.vocab['function2id']['QueryAttr']:#or :
+                            # if function == self.vocab['function2id']['QueryAttr']:#or :
                             if any([function == self.vocab['function2id'][qualifier] for qualifier in
-                                     ['QueryAttr', 'FilterYear', 'FilterDate', 'FilterNum']]):
+                                    ['QueryAttr', 'FilterYear', 'FilterDate', 'FilterNum']]):
                                 argument_pos.append([idx])
                         elif pred_type == 'operator':
                             if any([function == self.vocab['function2id'][qualifier] for qualifier in
@@ -357,14 +362,15 @@ class RelationPT(BertPreTrainedModel):
                 # print("")
                 # print("Printing tensors for hidden layer "+ f"{pred_type}")
                 # print(arg_f_word_h.shape)
-                #print(input_embeddings)
+                # print(input_embeddings)
 
-                #if pred_type == 'operator':
+                # if pred_type == 'operator':
 
                 if pred_type == 'concept':
                     class_embeddings = self.concept_classifier(input_embeddings)  ##[num_args, dim_h]
                 elif pred_type == 'entity':
-                    class_embeddings = self.entity_classifier(input_embeddings)  # input_embeddings#model.entity_classifier(input_embeddings)
+                    class_embeddings = self.entity_classifier(
+                        input_embeddings)  # input_embeddings#model.entity_classifier(input_embeddings)
                 elif pred_type == 'attribute':
                     class_embeddings = self.attribute_classifier(input_embeddings)
                     # class_embeddings = model.relation_classifier(input_embeddings)
@@ -377,8 +383,6 @@ class RelationPT(BertPreTrainedModel):
                         [[argument_pos[0] for argument_pos in argument_map] for argument_map in arguments_maps],
                         torch.argmax(operation_logits, dim=2).cpu().numpy()]
                     return pred_concepts, arg_f_word_h, operation_logits
-
-
 
                     # print("")
                 # print("Printing tensors for input embeddings "+ f"{pred_type}")
@@ -396,11 +400,13 @@ class RelationPT(BertPreTrainedModel):
                     [[argument_pos[0] for argument_pos in argument_map] for argument_map in arguments_maps],
                     torch.argmax(argument_logits, dim=2).cpu().numpy()]
                 return pred_concepts, arg_f_word_h, argument_logits
+
             # pred_concepts = pred_arguments(programs, f_word_h, concept_embeddings, 'concept')
             outputs['pred_attributes'], hidden_att, att_embeds = pred_arguments(programs, f_word_h,
-                                                                                    attribute_embeddings,
-                                                                                    'attribute')
-            outputs['pred_entities'], hidden_ent, ent_embeds = pred_arguments(programs, f_word_h, self.entity_embeddings,
+                                                                                attribute_embeddings,
+                                                                                'attribute')
+            outputs['pred_entities'], hidden_ent, ent_embeds = pred_arguments(programs, f_word_h,
+                                                                              self.entity_embeddings,
                                                                               'entity')
 
             outputs['pred_relations'], _, _ = pred_arguments(programs, f_word_h, relation_embeddings, 'relation')
@@ -408,7 +414,7 @@ class RelationPT(BertPreTrainedModel):
 
             outputs['pred_operators'], _, _ = pred_arguments(programs, f_word_h, "", 'operator')
 
-            #outputs['pred_values'],_,_ = pred_arguments(programs, "","", 'values')
+            # outputs['pred_values'],_,_ = pred_arguments(programs, "","", 'values')
 
         ## Transforms raw predictions into KG entities
         ## Calculated Topk predicted indices of entities
@@ -425,12 +431,10 @@ class RelationPT(BertPreTrainedModel):
         transform2 = [[list(zip(scores[0], scores[1])) for scores in output] for output in transform1]
         outputs['topk_entities'] = [outputs['pred_entities'][0], transform2]
 
-
-
         # outputs['pred_entities'][1] = [[self.config.vocab['id2entity'][pred[0]]] for pred in outputs['pred_entities'][1]
         # outputs['pred_concepts'][1] = [[self.config.vocab['id2concept'][pred[0]]] for pred in outputs['pred_concepts'][1]]
         # outputs['pred_attributes'][1] = [[self.config.vocab['id2attribute'][pred[0]]] for pred in outputs['pred_attributes'][1]]
-        #outputs['pred_relations'][1] = [[self.config.vocab['id2relation'][pred[0]]] for pred in outputs['pred_relations'][1]]
+        # outputs['pred_relations'][1] = [[self.config.vocab['id2relation'][pred[0]]] for pred in outputs['pred_relations'][1]]
 
         ## Transform indices into entities
         outputs['pred_entities'][1] = [list(map(lambda entity: self.config.vocab['id2entity'][entity], group)) for
@@ -440,18 +444,18 @@ class RelationPT(BertPreTrainedModel):
                                        group in outputs['pred_concepts'][1]]
 
         outputs['pred_attributes'][1] = [list(map(lambda entity: self.config.vocab['id2attribute'][entity], group)) for
-                                       group in outputs['pred_attributes'][1]]
+                                         group in outputs['pred_attributes'][1]]
 
         outputs['pred_relations'][1] = [list(map(lambda entity: self.config.vocab['id2relation'][entity], group)) for
-                                         group in outputs['pred_relations'][1]]
+                                        group in outputs['pred_relations'][1]]
         ### Todo might need to be changed
-        #outputs['pred_operators'][1] = [[self.config.vocab['id2operator'][pred[0]]] for pred in
+        # outputs['pred_operators'][1] = [[self.config.vocab['id2operator'][pred[0]]] for pred in
         #                                outputs['pred_operators'][1]]
 
         outputs['pred_operators'][1] = [list(map(lambda entity: self.config.vocab['id2operator'][entity], group)) for
                                         group in outputs['pred_operators'][1]]
-        #print(outputs['pred_functions'])
-        #print(self.config.vocab['id2function'])
+        # print(outputs['pred_functions'])
+        # print(self.config.vocab['id2function'])
         ## Creates dictionary structure of prediction [{'function':"Find", 'inputs': []}, {'function':"Relate", 'inputs':[]}, ...]
         parsed = []
         predictions = [[self.config.vocab['id2function'][function.item()] for function in program] for program in
@@ -463,11 +467,11 @@ class RelationPT(BertPreTrainedModel):
             temp = [{'function': function, 'inputs': []} for function in prediction[1:prediction.index('<END>')]]
 
             parsed.append(temp)
-            #print({'function':function,'input':[]})
+            # print({'function':function,'input':[]})
 
         ## Fills dictionary structure with right inputs  [{'function':"Find", 'inputs': ['COS B']}, {'function':"Relate", 'inputs':['LaunchVehicle' ]}, ...]
         ## Do not include following keys in prediction
-        for key in list(outputs.keys() - {'pred_functions','pred_operators', 'topk_entities'}):
+        for key in list(outputs.keys() - {'pred_functions', 'pred_operators', 'topk_entities'}):
             for num_batch, parse in enumerate(parsed):
 
                 ## for each argument in prediction
@@ -477,8 +481,8 @@ class RelationPT(BertPreTrainedModel):
                         ## add argument to right function
                         parse[pos - 1]['inputs'] = parse[pos - 1]['inputs'] + [outputs[key][1][num_batch][argument_num]]
         ## Insert operators last to retain position required for KG query
-        key ='pred_operators'
-        #print(outputs[key])
+        key = 'pred_operators'
+        # print(outputs[key])
         for num_batch, parse in enumerate(parsed):
 
             ## for each argument in prediction
@@ -493,7 +497,7 @@ class RelationPT(BertPreTrainedModel):
 
     def forward(self, concept_inputs=None, relation_inputs=None, entity_inputs=None, attribute_inputs=None,
                 input_ids=None, token_type_ids=None, attention_mask=None, function_ids=None, relation_info=None,
-                concept_info=None, entity_info=None, attribute_info=None, operator_info= None):
+                concept_info=None, entity_info=None, attribute_info=None, operator_info=None):
 
         ## encode query with base BERT model
         outputs = self.bert(input_ids=input_ids, attention_mask=attention_mask, token_type_ids=token_type_ids)
@@ -501,6 +505,7 @@ class RelationPT(BertPreTrainedModel):
         pooler_output = outputs[1]  # [bsz, hidden_size]
         outputs = {}
         sequence_output = self.dropout(sequence_output)
+
         # bsz = input_ids.size(0)
 
         def train(kb_inputs, kb_info, sequence_output, pooler_output, function_ids, pred_type):
@@ -523,8 +528,13 @@ class RelationPT(BertPreTrainedModel):
             ## calculate logits of function predictor
             function_logits = self.function_classifier(f_word_h)
             outputs['function_logits'] = function_logits
+
+            ## Change padding function to -100 to ignore in loss calculation
+            mask_func_ids = copy.deepcopy(function_ids)
+            mask_func_ids[mask_func_ids == 0] = -100
+            # function_ids[function_ids == 0] = -100
             outputs['function_loss'] = nn.CrossEntropyLoss()(function_logits.permute(0, 2, 1)[:, :, :-1],
-                                                             function_ids[:, 1:])
+                                                             mask_func_ids[:, 1:])
             # PREDICT KB inputs
             ## sets the position of the to be predicted entries in the KB and their id in the vocab of the KB
             bsz = function_ids.size(0)
@@ -539,10 +549,10 @@ class RelationPT(BertPreTrainedModel):
             if pred_type == 'operation':
                 operation_logits = self.operation_classifier(f_word_h)
                 outputs['operator_logits'] = operation_logits
-                #print('operator_logits', operation_logits.size())
+                # print('operator_logits', operation_logits.size())
                 # print('operator_id', kb_id.size())
                 kb_id = kb_id.squeeze(-1)
-                outputs['operator_loss'] = nn.CrossEntropyLoss()(operation_logits,kb_id)
+                outputs['operator_loss'] = nn.CrossEntropyLoss()(operation_logits, kb_id)
                 return outputs
 
             ## else embed the to be linked entities / relations / attributes / etc.
@@ -558,8 +568,8 @@ class RelationPT(BertPreTrainedModel):
                 kb_logits = f_word_h @ embeddings_kb.t()  # [bsz, num_relationis]
                 outputs['entity_logits'] = kb_logits
                 kb_id = kb_id.squeeze(-1)
-                #print('entity_logits', kb_logits.size())
-                #print('entity_id', kb_id.size())
+                # print('entity_logits', kb_logits.size())
+                # print('entity_id', kb_id.size())
                 outputs['entity_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 return outputs
 
@@ -588,12 +598,10 @@ class RelationPT(BertPreTrainedModel):
                 kb_logits = f_word_h @ embeddings_kb.t()  # [bsz, num_relationis]
                 outputs['attribute_logits'] = kb_logits
                 kb_id = kb_id.squeeze(-1)
-                #print('relation_logits',  kb_logits.size())
-                #print('relation_id', kb_id.size())
+                # print('relation_logits',  kb_logits.size())
+                # print('relation_id', kb_id.size())
                 outputs['attribute_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 return outputs
-
-
 
         def evaluate(kb_inputs, kb_info, sequence_output, pooler_output, function_ids, pred_type):
 
@@ -606,8 +614,9 @@ class RelationPT(BertPreTrainedModel):
             finished = torch.zeros((bsz,)).byte().to(device)  # record whether <END> is produced
             latest_func = torch.LongTensor([start_id] * bsz).to(device)  # [bsz, ]
             programs = [latest_func]
-            logits = []
+
             last_h = pooler_output.unsqueeze(0)
+            function_logits = []
             for i in range(self.max_program_len):
                 p_word_emb = self.word_dropout(self.function_embeddings(latest_func)).unsqueeze(1)  # [bsz, 1, dim_w]
                 p_word_h, last_h = self.function_decoder.forward_one_step(p_word_emb, last_h)  # [bsz, 1, dim_h]
@@ -619,6 +628,7 @@ class RelationPT(BertPreTrainedModel):
 
                 # predict function
                 logit_func = self.function_classifier(p_word_h).squeeze(1)  # [bsz, num_func]
+                function_logits.append(logit_func)
 
                 latest_func = torch.argmax(logit_func, dim=1)  # [bsz, ]
                 programs.append(latest_func)
@@ -628,9 +638,37 @@ class RelationPT(BertPreTrainedModel):
                     break
             programs = torch.stack(programs, dim=1)  # [bsz, max_prog]
             outputs['pred_functions'] = programs
-
-            func_emb = self.word_dropout(self.function_embeddings(function_ids))
+            # mask_func_ids = copy.deepcopy(function_ids)
+            # mask_func_ids[mask_func_ids == 0] = -100
+            function_ids[function_ids == 0] = -100
             func_lens = function_ids.size(1) - function_ids.eq(0).long().sum(dim=1)
+
+            ## Transforms list of logit tensor for each time step to tensor
+            function_logits = torch.stack(function_logits, dim=1)
+
+            ## eventually pads tensor depending on if prediction of max_length is correct
+            current_shape = function_logits.shape
+            pad_top = max(0, max(func_lens) - current_shape[1])  #
+            padding = (0, 0, 0, pad_top)
+            padded_tensor = torch.nn.functional.pad(function_logits, padding, "constant", 0)
+
+            ## eventually truncates predictions down to max length of functions -1
+            padded_tensor = padded_tensor.narrow(1, 0, max(func_lens - 1))
+
+            ## Cuts function_ids down to max programn length
+            function_ids = function_ids.narrow(1, 0, max(func_lens))
+
+            ## Calculates validation loss from predicted programs (padded_tensor) and
+            ## ground truth (function_ids), which are indexed after the starting program
+            # loss = torch.nn.CrossEntropyLoss()(padded_tensor.permute(0, 2, 1),
+            #                                   mask_func_ids[:, 1:])
+            loss = torch.nn.CrossEntropyLoss()(padded_tensor.permute(0, 2, 1),
+                                               function_ids[:, 1:])
+            outputs['function_loss'] = loss
+
+            function_ids[function_ids == -100] = 0
+            func_emb = self.word_dropout(self.function_embeddings(function_ids))
+            # func_lens = function_ids.size(1) - function_ids.eq(0).long().sum(dim=1)
             f_word_h, _, _ = self.function_decoder(func_emb, func_lens.cpu(),
                                                    h_0=pooler_output.unsqueeze(0))  # [bsz, max_prog, dim_h]
             attn = torch.softmax(torch.bmm(f_word_h, sequence_output.permute(0, 2, 1)), dim=2)  # [bsz, max_prog, max_q]
@@ -652,7 +690,7 @@ class RelationPT(BertPreTrainedModel):
                 operation_logits = self.operation_classifier(f_word_h)
                 outputs['operator_logits'] = operation_logits
                 outputs['pred_operator'] = torch.argmax(operation_logits, dim=1)
-                #outputs['operator_loss'] = nn.CrossEntropyLoss()(operation_logits, kb_id)
+                # outputs['operator_loss'] = nn.CrossEntropyLoss()(operation_logits, kb_id)
                 return outputs
 
             if pred_type == 'entity':
@@ -672,8 +710,8 @@ class RelationPT(BertPreTrainedModel):
                 # print('entity_id', kb_id.size())
 
                 outputs['pred_entity'] = torch.argmax(kb_logits, dim=1)
-                #kb_id = kb_id.squeeze(-1)
-                #outputs['entity_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
+                # kb_id = kb_id.squeeze(-1)
+                # outputs['entity_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 return outputs
 
             elif pred_type == 'concept':
@@ -683,7 +721,7 @@ class RelationPT(BertPreTrainedModel):
                 # kb_id = kb_id.squeeze(-1)
                 # print('concept_logits', kb_logits.size())
                 # print('concept_id', kb_id.size())
-                #outputs['concept_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
+                # outputs['concept_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 outputs['pred_concept'] = torch.argmax(kb_logits, dim=1)
                 return outputs
 
@@ -694,7 +732,7 @@ class RelationPT(BertPreTrainedModel):
                 # kb_id = kb_id.squeeze(-1)
                 # print('relation_logits',  kb_logits.size())
                 # print('relation_id', kb_id.size())
-                #outputs['relation_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
+                # outputs['relation_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 outputs['pred_relation'] = torch.argmax(kb_logits, dim=1)
                 return outputs
 
@@ -705,7 +743,7 @@ class RelationPT(BertPreTrainedModel):
                 # kb_id = kb_id.squeeze(-1)
                 # print('relation_logits',  kb_logits.size())
                 # print('relation_id', kb_id.size())
-                #outputs['attribute_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
+                # outputs['attribute_loss'] = nn.CrossEntropyLoss()(kb_logits, kb_id)
                 outputs['pred_attribute'] = torch.argmax(kb_logits, dim=1)
                 return outputs
 
@@ -736,10 +774,10 @@ class RelationPT(BertPreTrainedModel):
             outputs = evaluate(concept_inputs, concept_info, sequence_output, pooler_output, function_ids, 'concept')
 
         if attribute_info is not None and attribute_info[1] is None:
-            outputs = evaluate(attribute_inputs, attribute_info, sequence_output, pooler_output, function_ids,'attribute')
+            outputs = evaluate(attribute_inputs, attribute_info, sequence_output, pooler_output, function_ids,
+                               'attribute')
 
         if operator_info is not None and operator_info[1] is None:
             outputs = evaluate('', operator_info, sequence_output, pooler_output, function_ids, 'operation')
 
         return outputs
-

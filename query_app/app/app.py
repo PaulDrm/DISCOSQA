@@ -112,7 +112,7 @@ def dependencies_parser(program, main):
 
         if function['function'] == 'And' or function['function'] == 'Or':
             second_dependency = dependencies_parser(program[:get_reverse_index(index, program)], 0)
-            print(second_dependency)
+            #print(second_dependency)
             function.update({'dependencies': [second_dependency - 1, get_reverse_index(index, program) - 1]})
         elif function['function'] == 'Find' or function['function'] == 'FindAll':
             function.update({'dependencies': []})
@@ -217,7 +217,7 @@ def load_model(model_type):
         config = config_class.from_pretrained(save_dir)  # , num_labels = len(label_list))
         model = model_class.from_pretrained(save_dir, config=config)
         #path = './processed/vocab.json'
-        model.config.vocab = load_vocab(path)
+        #model.config.vocab = load_vocab(path)
 
     with open(huggingface_hub.hf_hub_download(save_dir, 'entity_embeddings.pt'), 'rb') as f:
         #embeddings = pickle.load(f)
@@ -301,8 +301,9 @@ def one_hop(engine, entity_ids, streamlit_state):
         if not node.id in [n.id for n in nodes]:
             nodes.append(node)
         else:
-            print('Skipping insertion of node')
-            print(node.id)
+            #print('Skipping insertion of node')
+            #print(node.id)
+            pass
         return nodes
 
     for entity_id in entity_ids:
@@ -382,17 +383,21 @@ def main():
 
     ##### Load Model
     # save_dir = '/content/drive/MyDrive/IOA/ProgramTransfer/models/checkpoint-14399'
-    #tokenizer =load_tokenizer('bert-base-cased')
-    tokenizer = load_tokenizer("PaulD/IOA_ft_latest")
-
-    input_dir = './processed_rob/'
+    tokenizer =load_tokenizer('bert-base-cased')
+    #tokenizer = load_tokenizer("PaulD/IOA_ft_latest")
+    model_type = 'bert'
+    if model_type =='roberta':
+        input_dir = './processed_rob/'
+    else:
+        input_dir = './processed_bert/'
     #path = './processed/vocab.json'
-    vocab = load_vocab(input_dir)
+
     device = 'cpu'#torch.device("cuda" if torch.cuda.is_available() else "cpu")
     #input_dir = './processed/'
     #input_dir = './processed_rob/'
-    model = load_model("roberta")
+    model = load_model(model_type)
     sutime = load_sftipars()
+    vocab = load_vocab(input_dir)
     model.config.vocab = vocab
 
     ################################################################
@@ -413,6 +418,10 @@ def main():
     set_state_if_absent('comment', '')
     set_state_if_absent('user', '')
 
+    set_state_if_absent('run_query', False)
+    set_state_if_absent('changed', False)
+    set_state_if_absent('random_question_requested', False)
+
     ## KG visualisation
     set_state_if_absent("nodes", [])
     set_state_if_absent("edges", [])
@@ -426,21 +435,23 @@ def main():
         #st.session_state.changed = False
         st.session_state.results = {}
         st.session_state.feedback = False
-        st.session_state.comment = ''
+        #st.session_state.comment = ''
         st.session_state.program = []
+        #st.session_state.question = ""
+        st.session_state.run_query = True
+        st.session_state.changed = True
+        #st.experimental_rerun()
 
-
-    load_embeddings(input_dir, model,device)
 
     ### Train dataset for random questions
     # with open("./test_data/IOA_test.json", 'r') as f:
     #     df = pd.read_json(f)
 
-    with open("./IOA_test.json", 'r') as f:
+    with open("./validated_test_queries.json", 'r') as f:
          df = pd.read_json(f)
 
-
-    st.title("Query DiscosWeb database with normal language")
+    print('RESET')
+    st.title("Query DiscosWeb database with natural language")
 
     user = st.text_input("Enter user name for feedback purpose", "")
 
@@ -448,9 +459,15 @@ def main():
 
     st.markdown(""" *Note: Try to not use keywords, but full-fledged questions.*""")
     # Enter a prediction of a model for querying the KB
-    query = st.text_input('Enter a query for the data base', value=st.session_state.question, on_change=reset_results)
-    #print(query)
+    question = st.text_input('Enter a query for the data base', value=st.session_state.question, on_change=reset_results)
 
+    if question != st.session_state.question:
+        st.session_state.question = question
+        #st.session_state.changed = False
+        st.experimental_rerun()
+
+    #print(query)
+    #st.session_state.question = query
     col1, col2 = st.columns(2)
     col1.markdown("<style>.stButton button {width:100%;}</style>", unsafe_allow_html=True)
     col2.markdown("<style>.stButton button {width:100%;}</style>", unsafe_allow_html=True)
@@ -473,24 +490,33 @@ def main():
         # Unfortunately necessary as the Random Question button is _below_ the textbox
         #raise st.scriptrunner.script_runner.RerunException(st.scriptrunner.script_requests.RerunData(None))
         st.experimental_rerun()
-    st.session_state.random_question_requested = False
+    #st.session_state.random_question_requested = False
+
+    # run_query = (
+    #               run_pressed or query != st.session_state.question   #st.session_state.results['query']
+    #             ) and not st.session_state.random_question_requested
 
     run_query = (
-                  run_pressed or query != st.session_state.question   #st.session_state.results['query']
-                ) and not st.session_state.random_question_requested
+                  run_pressed or st.session_state.run_query
+                ) or st.session_state.random_question_requested
 
     #st.session_state.results['question'] = query
-
+    query = st.session_state.question
+    print(st.session_state.run_query)
+    print(run_query)
     # Get results for query
     if run_query and query:
+        #st.session_state.results = {}
+        load_embeddings(input_dir, model, device)
         #reset_results()
-        st.session_state.question = query
-
+        #st.session_state.question = query
+        st.session_state.random_question_requested = False
+        st.session_state.run_query = False
         ## Get prediction
-        inputs = tokenizer([query], return_tensors='pt',padding='max_length', max_length=42, return_token_type_ids = True)
+        inputs = tokenizer([query], return_tensors='pt', padding=True, return_token_type_ids = True)#tokenizer([query], return_tensors='pt',padding='max_length', max_length=42, return_token_type_ids = True)
         inputs = {key: inputs[key].to(device) for key in inputs.keys()}
         object, outputs = model.demo(**inputs, relation_embeddings=st.session_state.relation_embeddings, concept_embeddings=st.session_state.concept_embeddings,attribute_embeddings=st.session_state.attribute_embeddings)#[0]
-        print(object)
+        #print(object)
         ## Transform prediction
         object = object[0]
 
@@ -574,21 +600,23 @@ def main():
 
 
     comment = st.text_area('Additional comment for feedback',"", key = "comment", on_change =clear_feedback)
-
+    print(st.session_state.comment)
+    #print(comment)
     def clear_text():
 
-        st.session_state.results['comment'] = comment
+        st.session_state.results['comment'] = deepcopy(st.session_state.comment)
         st.session_state.comment = ""
 
     button_col1, button_col2, _ = st.columns([1, 1, 6])
     button1 = button_col1.button("👍", help="Correct answer",  on_click=clear_text)
     button2 = button_col2.button("👎", help="Wrong answer", on_click=clear_text)
-
+    #print(st.session_state.results['comment'])
 
     if button1 and not st.session_state.feedback:  # key=f"{result['context']}{count}1",
         print('saving results...')
         st.write("Thanks for your feedback!")
-        print(st.session_state.results)
+        #print(st.session_state.results)
+        print(st.session_state.results['comment'])
         #st.session_state.comment = ""
         st.session_state.results['time'] = str(time.time())
         st.session_state.results['label'] = "True"
@@ -648,7 +676,7 @@ def main():
 
         #if st.session_state.program != program:
         #    st.session_state.program = program
-        print(program)
+        #print(program)
         results = eval(parse_program(program))
         st.write(f"Predicted program: {str(st.session_state.results['topk_results'])}")
         st.write(f'Results for the query "{query} are: ')
@@ -667,7 +695,7 @@ def main():
             index = index_y
 
             current = program
-            print(current)
+            #print(current)
             programs = []
             programs.append({current[index]['inputs'][0]: current[index]['inputs'][1], 'result': eval(parse_program(current))})
             # st.write(int(current[index]['inputs'][1]))
@@ -911,7 +939,7 @@ def main():
                     entity_ids = entity_ids + engine.kb.name_to_id[program[idx]['inputs'][0]]
 
             st.session_state.nodes, st.session_state.edges = one_hop(engine, entity_ids, st.session_state)
-            print([node.label for node in st.session_state.nodes])
+            #print([node.label for node in st.session_state.nodes])
             config = Config(width=900,
                             height=900,
                             # **kwargs

@@ -1,6 +1,6 @@
 import json
 import torch
-from transformers import *
+from transformers import AutoTokenizer
 import argparse
 import numpy as np
 from tqdm import tqdm
@@ -12,8 +12,7 @@ from tqdm import tqdm
 from Pretraining.model import RelationPT
 ## Todo changed
 #tokenizer = BertTokenizer.from_pretrained('/data/csl/resources/Bert/bert-base-cased', do_lower_case = False)
-tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
-#tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case = False)
+#tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
 import random
 
 def decision(probability):
@@ -44,7 +43,7 @@ def decision(probability):
 
 
 def get_vocab(args, vocab):
-    kb = json.load(open(os.path.join(args.input_dir, 'esa_kb.json')))
+    kb = json.load(open(os.path.join(args.input_dir, args.kb)))#'esa_kb.json')))
     #kb = json.load(open(os.path.join(args.input_dir, 'kb.json')))
     entities = kb['entities']
     for eid in entities:
@@ -97,7 +96,7 @@ def get_vocab(args, vocab):
 
     vocab['id2function'] = [function for function, id in vocab['function2id'].items()]
     vocab['id2operator'] = [function for function, id in vocab['operator2id'].items()]
-    
+
 def get_relation_dataset(args, vocab):
     ## Todo changed
 
@@ -109,7 +108,7 @@ def get_relation_dataset(args, vocab):
     for name, raw_data in zip(['train', 'dev'], [train, dev]):
         dataset = []
         for item in tqdm(raw_data):
-            print(item)
+            #print(item)
             text = item['question']
             program = item['program']
             data = []
@@ -332,7 +331,7 @@ def get_attribute_dataset(args, vocab):
             for item in dataset:
                 f.write(json.dumps(item) + '\n')
 
-def encode_kb_entity(args, vocab, pred_type):
+def encode_kb_entity(args, vocab, pred_type, tokenizer):
 
     encoded_inputs = tokenizer(vocab[f'id2{pred_type}'], padding=True, return_token_type_ids = True)
     print(encoded_inputs.keys())
@@ -349,7 +348,7 @@ def encode_kb_entity(args, vocab, pred_type):
     attention_mask_list = np.array(attention_mask_list, dtype=np.int32)
     return input_ids_list, token_type_ids_list, attention_mask_list
 
-def encode_relation_dataset(args, vocab, dataset):
+def encode_relation_dataset(args, vocab, dataset, tokenizer):
     def get_function_ids(program):
         function_ids = [f['function'] for f in program]
         return function_ids
@@ -412,11 +411,11 @@ def encode_relation_dataset(args, vocab, dataset):
     function_ids_list = np.array(function_ids_list, dtype=np.int32)
     relation_pos_list = np.array(relation_pos_list, dtype=np.int32)
     relation_id_list = np.array(relation_id_list, dtype=np.int32)
-    
+
     return input_ids_list, token_type_ids_list, attention_mask_list, function_ids_list, relation_pos_list, relation_id_list
 
 
-def encode_operator_dataset(args, vocab, dataset):
+def encode_operator_dataset(args, vocab, dataset, tokenizer):
     def get_function_ids(program):
         function_ids = [f['function'] for f in program]
         return function_ids
@@ -484,7 +483,7 @@ def encode_operator_dataset(args, vocab, dataset):
     return input_ids_list, token_type_ids_list, attention_mask_list, function_ids_list, relation_pos_list, relation_id_list
 
 
-def encode_concept_dataset(args, vocab, dataset):
+def encode_concept_dataset(args, vocab, dataset,tokenizer):
     def get_function_ids(program):
         function_ids = [f['function'] for f in program]
         return function_ids
@@ -547,11 +546,11 @@ def encode_concept_dataset(args, vocab, dataset):
     function_ids_list = np.array(function_ids_list, dtype=np.int32)
     relation_pos_list = np.array(relation_pos_list, dtype=np.int32)
     relation_id_list = np.array(relation_id_list, dtype=np.int32)
-    
+
     return input_ids_list, token_type_ids_list, attention_mask_list, function_ids_list, relation_pos_list, relation_id_list
 
 
-def encode_entity_dataset(args, vocab, dataset):
+def encode_entity_dataset(args, vocab, dataset, tokenizer):
     def get_function_ids(program):
         function_ids = [f['function'] for f in program]
         return function_ids
@@ -619,7 +618,7 @@ def encode_entity_dataset(args, vocab, dataset):
     return input_ids_list, token_type_ids_list, attention_mask_list, function_ids_list, relation_pos_list, relation_id_list
 
 
-def encode_attribute_dataset(args, vocab, dataset):
+def encode_attribute_dataset(args, vocab, dataset,tokenizer):
 
     def get_function_ids(program):
         function_ids = [f['function'] for f in program]
@@ -693,9 +692,11 @@ def main():
     train =True
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_dir', required = True, type = str)
-    parser.add_argument('--train_file_path', required = True, type = str)
-    parser.add_argument('--valid_file_path', required=True, type=str)
+    parser.add_argument('--train_file_path', required = True, type = str, default= 'train.json')
+    parser.add_argument('--valid_file_path', required=True, type=str, default= 'valid.json')
     parser.add_argument('--output_dir', required = True, type = str)
+    parser.add_argument('--model_type', required = True, type= str, default= 'bert-base-cased')
+    parser.add_argument('--kb', required= True, type=str, default= 'esa_kb.json')
     args = parser.parse_args()
     print(args)
     if not os.path.isdir(args.output_dir):
@@ -763,6 +764,12 @@ def main():
     }
     get_vocab(args, vocab)
 
+    # tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
+    # try:
+    tokenizer = AutoTokenizer.from_pretrained(args.model_type)#, do_lower_case=False)
+    # else:
+    # tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
+
     for k in vocab:
         print('{}:{}'.format(k, len(vocab[k])))
     fn = os.path.join(args.output_dir, 'vocab.json')
@@ -771,18 +778,19 @@ def main():
         json.dump(vocab, f, indent=2)
 
     #outputs = encode_relation(args, vocab)
-    outputs = encode_kb_entity(args, vocab,'relation')
+    outputs = encode_kb_entity(args, vocab,'relation',tokenizer)
     with open(os.path.join(args.output_dir, 'relation', 'relation.pt'), 'wb') as f:
         for o in outputs:
             print(o.shape)
             pickle.dump(o, f)
 
     #outputs = encode_entity(args, vocab)
-    outputs = encode_kb_entity(args, vocab, 'entity')
+    outputs = encode_kb_entity(args, vocab, 'entity',tokenizer)
     with open(os.path.join(args.output_dir, 'entity', 'entity.pt'), 'wb') as f:
         for o in outputs:
             print(o.shape)
             pickle.dump(o, f)
+
 
     # from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
     # batch_num = 64
@@ -821,17 +829,17 @@ def main():
     #     pickle.dump(attribute_embeddings, f)
 
     #outputs = encode_concept(args, vocab)
-    outputs = encode_kb_entity(args, vocab, 'concept')
+    outputs = encode_kb_entity(args, vocab, 'concept',tokenizer)
     with open(os.path.join(args.output_dir, 'concept', 'concept.pt'), 'wb') as f:
         for o in outputs:
-            print(tokenizer.decode(o[0]))
+            print(tokenizer.decode(o[0])[0:2])
             print(o.shape)
             pickle.dump(o, f)
 
-    outputs = encode_kb_entity(args, vocab, 'attribute')
+    outputs = encode_kb_entity(args, vocab, 'attribute',tokenizer)
     with open(os.path.join(args.output_dir, 'attribute', 'attribute.pt'), 'wb') as f:
         for o in outputs:
-            print(tokenizer.decode(o[0]))
+            print(tokenizer.decode(o[0][0:5]))
             print(o.shape)
             pickle.dump(o, f)
     if train:
@@ -846,7 +854,7 @@ def main():
             with open(os.path.join(args.output_dir, 'relation', '%s.json'%(name))) as f:
                 for line in f:
                     dataset.append(json.loads(line.strip()))
-            outputs = encode_relation_dataset(args, vocab, dataset)
+            outputs = encode_relation_dataset(args, vocab, dataset,tokenizer)
             assert len(outputs) == 6
             print('shape of input_ids, token_type_ids, attention_mask, function_ids， relation_pos, relation_id:')
             with open(os.path.join(args.output_dir, 'relation', '{}.pt'.format(name)), 'wb') as f:
@@ -859,7 +867,7 @@ def main():
             with open(os.path.join(args.output_dir, 'concept', '%s.json'%(name))) as f:
                 for line in f:
                     dataset.append(json.loads(line.strip()))
-            outputs = encode_concept_dataset(args, vocab, dataset)
+            outputs = encode_concept_dataset(args, vocab, dataset,tokenizer)
             assert len(outputs) == 6
             print('shape of input_ids, token_type_ids, attention_mask, function_ids， relation_pos, relation_id:')
             with open(os.path.join(args.output_dir, 'concept', '{}.pt'.format(name)), 'wb') as f:
@@ -872,7 +880,7 @@ def main():
             with open(os.path.join(args.output_dir, 'entity', '%s.json'%(name))) as f:
                 for line in f:
                     dataset.append(json.loads(line.strip()))
-            outputs = encode_entity_dataset(args, vocab, dataset)
+            outputs = encode_entity_dataset(args, vocab, dataset,tokenizer)
             assert len(outputs) == 6
             print('shape of input_ids, token_type_ids, attention_mask, function_ids， relation_pos, relation_id:')
             with open(os.path.join(args.output_dir, 'entity', '{}.pt'.format(name)), 'wb') as f:
@@ -885,7 +893,7 @@ def main():
             with open(os.path.join(args.output_dir, 'attribute', '%s.json' % (name))) as f:
                 for line in f:
                     dataset.append(json.loads(line.strip()))
-            outputs = encode_attribute_dataset(args, vocab, dataset)
+            outputs = encode_attribute_dataset(args, vocab, dataset,tokenizer)
             assert len(outputs) == 6
             print('shape of input_ids, token_type_ids, attention_mask, function_ids， relation_pos, relation_id:')
             with open(os.path.join(args.output_dir, 'attribute', '{}.pt'.format(name)), 'wb') as f:
@@ -898,7 +906,7 @@ def main():
             with open(os.path.join(args.output_dir, 'operator', '%s.json' % (name))) as f:
                 for line in f:
                     dataset.append(json.loads(line.strip()))
-            outputs = encode_operator_dataset(args, vocab, dataset)
+            outputs = encode_operator_dataset(args, vocab, dataset,tokenizer)
             assert len(outputs) == 6
             print('shape of input_ids, token_type_ids, attention_mask, function_ids， relation_pos, relation_id:')
             with open(os.path.join(args.output_dir, 'operator', '{}.pt'.format(name)), 'wb') as f:

@@ -2,11 +2,17 @@ python -m Pretraining.preprocess --input_dir C:/Users/pauld/Projects/IOA/2_2_Pro
 
 python -m Pretraining.preprocess --input_dir ./kqa_dataset_ent --output_dir ./kqa_processed_ent
 
-
 python -m Pretraining.pushhub --save_dir ./train/checkpoint-11999 --name IOA_261022
 
 python -m Pretraining.pushhub --save_dir ./train/checkpoint-11999 --name IOA_261022_test --input_dir ./processed/entity
 
+python -m Pretraining.pushhub --save_dir ./train/checkpoint-11999 --name IOA_261022_test --input_dir ./processed/entity
+
+python -m Pretraining.pushhub --save_dir ./train_pret_rob/checkpoint-1079 --name IOA_ft_latest --input_dir ./processed_ioa_rob/entity 
+
+python -m Pretraining.pushhub --save_dir ./train_pret_rob/checkpoint-719 --name IOA_ft_latest --input_dir ./processed_ioa_rob/entity 
+
+python -m Pretraining.pushhub --save_dir ./train_pret_rob_2301/checkpoint-359 --name IOA_ft_latest --input_dir ./processed_ioa_rob/entity 
 
 python -m  Preprocessing_KG.transform_graphdb
 
@@ -16,30 +22,90 @@ python -m Pretraining.preprocess_ESA --train_file_path ./processed/ioa_valid_100
 
 python -m Pretraining.eval --models_dir ./train_ioa_kep_concat --data_dir ./processed_ioa/
 
+python -m Pretraining.eval --models_dir ./train_pret_bert_cased_3101_05 --data_dir ./processed_ioa_bert/
+
 python -m Pretraining.eval --models_dir ./train_pret_cosmic --data_dir ./processed_ioa_rob/
+
+python -m Pretraining.eval --models_dir ./train_pret_rob --data_dir ./processed_ioa_rob/                                                                                                                                                           
 
 python -m Pretraining.eval --model_dir ./train --data_dir 
 
-python -m Pretraining.train --input_dir ./kqa_processed_ent --output_dir ./train_ent --save_dir ./train_ent --model_name_or_path bert-base-uncased --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=2 --logging_steps=1 --num_train_epochs=100 --wandb=1
+icelab/cosmicroberta
+
+python -m Pretraining.train_rob --input_dir ./kqa_processed_ent_bert_uncased --output_dir ./train_ent_spacebert_uncased --save_dir ./train_ent_spacebert_uncased --model_name_or_path icelab/spacebert --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=2400 --logging_steps=1200 --num_train_epochs=100 --eval_steps=1200 --wandb=1 --device cuda:1 --model_type bert
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_bert_cased_random --output_dir ./train_pret_bert_cased_random --save_dir ./train_pret_bert_cased_random --model_name_or_path --model_name_or_path ./train_ent_bert_cased/checkpoint-21599 --val_batch_size=128 --train_batch_size=32 --learning_rate=1e-5 --save_steps=480 --logging_steps=2 --eval_steps=240 --num_train_epochs=80 --device cuda:1 --wandb=1 --model_type bert --crf_learning_rate 1e-4 --wandb_project IOA_ent_experiments
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_bert_uncased_random --output_dir ./train_pret_bert_uncased_random --save_dir ./train_pret_bert_uncased_random --model_name_or_path ./train_ent_bert_uncased/checkpoint-21599 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=480 --logging_steps=2 --eval_steps=240 --num_train_epochs=80 --device cuda:0 --wandb=1 --model_type bert --crf_learning_rate 1e-4 --wandb_project IOA_ent_experiments
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob_random --output_dir ./train_pret_rob_large_random --save_dir ./train_pret_rob_large_random --model_name_or_path ./train_ent_rob_large/checkpoint-57599 --val_batch_size=128 --train_batch_size=32 --learning_rate=1e-5 --save_steps=480 --logging_steps=2 --eval_steps=240 --num_train_epochs=80 --device cuda:1 --wandb=1 --model_type roberta --crf_learning_rate 1e-4 --wandb_project IOA_ent_experiments --warmup_proportion 0.05
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob_random --output_dir ./train_pret_rob_large_random --save_dir ./train_pret_rob_large_random --model_name_or_path ./train_ent_rob_large/checkpoint-57599 --val_batch_size=128 --train_batch_size=32 --learning_rate=1e-5 --save_steps=480 --logging_steps=2 --eval_steps=240 --num_train_epochs=80 --device cuda:1 --wandb=1 --model_type roberta --crf_learning_rate 1e-4 --wandb_project IOA_ent_experiments --warmup_proportion 0.05 --contrastive_samples=512
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob_random --output_dir ./train_pret_rob_random --save_dir ./train_pret_rob_random --model_name_or_path ./train_ent_rob/checkpoint-40799 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=60 --num_train_epochs=80 --device cuda:1 --wandb=1 --model_type roberta --crf_learning_rate 1e-3 --wandb_project IOA_ent_experiments
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob_random --output_dir ./train_pret_cos_random --save_dir ./train_pret_cos_random --model_name_or_path ./train_ent_cosmicrob/checkpoint-23999 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=60 --num_train_epochs=80 --device cuda:1 --wandb=1 --model_type roberta --crf_learning_rate 1e-3 --wandb_project IOA_ent_experiments
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob_random --output_dir ./train_pret_cos_random --save_dir ./train_pret_cos_random --model_name_or_path ./train_ent_cosmicrob/checkpoint-23999 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=60 --num_train_epochs=80 --device cuda:1 --wandb=1 --model_type roberta --crf_learning_rate 5e-4 --wandb_project IOA_ent_experiments
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob_random --output_dir ./train_pret_cos_random --save_dir ./train_pret_cos_random --model_name_or_path ./train_ent_cosmicrob/checkpoint-23999 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=60 --num_train_epochs=80 --device cuda:1 --wandb=1 --model_type roberta --crf_learning_rate 5e-4 --wandb_project IOA_ent_experiments
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob_random --output_dir ./train_pret_kep_random --save_dir ./train_pret_kep_random --model_name_or_path ./train_ent_kep_norm/checkpoint-40799 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=60 --num_train_epochs=80 --device cuda:1 --wandb=1 --model_type roberta --crf_learning_rate 1e-4 --wandb_project IOA_ent_experiments
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob_random --output_dir ./train_pret_rob_random --save_dir ./train_pret_rob_random --model_name_or_path ./train_ent_rob/checkpoint-40799 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=60 --num_train_epochs=80 --device cuda:1 --wandb=1 --model_type roberta --crf_learning_rate 1e-3 --wandb_project IOA_ent_experiments
+
+
+
+python -m Pretraining.train_rob --input_dir ./kqa_processed_ent_rob --output_dir ./train_ent_spacerob --save_dir ./train_ent_spacerob --model_name_or_path icelab/spaceroberta --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=2400 --logging_steps=1200 --num_train_epochs=100 --eval_steps=1200 --wandb=1 --device cuda:0 --model_type roberta
+
+python -m Pretraining.train_rob --input_dir ./kqa_processed_ent_rob --output_dir ./train_ent_cosmicrob --save_dir ./train_ent_cosmicrob --model_name_or_path icelab/cosmicroberta --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=2400 --logging_steps=1200 --num_train_epochs=100 --eval_steps=1200 --wandb=1 --device cuda:1 --model_type roberta
+
+python -m Pretraining.train_rob --input_dir ./kqa_processed_ent_rob --output_dir ./train_pret_rob_norm --save_dir ./train_pret_rob_norm --model_name_or_path roberta-base --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=2400 --logging_steps=1200 --num_train_epochs=100 --eval_steps=1200 --wandb=1 --device cuda:1 --model_type roberta
+
+python -m Pretraining.train_rob --input_dir ./kqa_processed_ent_rob --output_dir ./train_pret_kep_norm --save_dir ./train_pret_kep_norm --model_name_or_path ./kepler_models/hf/esa_ioa_concat --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=2400 --logging_steps=1200 --num_train_epochs=100 --eval_steps=1200 --wandb=1 --device cuda:1 --model_type roberta
+
+python -m Pretraining.train_rob --input_dir ./kqa_processed_ent --output_dir ./train_ent_bert_cased_dec5 --save_dir ./train_ent_bert_cased_dec5 --model_name_or_path bert-base-cased --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=2 --logging_steps=1 --num_train_epochs=100 --wandb=1
+
+python -m Pretraining.train_rob --input_dir ./processed_ioa_bert --output_dir ./train_pret_bert_cased --save_dir ./train_pret_bert_cased --model_name_or_path ./train_ent_bert_cased/checkpoint-21599 --val_batch_size=256 --train_batch_size=256 --learning_rate=1e-5 --save_steps=120 --logging_steps=30 --eval_steps=30 --num_train_epochs=40 --device cuda:1 --wandb=1
 
 python -m Pretraining.train_rob --input_dir ./kqa_processed_ent_rob --output_dir ./train_pret_cosmicrob --save_dir ./train_pret_cosmicrob --model_name_or_path icelab/cosmicroberta --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=2400 --logging_steps=1200 --num_train_epochs=100 --wandb=1 --device cuda:1
 
-python -m Pretraining.train_rob --input_dir ./processed_ioa_rob --output_dir ./train_pret_kep_2 --save_dir ./train_pret_kep_2 --model_name_or_path ./train_ent_rob_kep/checkpoint-59999 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=30 --num_train_epochs=40 --device cuda:0 --wandb=1
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob --output_dir ./train_pret_kep_2 --save_dir ./train_pret_kep_2 --model_name_or_path ./train_ent_rob_kep/checkpoint-59999 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=30 --num_train_epochs=80 --device cuda:0 --wandb=1
 
 python -m Pretraining.train_rob --input_dir ./processed_ioa_rob --output_dir ./train_kepler_concat --save_dir ./train_kepler_concat --model_name_or_path ./kepler_models/hf/esa_ioa_concat --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=30 --num_train_epochs=80 --device cuda:0 --wandb=1
 
 python -m Pretraining.train_rob --input_dir ./processed_ioa_rob --output_dir ./train_roberta --save_dir ./train_roberta --model_name_or_path roberta-base --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=30 --num_train_epochs=80 --device cuda:0 --wandb=1
 
+python -m Pretraining.train_rob --input_dir ./kqa_processed_ent_rob --output_dir ./train_ent_rob_large --save_dir ./train_ent_rob_large --model_name_or_path roberta-large --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=2400 --logging_steps=1200 --eval_steps=1200 --num_train_epochs=100 --wandb=1 --device cuda:0 --model_type roberta
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob --output_dir ./train_pret_rob_2301 --save_dir ./train_pret_rob_2301 --model_name_or_path ./train_ent_rob_updated/checkpoint-71999 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=30 --num_train_epochs=40 --device cuda:0 --wandb=1
 
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob --output_dir ./train_kep_0502 --save_dir ./train_kep_0502 --model_name_or_path ./kepler_models/hf/esa_ioa_concat --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=120 --num_train_epochs=80 --device cuda:0 --wandb=1 --model_type roberta
 
-python -m Pretraining.train_rob --input_dir ./processed_ioa_bert --output_dir ./train_pret_bert --save_dir ./train_pret_bert --model_name_or_path ./train_ent_ioa_base/checkpoint-45599 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=2 --num_train_epochs=40 --device cuda:0 --wandb=1
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob --output_dir ./train_pret_rob --save_dir ./train_pret_rob --model_name_or_path ./train_ent_rob/checkpoint-40799 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=30 --num_train_epochs=80 --device cuda:0 --wandb=1 --model_type roberta
 
-python -m Pretraining.preprocess_ESA --input_dir ./Preprocessing_KG --train_file_path ./processed_ioa_bert/ioa_train_1001.json --valid_file_path ./processed_ioa_bert/ioa_valid_1001.json  --output_dir ./processed_ioa_bert                   
+python -m Pretraining.train_rob --input_dir ./processed_ioa_rob --output_dir ./train_pret_kep --save_dir ./train_pret_kep --model_name_or_path ./train_ent_kep_norm/checkpoint-40799 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=60 --num_train_epochs=80 --device cuda:0 --wandb=1 --model_type roberta
 
+python -m Pretraining.train_rob --input_dir ./processed_ioa_bert --output_dir ./train_pret_bert_cased --save_dir ./train_pret_bert_cased --model_name_or_path ./train_ent_bert_cased/checkpoint-21599 --val_batch_size=256 --train_batch_size=256 --learning_rate=1e-5 --save_steps=120 --logging_steps=30 --eval_steps=30 --num_train_epochs=40 --device cuda:0 --wandb=1
 
-python -m Pretraining.train_rob --input_dir ./processed_ioa_rob --output_dir ./train_ioa_cosmic_ --save_dir ./train_ioa_cosmic_ --model_name_or_path ./train_pret_cosmicrob/checkpoint-146399 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=2 --num_train_epochs=40 --device cuda:0 --wandb=1
+python -m Pretraining.train_rob --input_dir ./processed_ioa_bert --output_dir ./train_pret_bert_2 --save_dir ./train_pret_bert_2 --model_name_or_path ./train_ent_bert_cased/checkpoint-21599 --val_batch_size=256 --train_batch_size=128 --learning_rate=1e-5 --save_steps=120 --logging_steps=2 --eval_steps=60 --num_train_epochs=80 --device cuda:0 --wandb=1 --model_type roberta --crf_learning_rate 1e-4
 
+python -m Pretraining.preprocess_ESA --input_dir ./Preprocessing_KG --train_file_path ./processed_ioa_bert/ioa_train_0202_new.json --valid_file_path ./processed_ioa_bert/ioa_valid_0202_new.json  --output_dir ./processed_ioa_bert --model_type bert --kb esa_kb.json  
 
+python -m Pretraining.preprocess_ESA --input_dir ./Preprocessing_KG --train_file_path ./processed_ioa_bert/ioa_train_2801.json --valid_file_path ./processed_ioa_bert/ioa_valid_2801.json  --output_dir ./processed_ioa_bert                   
+
+python -m Pretraining.preprocess_ESA --input_dir ./kqa_dataset_ent --output_dir ./kqa_processed_ent_rob --model_type roberta-base --train_file_path ./kqa_dataset_ent/train.json --valid_file_path ./kqa_dataset_ent/valid.json
+
+python -m Pretraining.preprocess_ESA --input_dir ./Preprocessing_KG --train_file_path ./ioa_datasets/ioa_train_0702_random.json --valid_file_path ./ioa_datasets/ioa_valid_0702_random.json  --output_dir ./processed_ioa_rob_random                 
+
+python -m Pretraining.preprocess_ESA --input_dir ./kqa_dataset_ent --output_dir ./kqa_processed_ent_rob --model_type roberta-base --train_file_path ./kqa_dataset_ent/train.json --valid_file_path ./kqa_dataset_ent/valid.json
+
+python -m Pretraining.preprocess_ESA --input_dir ./kqa_dataset_ent --output_dir ./kqa_processed_ent_bert_uncased --model_type bert-base-uncased --train_file_path ./kqa_dataset_ent/train.json --valid_file_path ./kqa_dataset_ent/valid.json --kb kb.json´
+
+python -m Pretraining.preprocess_ESA --input_dir ./Preprocessing_KG --train_file_path ./ioa_datasets/ioa_train_0802_random_10n.json --valid_file_path ./ioa_datasets/ioa_valid_0802_random.json  --output_dir ./processed_ioa_rob_random_10n --model_type roberta-base --kb esa_kb.json                  
+
+python -m Pretraining.preprocess_ESA --input_dir ./Preprocessing_KG --train_file_path ./ioa_datasets/ioa_train_0802_random.json --valid_file_path ./ioa_datasets/ioa_valid_0802_random.json  --output_dir ./processed_ioa_bert_cased_random --model_type bert-base-uncased --kb esa_kb.json                  
+
+python -m Pretraining.preprocess_ESA --input_dir ./Preprocessing_KG --output_dir ./processed_ioa_bert_uncased_random --model_type bert-base-uncased --train_file_path ./ioa_datasets/ioa_train_0802_random.json --valid_file_path ./ioa_datasets/ioa_valid_0802_random.json --kb esa_kb.json 
 
 ## Evaluation
 python -m Pretraining.train_eval --input_dir ./test_data --output_dir ./evaluate --save_dir ./evaluate --model_name_or_path PaulD/IOA_261022-11999 --val_batch_size=8

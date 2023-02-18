@@ -20,6 +20,9 @@ from pathlib import Path
 from tqdm import tqdm
 import pickle
 import logging
+
+import wandb
+
 logging.basicConfig(level=logging.INFO, format='%(asctime)s %(levelname)-8s %(message)s')
 logFormatter = logging.Formatter('%(asctime)s %(levelname)-8s %(message)s')
 rootLogger = logging.getLogger()
@@ -40,7 +43,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     # eval_output_dir = args.output_dir
     # if not os.path.exists(eval_output_dir):
     #     os.makedirs(eval_output_dir)
-    checkpoint = global_step
+    print(global_step)
+    checkpoint =global_step
     ############################ Eval!
     ## Operators!
     nb_eval_steps = 0
@@ -49,6 +53,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     correct = 0
     tot = 0
     val_loss = 0
+    function_loss = 0
     for step, batch in enumerate(val_loaders['operator_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
@@ -77,6 +82,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             gt_relation = batch[5]
             gt_relation = gt_relation.squeeze(-1)
             val_loss += float(nn.CrossEntropyLoss()(outputs['operator_logits'], gt_relation).item())
+            function_loss += float(outputs['function_loss'].item())
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
             # print(correct)
@@ -92,10 +98,10 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
-    log = {'checkpoint':checkpoint, 'acc_func': func_metric.result(), 'acc_operations': acc, "op_val_loss": val_loss, 'step': global_step}
+    log = {'checkpoint':checkpoint, 'acc_operations': acc, "op_val_loss": val_loss, 'step': global_step}
     log_data(log)
-    #if args.wandb:
-    #    wandb.log(log)
+    if args.wandb:
+        wandb.log(log)
     logging.info('**** operation results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -107,6 +113,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     correct = 0
     tot = 0
     val_loss = 0
+    function_loss = 0
     for step, batch in enumerate(val_loaders['attribute_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
@@ -134,6 +141,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             gt_relation = batch[5]
             gt_relation = gt_relation.squeeze(-1)
             val_loss += float(nn.CrossEntropyLoss()(outputs['attribute_logits'], gt_relation).item())
+            function_loss += float(outputs['function_loss'].item())
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
             # print(correct)
@@ -152,10 +160,10 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
-    log = {'checkpoint': checkpoint, 'acc_func': func_metric.result(), 'acc_attributes': acc, "att_val_loss": val_loss, 'step': global_step}
+    log = {'checkpoint': checkpoint, 'function_loss': function_loss/(step+1), 'acc_func': func_metric.result(), 'acc_attributes': acc, "att_val_loss": val_loss, 'step': global_step}
     log_data(log)
-    #if args.wandb:
-    #    wandb.log(log)
+    if args.wandb:
+        wandb.log(log)
     logging.info('**** attribute results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -166,6 +174,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     correct = 0
     tot = 0
     val_loss = 0
+    function_loss = 0
     for step, batch in enumerate(val_loaders['relation_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
@@ -193,6 +202,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             val_loss += float(nn.CrossEntropyLoss()(outputs['relation_logits'], gt_relation).item())
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
+            function_loss += float(outputs['function_loss'].item())
             # print(correct)
             tot += len(pred_relation)
             gt_functions = batch[3].cpu().tolist()
@@ -206,10 +216,10 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     info = 'acc: {}'.format(acc)
     logging.info(info)
     acc = correct.item() / tot
-    log = {'checkpoint':checkpoint, 'acc_func': func_metric.result(), 'acc_relations': acc, "rel_val_loss": val_loss, 'step': global_step}
+    log = {'checkpoint':checkpoint,'function_loss': function_loss/(step+1), 'acc_func': func_metric.result(), 'acc_relations': acc, "rel_val_loss": val_loss, 'step': global_step}
     log_data(log)
-    #if args.wandb:
-    #wandb.log(log)
+    if args.wandb:
+       wandb.log(log)
     logging.info('**** relation results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
 
@@ -220,6 +230,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     correct = 0
     tot = 0
     val_loss = 0
+    function_loss = 0
     for step, batch in enumerate(val_loaders['concept_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
@@ -245,6 +256,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             gt_relation = batch[5]
             gt_relation = gt_relation.squeeze(-1)
             val_loss += float(nn.CrossEntropyLoss()(outputs['concept_logits'], gt_relation).item())
+            function_loss += float(outputs['function_loss'].item())
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
             # print(correct)
@@ -262,10 +274,10 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     logging.info('**** concept results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
-    log = {'checkpoint':checkpoint, 'acc_func': func_metric.result(), 'acc_concepts': acc, "cons_val_loss": val_loss, 'step': global_step}
+    log = {'checkpoint':checkpoint, 'function_loss': function_loss/(step+1), 'acc_func': func_metric.result(), 'acc_concepts': acc, "cons_val_loss": val_loss, 'step': global_step}
     log_data(log)
-    #if args.wandb:
-    #    wandb.log(log)
+    if args.wandb:
+        wandb.log(log)
 
     # Entities!
     # with torch.no_grad():
@@ -288,6 +300,8 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     tot = 0
     val_loss = 0
     results = []
+    function_loss = 0
+
     for step, batch in enumerate(val_loaders['entity_val_loader']):
         model.eval()
         batch = tuple(t.to(device) for t in batch)
@@ -315,6 +329,7 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
             gt_relation = gt_relation.squeeze(-1)
             val_loss += float(nn.CrossEntropyLoss()(outputs['entity_logits'], gt_relation).item())
             # print(pred_relation.size(), gt_relation.size(), batch[3].size())
+            function_loss += float(outputs['function_loss'].item())
             correct += torch.sum(torch.eq(pred_relation, gt_relation).float())
             # print(correct)
             tot += len(pred_relation)
@@ -332,7 +347,10 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
                     if pred[i] == end_id and label[i] == end_id:
                         boolean.append(False)
                         break
-            tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
+            if args.model_type == 'roberta':
+                tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
+            else:
+                tokenizer = AutoTokenizer.from_pretrained('bert-base-cased', do_lower_case=False)
             sents = tokenizer.batch_decode(inputs['input_ids'].to('cpu'))
 
             for des, val, pred, label in zip(boolean, sents, pred_functions, gt_functions):
@@ -347,13 +365,14 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     acc = correct.item() / tot
     logging.info('**** entity results %s ****', prefix)
     logging.info('acc: {}'.format(acc))
-    log = {'checkpoint':checkpoint, 'acc_func': func_metric.result(), 'acc_entities': acc, "ent_val_loss": val_loss, 'step': global_step}
+    log = {'checkpoint':checkpoint, 'function_loss': function_loss/(step+1), 'acc_func': func_metric.result(), 'acc_entities': acc, "ent_val_loss": val_loss, 'step': global_step}
+    print(results[0:3])
     with open(f'./eval/function_predictions_{checkpoint}.json', 'w') as fp:
         json.dump(results, fp)
     log_data(log)
 
-    #if args.wandb:
-    #    wandb.log(log)
+    if args.wandb:
+        wandb.log(log)
 
 
 
@@ -408,6 +427,8 @@ def main():
     parser.add_argument('--models_dir', type=str, default='./train/')
     parser.add_argument('--data_dir', type=str, default='./test_data/')
     parser.add_argument('--val_batch_size', type=int, default=128)
+    parser.add_argument('--wandb', type=int, default=1)
+    parser.add_argument('--model_type', type=str, default="bert")
     #parser.add_argument('--save_dir', type=int, default=128)
 
     args = parser.parse_args()
@@ -431,12 +452,21 @@ def main():
                    'relation_val_loader': relation_val_loader,
                    }
     models_path = Path(args.models_dir)
+
+    if args.wandb:
+        wandb.init(project="ProgramTransfer_Augmentation1001", name=args.models_dir)
+
     for model_dir in models_path.iterdir():
         if not model_dir.is_dir():
             continue
-        #config_class, model_class = (BertConfig, RelationPT)
 
-        config_class, model_class = (RobertaConfig, RelationPT_rob)
+        if args.model_type == 'bert':
+
+            config_class, model_class = (BertConfig, RelationPT)
+
+        else:
+
+            config_class, model_class = (RobertaConfig, RelationPT_rob)
 
         print("load ckpt from {}".format(model_dir))
         config = config_class.from_pretrained(model_dir)  # , num_labels = len(label_list))
@@ -471,9 +501,10 @@ def main():
         #                                      attention_mask=argument_inputs['attention_mask'],
         #                                      token_type_ids=argument_inputs['token_type_ids'])[1]
 
-        checkpoint = str(model_dir).split('\\')[-1]
+        #checkpoint = str(model_dir).split('\\')[-1]
+        checkpoint = str(model_dir).split("checkpoint-")[1]
         entity_inputs = []
-        evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model,device, global_step=checkpoint, **val_loaders)
+        evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model,device, global_step=int(checkpoint), **val_loaders)
 
 if __name__ == '__main__':
     main()

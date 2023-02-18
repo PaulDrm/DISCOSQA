@@ -1,13 +1,14 @@
 from transformers import (BertConfig, BertModel, BertTokenizer, BertPreTrainedModel)
-from .model_rob import RelationPT
+#from .model_rob import RelationPT
 import argparse
-
+from Pretraining.model import RelationPT
+from Pretraining.model_rob import RelationPT_rob
 from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
 import os
 import pickle
 from tqdm.notebook import tqdm
 import torch
-
+from transformers import (RobertaConfig, RobertaModel,AutoTokenizer, RobertaPreTrainedModel)
 from huggingface_hub import HfApi
 
 
@@ -36,17 +37,32 @@ def main():
     parser.add_argument('--save_dir', required=True, help='path to saved model checkpoints')
     parser.add_argument('--name', required=True, help='Name to save model with')
     parser.add_argument('--input_dir', help= 'Name to input directory for entity files')
+    parser.add_argument('--model_type', default="roberta")
     args = parser.parse_args()
     name = args.name
     save_dir = args.save_dir#'/content/drive/MyDrive/IOA/ProgramTransfer/models/checkpoint-14399'
     #save_dir = '/content/drive/MyDrive/IOA/ProgramTransfer/models/checkpoint-76799'
-    config_class, model_class, tokenizer_class = (BertConfig, RelationPT, BertTokenizer)
-    print("load ckpt from {}".format(save_dir))
-    config = config_class.from_pretrained(save_dir)#, num_labels = len(label_list))
-    tokenizer = tokenizer_class.from_pretrained("bert-base-cased")
-    model = model_class.from_pretrained(save_dir, config = config)
-    # checkpoint = save_dir.split('\\')[-1]
-    checkpoint = save_dir.split("checkpoint")[1]
+    #config_class, model_class, tokenizer_class = (BertConfig, RelationPT, BertTokenizer)
+    if args.model_type == "roberta":
+        print("load ckpt from {}".format(save_dir))
+        config_class, model_class, tokenizer_class = (RobertaConfig, RelationPT_rob, AutoTokenizer)
+        config = config_class.from_pretrained(save_dir)#, num_labels=len(label_list))
+        #config.update({'vocab': vocab})
+        tokenizer = tokenizer_class.from_pretrained('roberta-base', do_lower_case=False)
+        # tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path, do_lower_case=False)
+        # tokenizer = tokenizer_class.from_pretrained(args.model_name_or_path, do_lower_case = False)
+        model = model_class.from_pretrained(save_dir, config=config)
+        # checkpoint = save_dir.split('\\')[-1]
+        checkpoint = save_dir.split("checkpoint")[1]
+    else:
+        config_class, model_class, tokenizer_class = (BertConfig, RelationPT, BertTokenizer)
+        print("load ckpt from {}".format(save_dir))
+        config = config_class.from_pretrained(save_dir)#, num_labels = len(label_list))
+        #tokenizer = tokenizer_class.from_pretrained("bert-base-cased")
+        tokenizer = tokenizer_class.from_pretrained("bert-base-cased", do_lower_case=False)
+        model = model_class.from_pretrained(save_dir, config = config)
+        # checkpoint = save_dir.split('\\')[-1]
+        checkpoint = save_dir.split("checkpoint")[1]
 
     checkpoint= ""
     print("pushing tokenizer")

@@ -14,7 +14,7 @@ from Pretraining.model_rob import RelationPT_rob
 ## Todo changed
 #tokenizer = BertTokenizer.from_pretrained('/data/csl/resources/Bert/bert-base-cased', do_lower_case = False)
 #tokenizer = BertTokenizer.from_pretrained('bert-base-cased', do_lower_case = False)
-tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case = False)
+#tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case = False)
 
 import random
 
@@ -783,9 +783,9 @@ def main():
             print(o.shape)
             pickle.dump(o, f)
 
-    from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
-    batch_num = 64
-    model = load_model()
+    #from torch.utils.data import TensorDataset, DataLoader, RandomSampler, SequentialSampler
+    #batch_num = 64
+    #model = load_model()
     print(outputs[0].shape)
     print(outputs[1].shape)
     print(outputs[2].shape)
@@ -797,11 +797,11 @@ def main():
     masks = torch.as_tensor(outputs[1])
     tags = torch.as_tensor(outputs[2])
 
-    data = TensorDataset(inputs, masks, tags)
-    data_sampler = SequentialSampler(data)
-    dataloader = DataLoader(data, sampler=data_sampler, batch_size=batch_num)
-    attribute_embeddings = []
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    #data = TensorDataset(inputs, masks, tags)
+    #data_sampler = SequentialSampler(data)
+    #dataloader = DataLoader(data, sampler=data_sampler, batch_size=batch_num)
+    #attribute_embeddings = []
+    #device = 'cuda' if torch.cuda.is_available() else 'cpu'
     # with torch.no_grad():
     #     for i, batch in enumerate(tqdm(dataloader)):
     #         if i == 1:

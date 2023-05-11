@@ -1,0 +1,49 @@
+{"question": "How many fragmentation events happened prior to 1971?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "What launch vehicles exist with a GTO capacity above 5500 kg?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 7}], "operations": [[2, 4]]}
+{"question": "What are the comments related to impact events in 2005?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 11}], "operations": [[2, 1]]}
+{"question": "How many objects were launched in 2022?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "How many fragmentations in orbit happened in 2010?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "How many satellites decayed in 2010?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "How many rocket body objects with a mass above 1000 kg are in the database?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "How many payload fragmentation debris objects reentered before 2012? ", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many payload objects with a height above 1 m did reenter after 2015?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 4], [4, 4]]}
+{"question": "How many launch vehicles have a Leo capacity above 8000 kg?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "How many fragmentation events did not occurr in 2022?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 3]]}
+{"question": "What is the COSPAR launch number of Starlink 1615?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "operations": [[0, 0]]}
+{"question": "How many launches occurred before 2018?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many launches happened in 1970?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "How many launches took place in 1970?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "How many other mission-related objects with a height less than 7.59 kilometers re-entered in 1977?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 2], [4, 1]]}
+{"question": "How many other mission-related objects with a height lower than 7.59 km reentered in 1977?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 2], [4, 1]]}
+{"question": "How many payload mission related objects with a width less than 4.7 m reentered after 1971?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 2], [4, 4]]}
+{"question": "How many payload mission related objects with a width less than 4.7 meters reentered after 1971?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 2], [4, 4]]}
+{"question": "How many rocket bodies with a width less than 0.485 meters re-entered before 2012?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 2], [4, 2]]}
+{"question": "How many rocket body objects with a width less than 0.485 have re-entered before 2012?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 2], [4, 2]]}
+{"question": "How many objects re-entered after 1964?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "How many objects reentered after 1964?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "How many objects have been launched prior to 2008?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many objects were launched before 2008?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many rocket debris objects with a height less than 0.42 have re-entered since 1981?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 2], [4, 4]]}
+{"question": "How many rocket debris objects with a height of less than 0.42 meters have reentered Earth's atmosphere after 1981?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 2], [4, 4]]}
+{"question": "What objects were launched by the R-7 Semyorka?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "operations": [[0, 0]]}
+{"question": "How many fragmentations in orbit happened before 1980?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many fragmentations occurred before 1980?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many launches have occurred before 1976?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many launches occurred before 1976?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "What objects have been operated by NASA Wallops Flight Center?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "operations": [[0, 0]]}
+{"question": "What objects have fragmented in the airspace of East Timor?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 7}], "operations": [[0, 0]]}
+{"question": "How many rocket debris objects with a diameter of 2.74 cm reentered before 2019?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 1], [4, 2]]}
+{"question": "How many rocket debris objects with a diameter of 2.74 m reentered before 2019?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 1], [4, 2]]}
+{"question": "How many launches have occurred prior to 1973?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many launches occurred before 1973?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many objects have reentered since 1989?", "program": [{"function": 3}, {"function": 20}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "How many objects have reentered the atmosphere since 1989?", "program": [{"function": 3}, {"function": 20}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "What is the flight number of the launch of Explorer 19?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "operations": [[0, 0]]}
+{"question": "How many other mission related objects are in the database?", "program": [{"function": 3}, {"function": 5}, {"function": 17}], "operations": [[0, 0]]}
+{"question": "How many rocket debris objects re-entered in 2014?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "What are the objects that used to be in geosynchronous orbit and that were launched in 1990?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 6}, {"function": 7}], "operations": [[5, 1]]}
+{"question": "What objects used to be in Earth orbit that were launched in 1990?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 6}, {"function": 7}], "operations": [[5, 1]]}
+{"question": "How many fragmentation events happened prior to 1969?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many fragmentation events occurred before 1969?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many launch vehicles have a LEO capacity lower than 6300 kg?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many launch vehicles have a Leo capacity below 6300 kg?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}

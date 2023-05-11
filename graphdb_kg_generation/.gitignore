@@ -1,6 +1,0 @@
-token-discos.txt
-**/*.ipynb_checkpoints/
-__pycache__/
-
-*.csv
-*.ttl

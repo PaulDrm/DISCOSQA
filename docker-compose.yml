@@ -7,4 +7,6 @@ services:
     ports:
       - 8450:8501
     volumes:
-      - ./app/query_results:/app/query_results
+    #  - ./app/query_results:/app/query_results
+      - ./app:/app
+    command: ["streamlit", "run", "app.py", "--","--model_name","PaulD/IOA_ft_latest"]   

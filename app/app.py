@@ -7,6 +7,7 @@ from transformers import (BertConfig, BertModel, BertTokenizer, BertPreTrainedMo
 from transformers import (RobertaConfig, RobertaModel,AutoTokenizer, RobertaPreTrainedModel)
 from transformers import AutoConfig
 import huggingface_hub
+import argparse
 
 
 import streamlit as st
@@ -193,7 +194,7 @@ def load_classes(path,device):
   }
   return argument_inputs
 @st.experimental_singleton
-def load_model():
+def load_model(model_dir,input_dir):
 
     """
     Load the model from checkpoint
@@ -203,7 +204,7 @@ def load_model():
     #save_dir = "PaulD/IOA_261022-11999"
     #save_dir = "PaulD/IOA_ft_07112022-33"
     #save_dir = "PaulD/IOA_ft_17112022-33"
-    save_dir = "PaulD/IOA_ft_latest"
+    save_dir = model_dir#"PaulD/IOA_ft_latest"
     config = AutoConfig.from_pretrained(save_dir)
     model_type = config.model_type
     if model_type == "roberta":
@@ -222,8 +223,9 @@ def load_model():
         #path = './processed/vocab.json'
         #model.config.vocab = load_vocab(path)
 
-    with open(huggingface_hub.hf_hub_download(save_dir, 'entity_embeddings.pt'), 'rb') as f:
+    #with open(huggingface_hub.hf_hub_download(save_dir, 'entity_embeddings.pt'), 'rb') as f:
         #embeddings = pickle.load(f)
+    with open(os.path.join(input_dir, 'entity/entity_embeddings.pt'), 'rb') as f:
         model.entity_embeddings = pickle.load(f)
     #n_gpu = torch.cuda.device_count()
     #if torch.cuda.is_available():  #
@@ -382,11 +384,18 @@ def one_hop(engine, entity_ids, streamlit_state):
 
 def log_data():
 
-    with open("./query_results/queries.json", 'r') as f:
+    results_path = "./query_results/queries.json"
+    if not os.path.exists(results_path):
+        ## create empty json file 
+        data = [{}]
+        with open(results_path, 'w') as f:
+            json.dump(data, f)
+
+    with open(results_path, 'r') as f:
         dataset = json.load(f)
 
     dataset.append(st.session_state.results)
-    with open("./query_results/queries.json", 'w+') as f:
+    with open(results_path, 'w+') as f:
         json.dump(dataset, f)
 
 DEFAULT_QUESTION_AT_STARTUP = os.getenv("DEFAULT_QUESTION_AT_STARTUP", "What are the comments for fragmentations events which are related to objects operated by the European Space Agency?")#What is the mass of COS B?")
@@ -398,21 +407,33 @@ def set_state_if_absent(key, value):
 
 def main():
 
+    parser = argparse.ArgumentParser()
 
-    model, model_type = load_model()
+    parser.add_argument('--model_name', type=str, default='"PaulD/IOA_ft_latest"',
+                        help='Finetuned model on Program Transfer')
+    parser.add_argument('--input_dir', type=str, default='./dwq_processed_rob/',
+                            help='Dir to processed files')
+    
+    args = parser.parse_args()
 
-    if model_type == 'bert':
+    #if model_type =='roberta':
+        #input_dir = './processed_rob/'
+    #else:
+    #    input_dir = './processed_bert/'
+    input_dir =  args.input_dir
     ##### Load Model
+    model, model_type = load_model(args.model_name, input_dir)
+
+    ###### Load Tokenizer
+    if model_type == 'bert':
     # save_dir = '/content/drive/MyDrive/IOA/ProgramTransfer/models/checkpoint-14399'
-        tokenizer = load_tokenizer('bert-base-cased')
+        tokenizer = load_tokenizer(args.model_name)
     elif model_type == 'roberta':
         tokenizer = load_tokenizer('roberta-base')
+
     #tokenizer = load_tokenizer("PaulD/IOA_ft_latest")
     #model_type = 'bert'
-    if model_type =='roberta':
-        input_dir = './processed_rob/'
-    else:
-        input_dir = './processed_bert/'
+
     #path = './processed/vocab.json'
 
     device = 'cpu'#torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -425,7 +446,8 @@ def main():
 
     ################################################################
     ##### Load KG engine
-    path = './Preprocessing_KG/esa_kb.json'  #
+    #path = './Preprocessing_KG/esa_kb.json'#
+    path = './DWQ/esa_kb.json'  #
     engine = load_kg(os.path.abspath(path))
     ################################################################
 

@@ -293,20 +293,6 @@ def evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inp
     if args.wandb:
         wandb.log(log)
 
-    # Entities!
-    # with torch.no_grad():
-    #     model.entity_embeddings = model.bert(input_ids=entity_inputs['input_ids'],
-    #                                     attention_mask=entity_inputs['attention_mask'],
-    #                                     token_type_ids=entity_inputs['token_type_ids'])[1]
-
-    # with open(os.path.abspath(args.input_dir + "/entity/entity_embeddings_3110.pt"), 'rb') as f:
-
-    #    model.entity_embeddings = pickle.load(f)
-    # with open('c_embeddings.pt', 'wb') as f: #os.path.join(args.output_dir,
-    #           # for o in concept_embeddings:
-    #            # print(o)
-    #   pickle.dump(concept_embeddings, f)
-
     embed_ents(model, args)
 
     nb_eval_steps = 0
@@ -648,8 +634,9 @@ def train(args):
                 with torch.no_grad():
                     evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model,
                              device, global_step, **val_loaders)
-                wandb.log({"train_loss_tot": tot_tr_loss / global_step, "epoch": _, "step": global_step,
-                           'lr_BERT': scheduler.get_last_lr()[0], 'lr_class': scheduler.get_last_lr()[2]})
+                if args.wandb:
+                    wandb.log({"train_loss_tot": tot_tr_loss / global_step, "epoch": _, "step": global_step,
+                            'lr_BERT': scheduler.get_last_lr()[0], 'lr_class': scheduler.get_last_lr()[2]})
 
                 model.train()
             if (global_step + 1) % args.save_steps == 0:
@@ -711,11 +698,12 @@ def train(args):
             global_step += 1
 
             ## WANDBDB Logging
-            if (global_step+ 1) % args.logging_steps == 0:
+            if (global_step+ 1) % args.logging_steps == 0 and args.wandb:
                 wandb.log({"train_loss_tot": tot_tr_loss/global_step, "epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
             ## EVALUATION
             if (global_step + 1) % args.eval_steps == 0:
-                wandb.log({"train_loss_tot": tot_tr_loss / global_step, "epoch": _,"step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
+                if args.wandb:
+                    wandb.log({"train_loss_tot": tot_tr_loss / global_step, "epoch": _,"step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
                 model.eval()
                 with torch.no_grad():
                     #evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
@@ -824,7 +812,7 @@ def train(args):
                 
             global_step += 1
             epoch_step+=1
-            if (global_step+ 1) % args.logging_steps == 0:
+            if (global_step+ 1) % args.logging_steps == 0 and args.wandb:
                 wandb.log({"train_loss_tot": tot_tr_loss/global_step,"train_loss_epoch":epoch_tr_loss/epoch_step, "train_loss_ent": entity_loss/epoch_step, "epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
 
             if (global_step + 1) % args.eval_steps == 0:
@@ -835,7 +823,8 @@ def train(args):
                     evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model,
                              device, global_step, **val_loaders)
                 model.train()
-                wandb.log({"train_loss_tot": tot_tr_loss / global_step,"train_loss_epoch":epoch_tr_loss/epoch_step, "train_loss_ent": entity_loss/epoch_step,"epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
+                if args.wandb:
+                    wandb.log({"train_loss_tot": tot_tr_loss / global_step,"train_loss_epoch":epoch_tr_loss/epoch_step, "train_loss_ent": entity_loss/epoch_step,"epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
             if (global_step+1) % args.save_steps== 0:
                  # Save model checkpoint
                 output_dir = os.path.join(args.output_dir, "checkpoint-{}".format(global_step))
@@ -891,11 +880,12 @@ def train(args):
                 model.zero_grad()
             global_step += 1
 
-            if (global_step+ 1) % args.logging_steps == 0:
+            if (global_step+ 1) % args.logging_steps == 0 and args.wandb:
                 wandb.log({"train_loss_tot": tot_tr_loss/global_step, "epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
 
             if (global_step + 1) % args.eval_steps == 0:
-                wandb.log({"train_loss_tot": tot_tr_loss / global_step, "epoch": _,"step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
+                if args.wandb:
+                    wandb.log({"train_loss_tot": tot_tr_loss / global_step, "epoch": _,"step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
                 model.eval()
                 with torch.no_grad():
                     #evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
@@ -957,11 +947,12 @@ def train(args):
                 model.zero_grad()
             global_step += 1
 
-            if (global_step+ 1) % args.logging_steps == 0:
+            if (global_step+ 1) % args.logging_steps == 0 and args.wandb:
                 wandb.log({"train_loss_tot":  tot_tr_loss/global_step, "epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
 
             if (global_step + 1) % args.eval_steps == 0:
-                wandb.log({"train_loss_tot":  tot_tr_loss / global_step, "epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
+                if args.wandb:
+                    wandb.log({"train_loss_tot":  tot_tr_loss / global_step, "epoch": _, "step": global_step, 'lr_BERT':scheduler.get_last_lr()[0], 'lr_class':scheduler.get_last_lr()[2]})
                 model.eval()
                 with torch.no_grad():
                     #evaluate(args, concept_inputs, relation_inputs, entity_inputs, attribute_inputs, model, relation_val_loader, concept_val_loader, entity_val_loader, attribute_val_loader, device,global_step)
@@ -993,8 +984,8 @@ def train(args):
 
         #with torch.no_grad():
          #   evaluate(args, concept_inputs, relation_inputs, entity_inputs, model, relation_val_loader, concept_val_loader,entity_val_loader, device)
-
-    return global_step, tr_loss / global_step
+    print("Done!")
+    #return global_step, tr_loss / global_step
 
 
 def main():
@@ -1003,7 +994,7 @@ def main():
     parser.add_argument('--input_dir', required=True)
     parser.add_argument('--output_dir', required=True)
 
-    parser.add_argument('--save_dir', required=True, help='path to save checkpoints and logs')
+    #parser.add_argument('--save_dir', required=True, help='path to save checkpoints and logs')
     # parser.add_argument('--glove_pt', default='/data/csl/resources/word2vec/glove.840B.300d.py36.pt')
     # parser.add_argument('--model_name_or_path', default = '/data/csl/resources/Bert/bert-base-cased')
     parser.add_argument('--model_name_or_path', required=True)#, default='bert-base-cased')
@@ -1046,11 +1037,11 @@ def main():
 
     args = parser.parse_args()
 
-    if not os.path.exists(args.save_dir):
-        os.makedirs(args.save_dir)
+    if not os.path.exists(args.output_dir):
+        os.makedirs(args.output_dir)
     time_ = time.time()#strftime("%Y-%m-%d-%H:%M:%S", time.localtime())
 
-    fileHandler = logging.FileHandler(os.path.join(args.save_dir, '{}.log'.format(time_)))
+    fileHandler = logging.FileHandler(os.path.join(args.output_dir, '{}.log'.format(time_)))
     fileHandler.setFormatter(logFormatter)
     rootLogger.addHandler(fileHandler)
     # args display

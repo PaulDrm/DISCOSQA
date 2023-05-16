@@ -10,7 +10,7 @@ ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64/
 
 # Downloading and installing Maven
 # 1- Define a constant with the version of maven you want to install
-ARG MAVEN_VERSION=3.8.6
+ARG MAVEN_VERSION=3.8.8
 
 # 2- Define a constant with the working directory
 ARG USER_HOME_DIR="/root"
@@ -54,7 +54,7 @@ RUN mvn dependency:copy-dependencies -DoutputDirectory=./jars -f /usr/local/lib/
 
 WORKDIR app/
 
-COPY ./app .
+#COPY ./app .
 
 #EXPOSE 8501
 CMD ["streamlit", "run", "app.py"]

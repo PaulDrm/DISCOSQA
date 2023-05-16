@@ -718,7 +718,7 @@ def load_classes(path):
 def embed_ents(model,args):
     batch_num = 128
     # argument_inputs = load_classes(input_dir + "esa/new/entity_3110.pt", )
-    argument_inputs = load_classes(args.output_dir + "/entity/entity.pt",'cpu')
+    argument_inputs = load_classes(args.output_dir + "/entity/entity.pt")#,'cpu')
     data = TensorDataset(argument_inputs['input_ids'], argument_inputs['attention_mask'],
                          argument_inputs['token_type_ids'])
     data_sampler = SequentialSampler(data)
@@ -749,13 +749,13 @@ def embed_ents(model,args):
 
 
 def main():
-    train =True
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--input_dir', required = True, type = str)
-    parser.add_argument('--train_file_path', required = True, type = str, default= 'train.json')
-    parser.add_argument('--valid_file_path', required=True, type=str, default= 'valid.json')
+    parser.add_argument('--train_file_path', required = False, type = str, default= 'train.json')
+    parser.add_argument('--valid_file_path', required=False, type=str, default= 'valid.json')
     parser.add_argument('--output_dir', required = True, type = str)
-    parser.add_argument('--model_type', required = True, type= str, default= 'bert-base-cased')
+    parser.add_argument('--model_type', required = True, type= str, default= 'bert')
     parser.add_argument('--model_name', required = True, type=str, default= 'bert-base-case')
     parser.add_argument('--mode', required = True, type= str, default= '')
     parser.add_argument('--kb', required= True, type=str, default= 'esa_kb.json')
@@ -827,11 +827,14 @@ def main():
     }
     get_vocab(args, vocab)
 
-    # tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
+    #tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
     # try:
-    tokenizer = AutoTokenizer.from_pretrained(args.model_type)#, do_lower_case=False)
-    # else:
-    # tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
+    try:
+        tokenizer = AutoTokenizer.from_pretrained(args.model_name)#, do_lower_case=False)
+    except:
+        print("Could not load tokenizer from specified pretrained model")
+        print("Loading Roberta tokenizer instead...")
+        tokenizer = AutoTokenizer.from_pretrained('roberta-base', do_lower_case=False)
 
     for k in vocab:
         print('{}:{}'.format(k, len(vocab[k])))
@@ -862,13 +865,13 @@ def main():
 
             config_class, model_class = (BertConfig, RelationPT)
 
-        else:
+        elif args.model_type == 'roberta':
             
             config_class, model_class = (RobertaConfig, RelationPT_rob)
 
-        print("load ckpt from {}".format(args.model_dir))
-        config = config_class.from_pretrained(args.model_dir)  # , num_labels = len(label_list))
-        model = model_class.from_pretrained(args.model_dir, config=config)
+        print("load ckpt from {}".format(args.model_name))
+        config = config_class.from_pretrained(args.model_name)  # , num_labels = len(label_list))
+        model = model_class.from_pretrained(args.model_name, config=config)
         device = "cuda" if torch.cuda.is_available() else "cpu"
         if torch.cuda.is_available():  #
             model.cuda()
@@ -876,14 +879,14 @@ def main():
         embed_ents(model,args)
 
     #outputs = encode_concept(args, vocab)
-    outputs = encode_kb_entity(args, vocab, 'concept',tokenizer)
+    outputs = encode_kb_entity(args, vocab, 'concept', tokenizer)
     with open(os.path.join(args.output_dir, 'concept', 'concept.pt'), 'wb') as f:
         for o in outputs:
             print(tokenizer.decode(o[0])[0:2])
             print(o.shape)
             pickle.dump(o, f)
 
-    outputs = encode_kb_entity(args, vocab, 'attribute',tokenizer)
+    outputs = encode_kb_entity(args, vocab, 'attribute', tokenizer)
     with open(os.path.join(args.output_dir, 'attribute', 'attribute.pt'), 'wb') as f:
         for o in outputs:
             print(tokenizer.decode(o[0][0:5]))

@@ -1,0 +1,151 @@
+{"question": "How many fragmentation events happened prior to 1971?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What is the mass of OPS-SAT?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 19542]]}
+{"question": "What is the maximum cross section through COS B?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 2730]]}
+{"question": "What is the COSPAR ID of OPS-SAT?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 19542]]}
+{"question": "When was the reentry date of E-TBEx B?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 17838]]}
+{"question": "What is the minimal cross section of Endurosat One?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 15502]]}
+{"question": "What is the height of AMC 5 (GE 5)? ", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 8358]]}
+{"question": "What is the height of Soyuz TM-5? ", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 6156]]}
+{"question": "What is the fragmentation type for the fragmentation event that is related to Vanguard 3?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 11}], "entities": [[1, 32]]}
+{"question": "What is the comment of the fragmentation event that is related to Cosmos-192?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 11}], "entities": [[1, 1090]]}
+{"question": "How many payload fragmentation debris objects are there?", "program": [{"function": 3}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many payload fragmentation debris objects reentered before 2012? ", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What is the diameter of GAIA?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 10900]]}
+{"question": "Which year did GOCE launch?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "entities": [[1, 9918]]}
+{"question": "When was Gaia launched?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "entities": [[1, 10900]]}
+{"question": "How many rocket body objects with a mass above 1000 kg are in the database?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many payload objects with a height above 1 m did reenter after 2015?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many launches started in 2006?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What is the flight number of the launch of of  Samos/2 F/1?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "entities": [[1, 75]]}
+{"question": "What is the flight number of the launch of the Apollo 10 lunar module?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "entities": [[1, 1363]]}
+{"question": "What is the max cross section of Planetum 1?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 25646]]}
+{"question": "EOLE 1 Height", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 1791]]}
+{"question": "OGO 1 reentry date", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 444]]}
+{"question": "What fragmentation events occured on 31st of May 1994?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "What is the number of failed launches by an Ariane 5GS", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 30443]]}
+{"question": "What was the operator of GGSE-4?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "entities": [[1, 991]]}
+{"question": "What launch vehicles exist with a GTO capacity above 5500 kg?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "How many launch vehicles have a Leo capacity above 8000 kg?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "LEO capacity Ariane 5ES", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 30457]]}
+{"question": "What is the thrust level of an Soyuz 11A511M?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 28031]]}
+{"question": "What is the failure status for the launch of Goliat", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "entities": [[1, 10438]]}
+{"question": "What are the number of stages of a Saturn 5 rocket ", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 27526]]}
+{"question": "What is the escape capacity of a Long March (CZ) 3C?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 29545]]}
+{"question": "What is the launcher family of Zenit-3SLB?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "entities": [[1, 30474]]}
+{"question": "What is the entity that operates the launch system Falcon", "program": [{"function": 8}, {"function": 5}, {"function": 10}, {"function": 7}], "entities": [[1, 34049]]}
+{"question": "How many fragmentations in orbit happened in 2010?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What is the mass of the ROSETTA spacecraft?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 9186]]}
+{"question": "How much debris reentered in 2015?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many objects have been launched with the launch of ASTROSAT?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 17}], "entities": [[1, 11404]]}
+{"question": "What are the masses of all the objects that have been launched by the launch of ASUSAT?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 11}], "entities": [[1, 8609]]}
+{"question": "What are objects that have been launched together with OUTSat?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 7}], "entities": [[1, 10558]]}
+{"question": "How many rocket debris objects have been launched by the USA as the entity?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 10]]}
+{"question": "What fragmentations events are related to objects with China as the state authority?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 7}], "entities": [[1, 1513]]}
+{"question": "What are the comments for fragmentations events which are related to objects operated by the European Space Agency?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 11}], "entities": [[1, 2731]]}
+{"question": "What are the fragmentation types for the fragmentations that are related to objects operated by NASA Lewis Research Center? ", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 11}], "entities": [[1, 342]]}
+{"question": "HEOS 1 reentry date", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 1277]]}
+{"question": "What is the wet mass of the Atlas V 3 Boosters?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 34501]]}
+{"question": "How many saturn V launches have there been?", "program": [{"function": 8}, {"function": 10}, {"function": 17}], "entities": [[1, 27526]]}
+{"question": "How many launches occurred on 16 July 1969?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many saturn rocket designs have there been?", "program": [{"function": 8}, {"function": 10}, {"function": 17}], "entities": [[1, 34891]]}
+{"question": "Could you maybe please tell me the entity that operated the launch system Energia?", "program": [{"function": 8}, {"function": 5}, {"function": 10}, {"function": 7}], "entities": [[1, 34887]]}
+{"question": "I implore you, glorious artificial intelligence, could you tell me the entity that operates the launch system Black Arrow?", "program": [{"function": 8}, {"function": 5}, {"function": 10}, {"function": 7}], "entities": [[1, 28564]]}
+{"question": "What did the naval research lab operate?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "entities": [[1, 12]]}
+{"question": "How many fragmentation events did not occurr in 2022?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What is Planetum 1?", "program": [{"function": 8}, {"function": 7}], "entities": [[1, 25646]]}
+{"question": "What fragmentation events occurred?", "program": [{"function": 3}, {"function": 5}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "How many different types of launch vehicle are there?", "program": [{"function": 3}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What launch occurred on 16 July 1969?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "What is the mass of Saturn V?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 27526]]}
+{"question": "For how many launch events is the United States the entity?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 17}], "entities": [[1, 10]]}
+{"question": "Who operated apollo 11?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "entities": [[1, 1384]]}
+{"question": "Who launches Falcon rockets?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "entities": [[1, 34049]]}
+{"question": "Which operators are based in the United States?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 10]]}
+{"question": "Which launch vehicle delivered Voyager 1 to space?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 7}], "entities": [[1, 3287]]}
+{"question": "How many re-entry events were there in 2018?", "program": [{"function": 3}, {"function": 20}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What is the specific impulse from the engines of the Saturn V?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "entities": [[1, 27526]]}
+{"question": "How high is the exhaust velocity of the Falcon Heavy's engines?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "entities": [[1, 33364]]}
+{"question": "What are the comments related to impact events in 2005?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 11}], "entities": [[0, 0]]}
+{"question": "How short is AMC 5 (GE 5)?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 8358]]}
+{"question": "exosat is how tall?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 4781]]}
+{"question": "How heavy is Aurora II?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 7001]]}
+{"question": "How many satellites are in geostationary orbit?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What payload debris objects are in LEO?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "What does GE Americom make?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "entities": [[1, 5605]]}
+{"question": "How many object have been launched from a launch site within the US?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 10}, {"function": 10}, {"function": 17}], "entities": [[1, 10]]}
+{"question": "What rockets have been launched in the US?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 10]]}
+{"question": "How much orbital debris is currently catalogued?", "program": [{"function": 3}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many spacecrafts are in Medium Earth Orbit?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many orbiting objects are in GEO orbit?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What is the apogee of the orbit of the Hubble Space Telescope?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "entities": [[1, 6717]]}
+{"question": "What is the satellite number of ofeq 1?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 6251]]}
+{"question": "What is the shape of USA-205?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 9932]]}
+{"question": "What are objects with a mass above 5000 kg?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "How many objects were launched in 2022?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many fragmentations occurred that were not on March 4th, 1998?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "what do you know about the fragmentation of the Spot-4 debris", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 10274]]}
+{"question": "Number of satellites in orbit", "program": [{"function": 3}, {"function": 10}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many satellites are in orbit currently?", "program": [{"function": 3}, {"function": 10}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "how many European satellites are in orbit?", "program": [{"function": 3}, {"function": 10}, {"function": 8}, {"function": 10}, {"function": 6}, {"function": 5}, {"function": 7}], "entities": [[3, 2731]]}
+{"question": "How many satellites decayed in 2010?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many objects are in a highly elliptical orbit that are classified as unknown?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What are objects that used to be in low earth orbit and that were launched after 2008?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 6}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "What are objects with an historical orbit, which had an inclination of 0.8 and above?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 10}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "How many objects are there with a past navigation satellites Orbit?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many objects labelled as rocket fragmentation debris with a diameter higher than 1 m are currently in low earth orbit?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 13}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many mission related objects from rockets with a mass of 500 kg and heavier were launched before 2000?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 13}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "COSMOS-2251 fragmentation debris satellite number", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 9909]]}
+{"question": "How many Telesat satellites and probes that are currently in geostationary orbit?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 8}, {"function": 10}, {"function": 6}, {"function": 5}, {"function": 17}], "entities": [[4, 9913]]}
+{"question": "How much does CASTOR 2 weigh when fuelled?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 34371]]}
+{"question": "What attributes and relations are in the KG for the Zvezda module", "program": [{"function": 8}, {"function": 7}], "entities": [[1, 35234]]}
+{"question": "What rocket parts are the result of a launch with an Ariane 5ES", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 30457]]}
+{"question": "How many objects were launched with the launch vehicle Zenit 2m?'", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 17}], "entities": [[1, 30735]]}
+{"question": "What was the entity of the N-1 SL-15 (G-1-e) launch vehicle?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "entities": [[1, 33016]]}
+{"question": "Who developed the N-1 SL-15 (G-1-e)", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "entities": [[1, 33016]]}
+{"question": "What did obj42091's operator operate?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "entities": [[1, 11932]]}
+{"question": "Who operated obj42091?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "entities": [[1, 11932]]}
+{"question": "What launches has been performed by Satellife Inc?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 7468]]}
+{"question": "What launches were carried out by Satellife Inc?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 7468]]}
+{"question": "Can you tell me more about the fragmentation of obj57126?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 15911]]}
+{"question": "what fragmentation is linked to the object obj 57126", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 15911]]}
+{"question": "What is the leo capacity of Astra Rocket 3?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 33662]]}
+{"question": "How many objects have been launched from a launch site operated by Surrey Satellite Technology US LLC?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 10}, {"function": 10}, {"function": 17}], "entities": [[1, 35241]]}
+{"question": "How many objects were launched from a launch site which is operated by Surrey Satellite Technology US LLC?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 10}, {"function": 10}, {"function": 17}], "entities": [[1, 35241]]}
+{"question": "Delta E (Delta N) fragmentation altitude", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 11}], "entities": [[1, 1220]]}
+{"question": "What is the diameter of a Delta?", "program": [{"function": 8}, {"function": 11}], "entities": [[1, 27332]]}
+{"question": "What is the launch vehicle of OSCAR 20?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 7}], "entities": [[1, 18951]]}
+{"question": "Which rocket delivered OSCAR 20 debris to space?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 7}], "entities": [[1, 18951]]}
+{"question": "What fragmentation events are related to objects for which the QBUS Consortium (Stanford/APL/UC Boulder/U MIch/U del Turabo) is the state authority?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 7}], "entities": [[1, 13867]]}
+{"question": "What fragmentation events are related to objects with QBUS Consortium (Stanford/APL/UC Boulder/U MIch/U del Turabo) as the state authority?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 7}], "entities": [[1, 13867]]}
+{"question": "How many objects have been launched by the Cosmos-1849 launch?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 17}], "entities": [[1, 5921]]}
+{"question": "How many objects were launched with the Cosmos-1849 launch?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 17}], "entities": [[1, 5921]]}
+{"question": "How many objects were launched with the launch vehicle Thor-Agena B?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 17}], "entities": [[1, 27330]]}
+{"question": "How many objects were launched with the launch vehicle Thor-Agena B?'", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 17}], "entities": [[1, 27330]]}
+{"question": "How many launches did Dynetics operate?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 17}], "entities": [[1, 35417]]}
+{"question": "How many launches did Dynetics operator?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 17}], "entities": [[1, 35417]]}
+{"question": "What is the operator of Teledyne Brown Engineering, Huntsville?", "program": [{"function": 8}, {"function": 7}], "entities": [[1, 35255]]}
+{"question": "What is the relationship between Teledyne Brown Engineering, Huntsville and any other entity?", "program": [{"function": 8}, {"function": 7}], "entities": [[1, 35255]]}
+{"question": "What UnknownObjClass objects were launched by the entity National Satellite Oceanic Applications Center?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 11676]]}
+{"question": "What is the number of unknown objects launched by the National Satellite Oceanic Applications Center as the entity?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 11676]]}
+{"question": "What fragmentation events are related to objects with KT SAT as the state authority?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 7}], "entities": [[1, 13836]]}
+{"question": "What fragmentation events are related to objects with KT Sat as the state authority?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 7}], "entities": [[1, 13836]]}
+{"question": "What is the misison of Starlink 1715?", "program": [{"function": 8}, {"function": 7}], "entities": [[1, 21367]]}
+{"question": "What is the purpose of Starlink 1715?", "program": [{"function": 8}, {"function": 7}], "entities": [[1, 21367]]}
+{"question": "What do you know about the fragmentation of Starlink 1774?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 21376]]}
+{"question": "What is the fragmentation of starlink 1774?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 7}], "entities": [[1, 21376]]}
+{"question": "What are objects that used to be in a MEO-GEO crossing orbit and that were launched before 2003?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 6}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "What are objects whose historical orbit was a MEO-GEO Crossing Orbits and that have been launched before 2003?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 6}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "How many launches occured on 11th of October 1974?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many launches took place on 11th of October 1974?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many objects in orbit labeled as other mission related objects that have a mass below 7.39 kg?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 13}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many objects that are in GTO orbit and have a mass less than 7.39 Kg are labelled as other mission related objects", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 13}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many objects have a minimal cross section greater than 7.258?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "how many other mission related objects are there with a min cross section of over 7.258?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many fragmentation events happened after 29 November 1998?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many fragmentation events occured after 1998-11-29?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many payload fragmentation debris objects reentered before 2007?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many rocket fragments reentered before 2007?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many mission related objects are in geostationary orbit?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "How many payload mission related objects are in geostationary orbit?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 5}, {"function": 17}], "entities": [[0, 0]]}
+{"question": "What are the fragmentation events that took place prior to 24 July 2003?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 7}], "entities": [[0, 0]]}
+{"question": "What fragmentation events were there prior to 24 July 2003?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 7}], "entities": [[0, 0]]}

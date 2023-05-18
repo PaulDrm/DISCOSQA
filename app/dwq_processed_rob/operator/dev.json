@@ -1,0 +1,35 @@
+{"question": "How many fragmentation events happened prior to 1971?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many payload fragmentation debris objects reentered before 2012? ", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "Which year did GOCE launch?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "operations": [[0, 0]]}
+{"question": "How many rocket body objects with a mass above 1000 kg are in the database?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "How many payload objects with a height above 1 m did reenter after 2015?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 20}, {"function": 17}], "operations": [[2, 4], [4, 4]]}
+{"question": "How many launches started in 2006?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "OGO 1 reentry date", "program": [{"function": 8}, {"function": 11}], "operations": [[0, 0]]}
+{"question": "What launch vehicles exist with a GTO capacity above 5500 kg?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 7}], "operations": [[2, 4]]}
+{"question": "How many launch vehicles have a Leo capacity above 8000 kg?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "How many fragmentations in orbit happened in 2010?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "How much debris reentered in 2015?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "What are the masses of all the objects that have been launched by the launch of ASUSAT?", "program": [{"function": 8}, {"function": 10}, {"function": 10}, {"function": 11}], "operations": [[0, 0]]}
+{"question": "How many fragmentation events did not occurr in 2022?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 3]]}
+{"question": "Who operated apollo 11?", "program": [{"function": 8}, {"function": 10}, {"function": 7}], "operations": [[0, 0]]}
+{"question": "How many re-entry events were there in 2018?", "program": [{"function": 3}, {"function": 20}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "How high is the exhaust velocity of the Falcon Heavy's engines?", "program": [{"function": 8}, {"function": 10}, {"function": 11}], "operations": [[0, 0]]}
+{"question": "What are the comments related to impact events in 2005?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 11}], "operations": [[2, 1]]}
+{"question": "What are objects with a mass above 5000 kg?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 7}], "operations": [[2, 4]]}
+{"question": "How many objects were launched in 2022?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "How many satellites decayed in 2010?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 1]]}
+{"question": "What are objects that used to be in low earth orbit and that were launched after 2008?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 6}, {"function": 7}], "operations": [[5, 4]]}
+{"question": "What are objects with an historical orbit, which had an inclination of 0.8 and above?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 10}, {"function": 7}], "operations": [[2, 4]]}
+{"question": "How many objects labelled as rocket fragmentation debris with a diameter higher than 1 m are currently in low earth orbit?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[4, 4]]}
+{"question": "How many mission related objects from rockets with a mass of 500 kg and heavier were launched before 2000?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 2], [5, 4]]}
+{"question": "How many objects were launched from a launch site which is operated by Surrey Satellite Technology US LLC?", "program": [{"function": 8}, {"function": 10}, {"function": 5}, {"function": 10}, {"function": 10}, {"function": 17}], "operations": [[0, 0]]}
+{"question": "What are objects that used to be in a MEO-GEO crossing orbit and that were launched before 2003?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 6}, {"function": 7}], "operations": [[5, 2]]}
+{"question": "What are objects whose historical orbit was a MEO-GEO Crossing Orbits and that have been launched before 2003?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 3}, {"function": 20}, {"function": 5}, {"function": 10}, {"function": 6}, {"function": 7}], "operations": [[5, 2]]}
+{"question": "How many objects in orbit labeled as other mission related objects that have a mass below 7.39 kg?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[4, 2]]}
+{"question": "How many objects that are in GTO orbit and have a mass less than 7.39 Kg are labelled as other mission related objects", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[4, 2]]}
+{"question": "How many objects have a minimal cross section greater than 7.258?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "how many other mission related objects are there with a min cross section of over 7.258?", "program": [{"function": 3}, {"function": 13}, {"function": 5}, {"function": 17}], "operations": [[2, 4]]}
+{"question": "How many fragmentation events occured after 1998-11-29?", "program": [{"function": 3}, {"function": 22}, {"function": 5}, {"function": 17}], "operations": [[0, 0]]}
+{"question": "How many payload fragmentation debris objects reentered before 2007?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many rocket fragments reentered before 2007?", "program": [{"function": 3}, {"function": 20}, {"function": 5}, {"function": 17}], "operations": [[2, 2]]}
+{"question": "How many payload mission related objects are in geostationary orbit?", "program": [{"function": 3}, {"function": 5}, {"function": 10}, {"function": 5}, {"function": 17}], "operations": [[0, 0]]}

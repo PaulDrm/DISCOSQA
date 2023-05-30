@@ -1,6 +1,6 @@
 # ESA's DISCOS QA system
 
-This is the source code for the ACL industry track paper submission "DISCOSQA: A Knowledge Base Question Answering System for Space Debris based on Program Induction".
+This is the source code for the ACL industry track paper "Knowledge Base Question Answering for Space Debris Queries".
 
 # INSTALLATION
 
